@@ -1,0 +1,247 @@
+Jenkins Notes
+
+SDLC -> Software development life cycle
+7 phases of SDLC:
+   1. Planning
+   2. Requirements Analysis
+   3. Design
+   4. Development (Coding)
+   5. Testing
+   6. Deployment
+   7. Maintenance
+
+For 1 developer:
+dev -> github -> git clone -> mvn goals (package creation) -> java -jar <jar file>
+
+For 20 developers:
+dev -> github -> CI (Continuous Integration) -> CD (Continuous Deployment)
+- clone
+- maven
+- java
+
+Jenkins -> CI/CD tool / opensource tool / Java
+
+The old name of Jenkins is Hudson.
+
+Jenkins uses a master-agent architecture where:
+   Master: Manages the Jenkins UI, job configurations, and schedules builds
+   Agents: Execute the actual build jobs
+
+What is Continuous integration, continous delivery and continous deployment
+•	Continuous Integration (CI): It is the automated process of frequently merging developers' code updates into a shared project and instantly testing them to catch bugs early.
+•	Continuous Delivery (CD): It is the practice of ensuring that every tested code change is safely packaged and always ready to be released to users with the manual click of a button.
+•	Continuous Deployment (CD): It is the fully automated process where every code change that passes testing is immediately released directly to the users without any human intervention.
+
+Alternatives:
+- Github actions
+- Code pipeline
+- Azure devops
+- Bamboo
+- Gitlab cicd
+- Tekton
+
+---
+
+Jenkins Pipeline Flow:
+Dev -> push -> Github -> Triggers Jenkins Job -> Jenkins
+From Jenkins:
+1. git checkout
+2. Build -> maven, NPM, pip, docker
+3. Push the packages to the artifactory -> JFrog, Nexus, ECR, Docker hub
+4. Deploy the artifacts -> machine, Tomcat, Docker, Kubernetes
+
+Jenkins will also integrate:
+1. sonarqube analysis
+2. security analysis
+
+API -> Application Programming Interface
+UI -> User Interface
+Jenkins has both UI and API.
+
+Triggers help to identify the changes made in github to let Jenkins know to initiate the process.
+
+---
+
+Installation & EC2 Setup:
+- t2.medium is required for jenkins in ec2
+- 15 GB size gp3
+- Use ubuntu image
+- security group -> All traffic (Note: Fine for practice. Best practice is to restrict to Port 22 for SSH and Port 8080 for Jenkins UI)
+
+Install jenkins:
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt install openjdk-21-jdk -y
+use sudo wget commands from jenkins page
+sudo systemctl enable jenkins
+sudo systemctl start jenkins (Note: The wget package installation often starts Jenkins automatically)
+sudo systemctl status jenkins
+
+-> initial admin password is required in the Jenkins UI. You can retrieve it from your EC2 server by running:
+   sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+-> sudo !! -> run previous command using sudo privileges
+
+What are plugins
+Plugins in Jenkins are add-on software modules that you install to give Jenkins new features and allow it to communicate with other tools.
+
+Important plugins of jenkins
+•	Pipeline: The most critical plugin. It allows you to write your build processes as code (using a Jenkinsfile) rather than configuring them manually in the UI.
+•	Git Plugin: Essential for connecting Jenkins to your Git repositories (GitHub, GitLab, etc.) to pull code and trigger builds automatically.
+•	Credentials Binding: Crucial for security. It allows you to inject secrets (like API tokens, passwords, and SSH keys) into your builds without exposing them in your code or logs.
+•	Blue Ocean: Upgrades the classic Jenkins interface to a modern, visual dashboard, making it much easier to monitor pipelines and troubleshoot failed builds.
+•	Docker Pipeline / Kubernetes: These plugins are standard for modern infrastructure, allowing you to run your build jobs inside clean, isolated containers that spin up and down as needed.
+•	Role-Based Access Control (RBAC): Important for teams, this allows you to define specific permissions (view, build, configure) for different users or groups.
+
+---
+Different types of jenkins jobs:
+   Freestyle Project
+   Pipeline Project
+   Multibranch Pipeline
+   Multi-Configuration Project 
+   Maven Project
+   External Job
+   Organization Folder
+   Folder
+
+To use sudo command in Jenkins:
+sudo visudo /etc/sudoers
+-> jenkins ALL=(ALL:ALL) NOPASSWD:ALL
+
+(Best Practice Alternative: Keep the main sudoers file clean by creating a dedicated drop-in file)
+sudo visudo  /etc/sudoers
+-> jenkins ALL=(ALL:ALL) NOPASSWD:ALL
+
+Default Installation Directory:
+   /var/lib/jenkins
+
+To Bypass Login (Disable Security):
+   Edit the configuration file: `sudo vi /var/lib/jenkins/config.xml`
+   Find the tag `<useSecurity>true</useSecurity>` and change it to `<useSecurity>false</useSecurity>`.
+   (Note: You must restart the Jenkins service for this to take effect, e.g., `sudo systemctl restart jenkins`).
+
+Jenkins Location Configuration:
+   File: `/var/lib/jenkins/jenkins.model.JenkinsLocationConfiguration.xml`
+   Update the Jenkins URL (with the correct IP address or domain) here to ensure correct link routing and prevent application lag or redirect issues.
+
+Workspace Directory:
+   /var/lib/jenkins/workspace
+   This is the default path where the project source code is cloned and where builds are executed.
+
+Keeping Background Processes Alive After Build:
+   To run an application or script and keep it running after the Jenkins build is completed, you must bypass the Jenkins Process Tree Killer.
+   Method: Set the environment variable `BUILD_ID=dontKillMe` (or `JENKINS_NODE_COOKIE=dontKillMe` in newer Jenkins versions) before your command.
+   Example: `daemonize -E BUILD_ID=dontKillMe /path/to/command` or simply exporting the variable before executing a background script.
+
+Importance of Jenkins home directory:
+In Jenkins, the home directory (which your notes correctly identified as /var/lib/jenkins for Linux) is the brain and heart of the entire application.
+   It Holds All Configurations
+   It Stores All Plugins
+   It Contains the Workspace
+   It Keeps the Build History
+   Backups and Migrations are Easy
+
+A hotfix is an urgent, rapidly deployed code update designed to fix a specific, critical bug or security vulnerability in a live production environment.
+A software patch is a planned, routine update that bundles multiple bug fixes, security enhancements, and minor improvements into a single release.
+
+What is waterfall and agile methodology
+   •	Waterfall is a linear and sequential approach. You complete the project in strict phases (plan, build, test, deploy), finishing one phase completely before starting the next. It is rigid and delivers the final product all at once at the very end.
+   •	Agile is an iterative and flexible approach. You break the project down into short cycles (sprints), delivering small, working pieces of the product continuously. It embraces changing requirements and constant customer feedback.
+
+Difference between monolithic app and micro service app
+   •	Monolithic Architecture is a traditional approach where the entire application is built as a single, tightly coupled codebase. All features are deployed together, meaning if you need to update or scale one feature, you have to redeploy and scale the entire application.
+   •	Microservices Architecture breaks the application down into small, independent services (e.g., login, payment, cart) that communicate via APIs. Because they are loosely coupled, you can update, deploy, and scale each service individually without affecting the rest of the application.
+
+Jenkins Build Triggers
+   Trigger builds remotely (e.g., from scripts) - Allows you to trigger a build by sending an HTTP request to a specific Jenkins URL with an authentication token, enabling external scripts, tools, or third-party applications to start jobs on demand.
+   Build after other proiects are built - Automatically starts a build as soon as a specified "upstream" project finishes running, linking jobs together to create sequential pipelines or dependent workflows (e.g., deploying only after the testing job succeeds).
+   Build periodically - Schedule builds to run at specific times using cron-like syntax, regardless of code changes.
+   GitHub hook trigger for GITScm polling - GitHub sends a notification to Jenkins immediately when code is pushed, triggering an instant build.
+   Poll SCM - Jenkins periodically checks your source control system for changes and builds only when changes are detected.
+
+How to Set Up a GitHub Hook Trigger for Jenkins:
+   1. Go to your GitHub repository settings.
+   2. Navigate to "Webhooks" and click to add a new webhook.
+   3. In the "Payload URL" field, enter your Jenkins URL followed by `/github-webhook/`.
+   Example: http://0.0.0.0:8080/github-webhook/
+   4. Click "Add webhook" and save your changes.
+
+A parameterized job In Jenkins is a build job or pipeline that is configured to accept input values (parameters) right before it executes.
+
+Parallel jobs (or parallel stages) In Jenkins allow you to execute multiple tasks simultaneously, rather than waiting for one task to finish before starting the next.
+
+Jenkins Agents
+   Jenkins agents (formerly called slaves) allow you to distribute builds across multiple machines.
+
+Benefits of Using Agents
+   Scalability: Distribute load across multiple machines
+   Platform diversity: Run builds on different OS (Windows, Linux, macOS)
+   Resource isolation: Dedicated resources for specific projects
+   Security: Keep build environments separate from master
+
+Security Concepts in Jenkins:
+   1. Authentication
+      Authentication is the process of verifying a user's identity. This can be handled through a standard login, an external LDAP (Lightweight Directory Access Protocol) server, or the internal Jenkins Database (JENKINS DB).
+      * Simple Definition: Authentication answers the question, "Who are you?" It is like checking your ID badge at the door. LDAP is a central directory system companies use so you can log in with your normal work credentials, while Jenkins DB means your account is stored directly inside Jenkins.
+
+   2. Authorization
+      Authorization deals with granting permissions to users after they have successfully authenticated. It determines what specific actions a user is allowed to perform.
+      * Simple Definition: Authorization answers the question, "What are you allowed to do?" It is like having a keycard that only unlocks specific rooms inside the building.
+
+      Authorization Methods for Permissions:
+         * Matrix-based: This method uses a global grid (or matrix) to assign specific permissions (like read, write, or build) to users or groups across the entire system.
+         * Project-based: This allows you to grant permissions on a per-project basis. For example, a user might be able to edit and build "Project A," but they can only view "Project B."
+         * RBAC (Role-Based Access Control): This method involves creating specific "roles" (such as Admin, Developer, or Tester) that have predefined permissions. You then assign users to those roles instead of managing permissions one-by-one.
+
+How to securely store credentials in Jenkins?
+   To securely store credentials in Jenkins, you store them centrally using the Credentials Plugin, which encrypts them on the Jenkins master node. To safely use them in a job, you use the Credentials Binding Plugin to inject them as temporary environment variables, which automatically masks the values in the console logs to prevent exposure. 
+
+Senario-> how to debug on why build is taking long time
+   "Whenever a build suddenly spikes in duration, my first goal is to isolate exactly where the time is being spent rather than guessing.
+   Phase 1: Triage and Isolation
+      I would immediately open the Jenkins pipeline UI (like Blue Ocean) and compare the current slow run to a previous fast run. I need to identify which specific stage is causing the delay. Is it the Git checkout, the compilation, the unit tests, or the artifact upload?
+   Phase 2: Targeted Investigation
+      Once I find the bottleneck stage, I look at the console logs and infrastructure metrics. The issue almost always falls into one of four categories:
+      •	Infrastructure & Resource Exhaustion: I check the Jenkins agent. Is the CPU maxed out? Is it out of memory and aggressively swapping? Is another heavy job running concurrently on the same node?
+      •	Network & External Dependencies: If it's failing in the build stage, is Maven or npm hanging while trying to download dependencies? Often, an external registry (like Nexus, Artifactory, or npmjs) is experiencing an outage, or the local cache was wiped.
+      •	Code & Tests: If the test stage is dragging, I look for hanging integration tests. Did someone introduce a test that waits for a database connection that never happens? Are UI/Selenium tests timing out?
+      •	Git History: If the checkout stage is slow, did a developer accidentally commit massive binary files or a database dump, bloating the repository size?
+   Phase 3: Resolution & Prevention
+      Once identified, I apply the specific fix. If it's a caching issue, I ensure dependency caching is properly configured on the agent. If it's resource exhaustion, I might scale up the agent or restrict concurrent builds. If it's hanging tests, I would fail the pipeline and send it back to the developer to fix the infinite loop or timeout."
+
+Types of credentials manager in jenkins
+   •	Secret text: A single sensitive string, like a GitHub API token or a webhook URL.
+   •	Username with password: A standard login pair, typically used to authenticate with Docker Hub, Nexus, or Artifactory.
+   •	Secret file: A sensitive file that Jenkins temporarily places in the workspace during a build, like a kubeconfig file or a .env file.
+   •	SSH Username with private key: Used for secure connections, like cloning a private Git repository or SSH-ing into a remote server.
+   •	Certificate: Used for securely storing PKCS#12 or JKS certificate files.
+
+Which plugin is used to take backup of jenkins
+   ThinBackup Plugin 
+
+Difference between Agile methodology and Devops methodology
+   Agile and DevOps solve two different problems in the software lifecycle. Agile focuses on the development phase; it bridges the gap between the business and the developers through iterative sprints to ensure we are building the right product. DevOps focuses on the delivery phase; it bridges the gap between developers and operations by using automation and CI/CD pipelines to ensure that the code Agile teams write can be deployed to production instantly, safely, and reliably.
+
+Jenkins Pipeline Types
+•	There are two main types of Jenkins pipeline jobs: Declarative and Scripted.
+•	A Declarative pipeline always starts with a pipeline block.
+•	A Scripted pipeline always starts with a node block.
+
+Testing Strategies and Environments
+•	Testing can be categorized into static and dynamic phases.
+•	Static tests are performed before the execution of the application.
+•	Dynamic tests are performed after the execution of the application.
+•	The standard software deployment flow progresses sequentially through the following environments: Local, Development (Dev), Staging, and Production.
+•	Unit tests are used to determine code quality; a standard minimum requirement is 70% code quality, though highly secure applications like banking apps often require up to 95%.
+•	The general sequence for application testing includes:
+	1.	Unit tests.
+	2.	Integration tests.
+	3.	Code analysis, typically using Sonar.
+	4.	Code vulnerability scanning, typically using Trivy.
+
+SonarQube Architecture and Configuration
+•	The SonarQube architecture operates in two main parts.
+•	The first part is the server component, which includes the User Interface (UI) and the database.
+•	The second part is the Command Line Interface (CLI), specifically the Sonar Scanner, which is the tool that will be used most frequently.
+•	The official domain for the tool is sonarsource.com.
+•	By default, the SonarQube application runs on port 9000.
+•	The initial default credentials to log in are "admin" for the username and "admin" for the password.

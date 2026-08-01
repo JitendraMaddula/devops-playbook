@@ -1,0 +1,266 @@
+What is Version Control?
+    Version Control is a system that tracks changes made to files over time. It helps developers collaborate, maintain history, and restore previous versions if needed.
+Distributed Version Control System vs Centralized Version Control System
+    Centralized (CVCS): Relies on a single central server to store the project history. Developers only download a snapshot of the latest files
+        Requires internet to commit or view history. If the server dies, work stops.
+        Examples: Subversion (SVN), Perforce.
+    Distributed (DVCS): Every developer downloads a complete copy of the entire project and its full history to their local machine.
+        Works offline. You can commit, branch, and view history without the internet. Every local copy is a full backup.
+        Examples: Git, Mercurial.
+Git Architecture
+    Working Directory
+        Where you create or modify files.
+    Staging Area
+        A temporary area where files are prepared before committing.
+    Local Repository
+        Stores commits on your local machine.
+    Remote Repository
+        Stores the project online for collaboration.
+git --version           -->Check Git Version
+sudo yum install git -y -->To install git
+Add in the linux .bashrc
+    alias gs="git status"
+    alias gl="git log"
+    alias glo="git log --oneline"
+    alias gc="git checkout"
+    alias gb="git branch"
+
+User Configuration
+git config --global user.name "<user-name>": Set the global username. This username will be used for all repositories on the local machine.
+git config --global user.email "<email-id>": Set the global email. This email will be used for all repositories on the local machine.
+    --global --> All repositories of current user
+    --local  --> Current Repo
+    --system --> All users and all repositories
+git config --list -->View Configuration
+
+Create Repo
+    git init --> Initialize a new Git repository locally. This creates a .git directory in your project folder, which contains all the necessary metadata for the repository.
+
+Clone Existing Repository
+    git clone <repository_url> --> Clone a remote repository from GitHub to the local machine. This command creates a copy of the remote repository on your local machine.
+
+Check Repository Status
+git status -->Check if the repository is initialized and track changes in files/folders. This command also shows the status of the working directory and the staging area.
+
+HEAD Concept
+HEAD: A pointer to the latest commit in the current branch. It represents the most recent commit on the current branch and serves as a reference point for various Git operations.
+
+Stage changes
+git add <filename> --> Add changes from the working directory to the staging area. This marks the changes as ready to be committed.
+git add .          --> Stages all new and modified files.
+
+Commit Changes
+git commit -m "<message>" -->Commit staged changes to the local repository with a descriptive message. The -m flag allows you to include a commit message describing the changes.
+
+View Commit History
+git log -->Display a log of all commits in the current branch. It shows the commit hash, author, date, and commit message.
+git log --oneline -->Display a concise log of commits, showing only the commit hash and message.
+
+git commit --amend -m "new commit message" --> update commit message of recent commit
+
+Branches
+git branch                      -->List all branches in the repository.
+git branch <branch_name>        -->Create a new branch.
+git branch -m <new_branch_name> -->Rename the current branch.
+git branch -d <branch_name>     -->Delete a specified branch.
+git switch <branch_name>        -->Switch to a specified branch.
+git checkout <branch_name>      -->Switch to a specified branch. 
+git checkout -b <new_branch>    -->Create and switch to a new branch.
+
+How do you restore deleted branch in git
+    Use git reflog command to get the log of every action we have taken. Identify the commit hash used to delete branch
+    use git checkout -b <hash of commit>
+
+Manage Remote Repositories
+git remote -v                           -->List all remote repositories.
+git remote rename <old_name> <new_name> -->Rename a remote repository alias.
+git remote add <name> <repo_url>        -->Add a new remote repository.
+git remote set-url <name> <repo-url>.   -->Update URL
+
+Personal Access Token (PAT)
+https://<git_token>@github.com/<account_name>/<repo_name>.git: Use PAT for authentication. This is useful for accessing private repositories or when two-factor authentication is enabled.
+
+Push Changes
+git push -u <Alias> <branch name> -->Uploads local commits to the remote repository.
+git push --all <Alias>       -->Uploads local commits to the remote repository. from all branches
+
+Fetch Changes
+git fetch <Alias> <branch> -->Downloads remote changes without merging them.
+
+Pull Change
+git pull <Alias> <branch> -->Downloads and merges the latest changes from the remote repository.
+
+Merge Branches
+git merge <branch_name> -->Merge changes from a specified branch into the current branch.
+
+Merge Conflict
+    A merge conflict occurs when Git cannot automatically figure out which changes to keep when combining two branches. The most common reasons are:
+        •	Same-line edits: Two branches modify the exact same line(s) in the same file differently.
+        •	Modify vs. Delete: One branch updates a file, while the other branch completely deletes that same file.
+        •	File creation collision: Both branches create a new file with the exact same name but different content.
+    Resolve the conflict manually, then:
+        git add .
+        git commit
+
+Rebase
+git rebase <branch_name>: Apply changes of the current branch on top of another branch. This can lead to a cleaner commit history compared to git merge.
+
+Reset
+Moves the branch pointer to a previous commit.
+    Soft Reset
+        git reset --soft HEAD~1
+        Removes the last commit but keeps changes staged.
+    Mixed Reset
+        git reset HEAD~1
+        Removes the last commit and un-stages changes.
+    Hard Reset
+        git reset --hard HEAD~1
+        Deletes the last commit and all associated changes.
+
+Revert
+Safely undoes a commit by creating a new commit.
+git revert <commit_id>
+
+Restore
+to get deleted file back
+git restore file.txt
+
+Key difference between restore, reset, revert
+    git restore works in working directory and staging
+    git reset works in all 3 and also rewrites history
+    git revert works in all 3 without rewriting history but adds a new commit
+
+Stash
+Temporarily saves uncommitted work.
+    Save changes:
+        git stash
+    View stashes:
+        git stash list
+    Restore:
+        git stash apply
+    Restore and remove:
+        git stash pop
+    Delete all stashes:
+        git stash clear
+
+Cherry-pick
+Applies a specific commit from one branch to another.
+git cherry-pick <commit_id>
+
+Tags
+Tags mark important commits, usually releases.
+    Create tag:
+        git tag v1.0
+    Annotated tag:
+        git tag -a v1.0 -m "Version 1.0"
+    Push tag:
+        git push origin v1.0
+
+Git Ignore
+.gitignore: Specify files and directories for Git to ignore. Commonly used for excluding build artifacts, temporary files, and sensitive information.
+
+Pull Requests
+Pull Request: Propose changes from one branch to another for review and merging. This is a common workflow in collaborative projects.
+
+Fork vs Clone
+    Fork
+        Creates your own copy of another user's repository on GitHub. 
+        Commonly used for contributing to open-source projects. 
+    Clone
+        Downloads a repository to your local machine. 
+        Used to start working on a project. 
+
+git clone --mirror --> Used to create 1:1 replica of a repository, this is used whenever you want to migrate or take backup.
+    It wont let you edit files.
+
+Credentials helper
+git config --global credential.helper store -->to store your credentials in plain text (note that this is less secure because they're stored unencrypted).
+    After running this, the next time you push or pull, Git will prompt you for your username and password and then save them in the `~/.git-credentials` file for future use
+Additionally, if you're on Windows or macOS, you might choose platform-specific credential helpers for better security. 
+    For example:
+    on macOS you can use the macOS Keychain with:
+        git config --global credential.helper osxkeychain
+    And on Windows, you can use the Git Credential Manager with:
+        git config --global credential.helper manager-core
+
+git -blame --> Used to figure who last modified a specific line of code in a file and when they did it.
+
+Bare repository is a Git repository that does not have a working directory.
+In a standard Git repository, you have your actual project files (the code you can open, edit, and run) plus a hidden .git folder that tracks all the version history. 
+A bare repository contains only the version control data (the contents normally found inside the .git folder) and no editable project files.
+
+git bisect start -->Start the process
+git bisect is a powerful debugging tool that uses a binary search algorithm to find the exact commit that introduced a bug into your project.
+
+orphaned files == Untracked Files
+it is to describe files that exist in your local project folder but have never been added to Git. 
+
+git diff -->it is a comparison tool used to show the line-by-line differences between two states of your Git repository. 
+git diff --staged
+git diff branch_name_1 branch_name_2 -- path/to/your/file.ext
+
+squashing --> It is the process of combining multiple historical commits into a single, unified commit.
+git merge --squash
+
+Git hooks are custom scripts that Git automatically runs before or after key events, such as committing, pushing, or merging code. 
+They act as automated trigger points, allowing you to enforce rules, run tests, or automate tasks in your development workflow.
+location --> .git/hooks
+
+types of githooks
+    Git hooks are custom scripts triggered by specific actions in a Git repository. They are divided into two main categories:
+•	Client-Side Hooks: Run on your local machine.
+•	Workflow hooks: pre-commit, prepare-commit-msg, commit-msg, post-commit.
+•	Other hooks: pre-rebase, pre-push, post-checkout, post-merge.
+•	Server-Side Hooks: Run on the remote repository when receiving pushes.
+•	pre-receive, update, post-receive.
+
+What is HEAD~1 --> refers to the one commit before the current HEAD.
+
+In undoing a commit why reset command cannot be used and revert is used --> This is because it rewrites history and If you have already pushed that commit to a remote server and others have pulled it, using reset will cause massive synchronization conflicts for your team.
+
+command to Display .gitignore files --> git ls-files --others --ignored --exclude-standard
+
+Command to stop merge in between --> git merge --abort
+
+What is fast forward merge--> happens when the branch you are merging into (e.g., main) has not received any new commits since the feature branch was created.
+git merge --ff-only feature-branch   
+
+command for no fast forward (merge commit is created)--> git merge --no-ff feature-branch
+
+How to delete remote branch--> git push origin --delete <branch_name>
+List only remote branches --> git branch -r
+
+What are Branch protection rules --> Branch protection rules are administrative features provided by Git hosting platforms to enforce specific workflows and safeguard important branches.
+•	Requiring pull requests/merge requests before code can be merged.
+•	Requiring a specific number of approvals from other developers.
+•	Forcing status checks (like CI/CD pipeline tests) to pass before merging.
+•	Preventing anyone (even admins) from force-pushing (rewriting history) or accidentally deleting the branch.
+
+A hotfix is an urgent, rapidly deployed code update designed to fix a specific, critical bug or security vulnerability in a live production environment.
+A software patch is a planned, routine update that bundles multiple bug fixes, security enhancements, and minor improvements into a single release.
+
+A detached HEAD means Git is pointing directly to a specific commit rather than a branch, making any new commits you make temporary unless you explicitly save them by creating a new branch.
+
+git rm <filename> --> To delete a complete file file in git (local) repo
+
+Logic behind web hooks of GitHub and jenkins
+    When you configure a webhook in GitHub and link it to a Jenkins pipeline, the following sequence of logical steps occurs:
+	1.	The Triggering Event: A developer performs an action in GitHub. This is usually a git push to a repository, but it can also be the creation of a Pull Request, a merged branch, or a new release tag.
+	2.	The Payload Generation: GitHub packages all the details about that event into a JSON file (the payload). This includes the repository name, the specific branch updated, the commit ID, the commit message, and the user who made the change.
+	3.	The HTTP POST Request: GitHub acts as a client and sends an HTTP POST request containing that JSON payload to a specific URL hosted by your Jenkins server (e.g., [https://your-jenkins-server.com/github-webhook/](https://your-jenkins-server.com/github-webhook/)).
+	4.	The Jenkins Reception: The Jenkins server is listening on that URL. It catches the POST request and reads the JSON payload.
+	5.	The Matching Logic: Jenkins scans its internal database of jobs/pipelines. It looks for any job that is configured to build the specific GitHub repository and branch mentioned in the payload.
+	6.	The Execution: Once a match is found, Jenkins automatically triggers the pipeline to run (compiling code, running tests, deploying, etc.).
+	7.	The Feedback Loop (Optional but common): After the build finishes, Jenkins can use the GitHub API to send a status check back to GitHub, displaying a green checkmark (Success) or a red cross (Failure) directly on the GitHub commit or Pull Request.
+
+Difference between git reflog and git log
+    git log is the official biography of your project. It shows the public, permanent history of the code.
+    git reflog is your private, local journal. It records absolutely everything you did on your specific machine, including the mistakes, the erased history, and the dead ends.
+
+git clean --> Its sole purpose is to permanently remove untracked files—files that are currently in your project folder but have not been added to Git's tracking via git add
+
+What is snapshot
+    A snapshot is a complete, point-in-time capture of a system's exact state, whether that means saving an entire file tree in Git or backing up a storage drive in cloud infrastructure. Across all of these tools, its primary purpose is to provide a reliable, historical record that you can instantly revert to if something goes wrong.
+
+Real time use case of githooks with reference to opt pipelines
+A primary real-world use case for Git hooks is protecting our CI/CD pipelines by 'shifting left.' We configure local pre-commit hooks on the developers' machines to run fast, lightweight checks—such as scanning for hardcoded secrets or formatting errors—before a commit is even allowed. By blocking bad code locally, we prevent it from ever reaching the repository, which stops our main Jenkins pipelines from wasting compute time and money on builds that are guaranteed to fail."

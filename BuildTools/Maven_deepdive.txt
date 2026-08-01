@@ -1,0 +1,160 @@
+--- Introduction to Build Tools ---
+Build tools: It is the program which helps to automate the process of turning raw source code into executable files.
+
+Extensions:
+- java -> .java (coding language, needs build tool)
+- shell script -> .sh
+- python -> .py (No build tool needed)
+- nodejs -> .js (No build tool needed)
+
+Difference between interpreter and compiler:
+  •	Compiler: A compiler translates your entire program into a finished, ready-to-run file all at once before it ever starts running.
+  •	Interpreter: An interpreter translates and runs your code one single line at a time while the program is actively running.
+  C,C++ --> compiler
+  python, Nodejs --> Interpreted
+  java --> both compiler and Interpreted
+
+Dependencies:
+A project may rely on other modules. For example, a calculator app might depend on addition.jar, Sub, Div, Multiplication.
+
+Manual process (without build tools):
+calc.java (stays in github) -> compiled (C.class) (compiler called javac) -> calc.jar (application)
+
+Build tools are:
+- Maven (Java -> Maven, Ant, Gradle)
+- Ant
+- Gradle
+- (C/C++ -> make)
+
+Difference between ant and maven
+•	Approach: Ant is procedural, meaning you have to write explicit, step-by-step scripts telling it exactly how to build the project. Maven is declarative and uses 'convention over configuration.' Because Maven has a standardized project structure, it already knows how to build the project—you just tell it what you need it to do.
+•	Dependency Management: Maven automatically downloads and manages third-party libraries and their sub-dependencies via a central repository. With Ant, you traditionally have to download, store, and link those library files manually."
+
+This process is controlled by writing instructions in a pom.xml file.
+
+--- Java Executable Files (Artifacts) ---
+Java can output 3 different executable files:
+1. .jar -> java archive (standalone app like .class and metadata)
+2. .war -> web archive (contains java classes + web content like html, css, javascript)
+3. .ear -> enterprise archive (.jar + .war)
+
+All executable files are called Artifacts.
+
+What is target files (artefacts ) in case of c,c++
+Windows: .exe
+Linux/macOS: .out
+
+build.xml -->Configuration file in case of ant 
+configuration file for make (build tool for c and C++) is makefile
+
+Difference between unit testing, integration testing and UAT and PRE-PROD
+  Unit Testing
+    •	What it is: Testing the smallest individual, testable parts of an application (like a single function, method, or class) in complete isolation.
+    testing tool is JUnit
+  Integration Testing
+    •	What it is: Grouping individual software modules together and testing them as a combined entity.
+    Testing tools is selenium
+  User Acceptance Testing (UAT)
+    •	What it is: The final phase of testing performed in a real-world scenario by the intended audience or client.
+    Testing tool is Jira
+  Pre-Production (PRE-PROD)
+    A testing environment that is an exact replica of the live production environment, used by technical teams to perform final load, performance, security, and deployment testing before the software goes live.
+    Testing tool is JMeter
+
+Standalone app manual creation process:
+calc.java (source code)
+  |
+javac (Compiler)  <-- This is to convert java to .jar manually
+  |
+calc.class (bytecode. This is not a human readable format)
+  |
+.jar (artifact will be created)
+
+--- Maven Overview ---
+Maven is an opensource build automation & project management tool which is primarily used for java applications.
+* Opensource means anyone can use it without paying anything.
+
+pom.xml (Project Object Model): A required file where we can write instructions which maven should follow.
+
+Example of a pom.xml structure:
+<project>
+  <groupId>kms-api-examples</groupId>
+  <artifactId>kms-api-examples</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+    <dependency>
+    </dependency>
+  </dependencies>
+</project>
+
+--- Installation & Prerequisites ---
+- When installing a new package on a machine, first run `sudo yum update` & `sudo yum upgrade`.
+- To install Maven on Debian/Ubuntu systems, use: `sudo apt-get install maven`
+- To install Maven, Java should be installed first.
+
+--- Maven Goals / Maven Lifecycle ---
+(Execute these commands in the directory where pom.xml is stored)
+1. validate: `mvn validate` (Checks whether project structure is valid, is pom.xml correct, whether all required info exists or not).
+2. compile: Compiles the source code to classes.
+3. test: Unit test (which is done at code level). By default maven uses surefire plugin to execute unit testcases. But companies use JUnit to run the unit testcases.
+4. package: Creates a .jar file by running all the above goals. Creates distributable artifacts (.jar, .war, .ear).
+   * How do we run a jar file? `java -jar <jarfilename>`
+5. integration-testing: selenium (optional)
+6. verify: It will ensure that the package created by the maven is valid.
+7. install: Builds the project & copies the artifacts into the local repository (~/.m2) *Interview Question*
+8. deploy: jfrog artifactory, nexus artifactory (remote repository) -> uploads the build artifact into the remote repository.
+
+Difference between maven install and maven clean install
+  mvn install
+    When you run this command, Maven executes the default build lifecycle up to the "install" phase (compiling, testing, packaging, and moving the final .jar or .war to your local .m2 repository).
+  mvn clean install 
+    This command chains two separate Maven lifecycles together: clean and default.
+  •	The clean phase: Before doing absolutely anything else, Maven completely deletes the target directory. Every old compiled class, test result, and packaged file is wiped out.
+  •	The install phase: Maven then builds the project entirely from scratch. Every single .java file is recompiled.
+
+--- Maven Repositories ---
+1. local repo: `~/.m2` -> stores downloaded dependencies and locally installed artifacts.
+2. central repo: This is managed and maintained by the Maven community.
+3. Remote repo: Private repos confined to the organizations.
+
+Maven will look for dependencies in the below order:
+local repo --> remote repo (if does not exist) --> central repo
+
+--- Maven Installation Directories ---
+bin/
+conf/ -> configurations
+lib/ -> libraries
+
+Python Build Tools
+•	Core Concepts
+•	pip: The primary installer for Python.
+•	Configuration: requirements.txt serves as the equivalent to Maven's pom.xml.
+•	Modern Metadata: pyproject.toml is used for project configuration.
+•	Virtual Environment Workflow
+•	Creation: python3 -m venv myenv creates a virtual environment.
+•	Activation: source myenv/bin/activate activates the environment.
+•	Dependency Management: pip install -r requirements.txt installs all packages defined in the requirements file.
+•	Application Execution: python3 app.py starts the application within the environment.
+•	Verification: pip freeze lists all currently installed packages.
+•	Exit: deactivate exits the current virtual environment.
+
+Node.js Build Tools
+•	Key Components
+•	NVM (Node Version Manager): Used to manage and switch between different versions of Node.js.
+•	npm (Node Package Manager): The standard package manager for Node.js.
+•	package.json: The central configuration file for managing project dependencies and scripts.
+•	Command Reference
+•	Build/Execution: npm run build is used to compile or prepare the project.
+•	Application Start: npm start executes the start script defined in package.json to run the application (e.g., node server.js).
+
+Difference between build process of c,c++,java, python and nodes
+  	1.	C/C++ (Ahead-of-Time): You explicitly compile the code directly into a native machine binary. The Trade-off: Extremely fast execution, but not portable (it is tied to the specific OS/hardware).
+	  2.	Java (Hybrid): You explicitly compile the code into intermediate bytecode. At runtime, the JVM (Java Virtual Machine) translates it to machine code. The Trade-off: Slower startup, but highly portable ('Write Once, Run Anywhere').
+	  3.	Python & Node.js (Interpreted/JIT): There is no explicit build step; you just execute the source file. Python runs via an interpreter, and Node.js JIT-compiles the code at runtime. The Trade-off: Very fast development cycle, but generally slower raw execution speed than C++."
+
+Compliers used in java, C, C++, Python and nodejs
+Java-->javac
+C-->gcc
+C++-->g++
+Python-->CPython
+Node.js-->V8 Engine

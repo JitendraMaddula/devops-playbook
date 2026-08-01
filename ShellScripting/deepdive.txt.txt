@@ -1,0 +1,372 @@
+Shell Scripts:
+To perform repititive tasks, Instead of running each individual command manually one after the other - We can write them in a file called as Shell Script
+The extension of Shell Script is .sh
+Executing Shell Scripts:
+1. ./<name>.sh --- Recommended
+2. bash <name>.sh --- Simple but uses BASH Shell Only for executing commands
+
+Shebang:
+The first line of any Shell Script should always start with Shebang
+#!/bin/bash
+Shebang invokes the bash shell and if it is not used inside the script, The shell script gets executed in the default shell of the server
+
+Variables:
+Variables are strings to which we can assign some value. The value could be an integer, string, sentence, file name or any other data
+But the name of the variable can only contain letters, numbers and underscore
+To get the value that is stored inside the variable, Add $ followed by the variable name
+
+Arguments:
+To reference the arguments passed to the shell script at run time - we can use $1, $2, $3 ...... $(10) ....$(n)
+Example - ./<script>.sh <first-argument> <second-argument>
+
+bashrc -- These are auto executable files that execute everytime an user logs in to the server or a new shell session starts. 
+bash_profile -- They are generally user for setting up Aliases, Environment Variables etc
+bash_logout -- Auto Executable file that executes everytime a session is exited or killed
+bash_history -- It contains all the commands executed by the user
+history -- Command to show history of commands executed by the user
+
+Difference between bashrc and bash_profile
+.bashrc file is executed every time you open a new terminal window or tab after you have already logged in.
+.bash_profile file is executed only once when you first log into your system.
+
+Special Variables:
+$0 -- The Name of the Shell Script
+$# -- THe Total Number of Arguments Passed to the script
+$* -- All the Arguments passed to the script in String Format
+$@ -- All the Arguments passed to the script in Array Format
+$$ -- The PID of the current Running Process
+$? -- The status of the last executed command
+$! -- PID of the last background process
+
+Operators:
+1. Arithmetic Operators [+, -, *. /, %]
+    sum=`expr $num1 + $num2`
+    or
+    sum=$(($num1 + $num2))
+
+2. Relational Operators:
+    a. Strings
+    Equal                       --          ==
+    Not Equal                   --          !=
+    Greater Than                --          >
+    Greater Than or Equal To    --          >=
+    Less Than                   --          <
+    Less Than or Equal To       --          <=
+
+    b. Numbers
+    Equal                       --          eq
+    Not Equal                   --          ne
+    Greater Than                --          gt
+    Greater Than or Equal To    --          ge
+    Less Than                   --          lt
+    Less Than or Equal To       --          le
+
+3. File Operators
+    [ -f <name> ] -- To check whether given name is a file
+    [ -d <name> ] -- To check whether given name is a file
+    [ -r <name> ] -- To check whether given name file/dir has read permission for owner
+    [ -w <name> ] -- To check whether given name file/dir has write permission for owner
+    [ -x <name> ] -- To check whether given name file/dir has executable permission for owner
+    [ -e <name> ] -- To check whether given name file/dir/link exists
+    [ -s <name> ] -- To check whether given name file has some data
+    [ -L <name> ] or [ -h <name> ] -- To check wether given name is a link or not
+    [ -z <variable ] -- To check if a string variable is empty. 
+
+If Condition:
+Syntax:
+a. Simple If Condition:
+if [ condition ]
+then
+    commands
+else
+    commands
+fi
+
+b. If-Else-If
+if [ condition ]; then
+    commands
+elif [ condition ]; then
+    commands
+else
+    commands
+fi
+
+c. Nested-If
+if [ condition ]
+then
+    if [ condition ]
+    then
+        commands
+    else
+        commands
+    fi
+else
+    commands
+fi 
+
+1. Find the biggest of 3 numbers
+#!/bin/bash
+num1=$1
+num2=$2
+num3=$3
+if [ $# -ne 3 ]; then
+    echo "The script requires 3 Arguments to be passed!!!!!!"
+    echo "Usage -- ./$0 <number1> <number2> <number3>"
+    exit 1
+fi
+if [ $num1 -eq $num2 ] && [ $num2 -eq $num3 ]; then
+    echo "All the numbers are equal"
+elif [ $num1 -gt "$num2" ] && [ $num1 -gt $num3 ]; then
+    echo "$num1 is the biggest"
+elif [ $num2" -gt $num3 ]; then
+    echo "$num2 is the biggest"
+else
+    echo "$num3 is the biggest"
+fi
+
+2. Check whether given input is Link, File, Directory
+#!/bin/bash
+echo "Enter the name of a link or file or directory"
+read name
+if [ -L $name ]; then
+    echo "$name is a Softlink"
+elif [ -f $name ]; then
+    echo "$name is a file"
+elif [ -d $name ]; then
+    echo "$name is a directory"
+else
+    echo "$name is neither a link, a file, nor a directory."
+fi
+
+While Loop:
+Syntax:
+while [ condition ]
+do 
+    commands
+done
+(or)
+while [ condition ]; do 
+    commands
+done
+
+Script - Find the sum of Even And Odd Numbers upto N
+#!/bin/bash
+echo "Enter the N value"
+read n
+even=0
+odd=0
+while [ $n -gt 0 ]
+do  
+    if [ $(($n%2)) -eq 0 ]; then
+        even=$(($even+$n))
+    else
+        odd=$(($odd+$n))
+    fi
+    ((n--))   
+done
+echo "The Sum of Even Numbers is $even"
+echo "The Sum of Odd Numbers is $odd"
+
+Syntax:
+While Read Loop:
+while read <variable>
+do
+    commands
+done < <file-name>
+
+Practical Example: Read the names of the users from a File and create them on the linux server
+user.txt-->
+user1
+user2
+user3
+user4
+user5
+user6
+user7
+user8
+user9
+user10
+
+#!/bin/bash
+while read user
+do
+    echo "Creating User - $user"
+    sudo useradd -s /bin/bash -d /home/$user -m $user
+    echo -e "User - $user Created Successfully\n"
+done < users.txt
+
+Debugging in Shell Scripts:
+    set -x --> To print commands and their arguments as they are executed
+    set -e --> Exits the shell script immediately, if a command exits with non zero status
+    set -u: Stops the script immediately if you try to use a variable that doesn't exist yet.
+    set -n: Scans your script for formatting errors without actually executing any of the commands.
+
+Logical Operators
+    && --> logical and 
+    || --> Logical OR
+    !  --> Logical not
+
+Practical Example: Find all the files that are created more than 30 days ago - Archive those files and delete them
+#!/bin/bash
+archive_name=backup_$(date +%d%m%Y-%H%M).tar.gz
+logs_folder="/home/ec2-user/logs"
+backups_folder="/home/ec2-user/logs/backups"
+mkdir -p $backups_folder
+cd $logs_folder
+find -type f -mtime +30 | tar -czf $backups_folder/$archive_name -T -
+if [ -f $backups_folder/$archive_name ]; then
+    echo "Tar Archive has been Successfully Created at $backups_folder/$archive_name"
+    find -type f -mtime +30 -delete
+    echo "Files older than 30 days are deleted Successfully"
+else
+    echo "No Files found for Archiving"
+fi
+
+For Loop Syntax:
+
+1. C-Style 
+for ((Init; Condition; Iteration))
+do
+    Commands
+done
+
+2. List Iterative Loop
+a. With Direct Values
+for i in var1 var2 var3 var4 ..... varn
+do
+    commands
+done
+
+b. Using Range Functions:
+for i in {0..10}    -- The value of i will iterate from 0 to 10
+for i in {0..10..2} -- The value of i will iterate from 0 to 10 with increments of 2
+
+c. Using Sequence Command
+for i in $(seq 0 10)    -- The value of i will iterate from 0 to 10
+for i in $(seq 0 2 10)  -- The value of i will iterate from 0 to 10 with increments of 2
+
+d. Using Arguments
+for i in $* -- The value of i will iterate through all the arguments passed to the shell script
+for i in $@ -- The value of i will iterate through all the arguments passed to the shell script
+
+Script: Check whether particular services on the server are running or not [docker jenkins kubelet]
+#!/bin/bash
+for i in docker jenkins kubelet
+do
+    systemctl is-active -q $i
+    if [ $? -ne 0 ]; then
+        echo "Service $i is In-Active!!!!!!" >> services.txt
+        sudo systemctl start $i
+    fi
+done
+if [ -f services.txt ]; then
+    mail -s "Services Stopped" adithya@gmail.com < services.txt
+    rm services.txt
+fi
+
+Script: Check the disk usage percentage of the server
+#!/bin/bash
+usage=$(df -h | grep "/$" | awk '{print$(NF-1)}' | sed 's/%//g')
+ip=$(curl ifconfig.me)
+if [ $usage -gt 80 ]; then
+    echo "The Disk Usage has crossed 80 Percent on the server - $ip" | mail -s "Disk Full" adithya@gmail.com
+fi
+
+Crontab
+A crontab is a linux service used for scheduling commands to be executed periodically
+
+crontab -e --> To edit the crontab file
+crontab -l --> To list the existing crontabs
+
+*           *           *           *           *           <command>
+(mins)      (hour)      (date)      (month)     (day)
+
+Sunday          -- 00
+Monday          -- 01
+Tuesday         -- 02
+Wednesday       -- 03
+Thursday        -- 04
+Friday          -- 05
+Saturday        -- 06
+
+8 PM on 27th June on Saturday       -- 00 20 27 06 06 <command>
+Every Friday at 6 PM                -- 00 18 * * 05 <command>
+Every Monday to Friday at 9 AM      -- 00 09 * * 01-05 <command>
+Every Saturday and Sunday at 8 Am   -- 00 08 * * 06,00 <command>
+Every hour                          -- 00 * * * * <command>
+Every 30 Minutes                    -- */30 * * * * <command>
+Every Minutes                       -- * * * * * <command>
+Every alternative day at 12:am.     -- 0 0 */2 * * <command>
+
+For Practise - crontab.guru
+
+Case Statements:
+Syntax:
+case $<var> in
+    pattern1) Commands to be executed if variable matches pattern1;;
+    pattern2) Commands to be executed if variable matches pattern2;;
+    pattern3) Commands to be executed if variable matches pattern3;;
+    pattern4 | pattern5) Commands to be executed if variable matches pattern4 or pattern5;;
+    *) Commands to be executed if none of the above patterns match;;
+esac
+
+Script: Check the number entered by an user to show difference btwn if-else-if and case
+1. IF-ELSE-IF
+#!/bin/bash
+echo "Enter the Number Between 0-5"
+read n
+if [ $n -eq 0 ]; then
+    echo "The Number entered by the user is Zero"
+elif [ $n -eq 1 ]; then
+    echo "The Number entered by the user is One"
+elif [ $n -eq 2 ]; then
+    echo "The Number entered by the user is Two"
+elif [ $n -eq 3 ]; then
+    echo "The Number entered by the user is Three"
+elif [ $n -eq 4 ] || [ $n -eq 5 ] || ; then
+    echo "The Number entered by the user is Four or Five"
+else
+    echo "Invalid Number"
+fi
+
+2. Case Statments
+#!/bin/bash
+echo "Enter the Number Between 0-5"
+read n
+case $n in
+    0) echo "The Number entered by the user is Zero";;
+    1) echo "The Number entered by the user is One";;
+    2) echo "The Number entered by the user is Two";;
+    3) echo "The Number entered by the user is Three";;
+    4|5) echo "The Number entered by the user is Four or Five";;
+    *)  echo "Invalid Number";;
+esac
+
+Functions:
+Syntax:
+<function-name> () {
+    commands
+}
+
+Script: Hello Function
+#!/bin/bash
+hello () {
+    echo "Hello World"
+    echo "This is $1"
+    echo "I am Learning Shell Scripting"
+}
+hello Adithya
+hello Sai
+hello Zubair
+hello Roopa
+
+Buckets or brackets and there Primary Purpose
+$() (Command Substitution)  : Runs the command inside and returns the output (e.g., date=$(date)).
+${} (Parameter Expansion)   : The standard way to reference variables. It allows for advanced manipulation (like ${str,,} or ${str:0:1}).
+(()) (Arithmetic Expansion) : Evaluates math expressions. Crucial: It handles integer math and logic, not strings.
+() (Subshell)               : Runs the commands inside in a separate, "child" shell environment. Changes made here (like cd or variable exports) don't affect your main script.
+[[]] (Extended Test)        : The "modern" way to test conditions. It supports regex (=~) and logical &&/||.
+[] (Test)                   : The "legacy" way. Strict, POSIX-compliant, but lacks the features of [[]].
+<< / <<<                    : Feed input to a command (Piping)
+
+Crown job for last day of every month --> 0 0 28-31 * * [ "$(date +\%d -d tomorrow)" = "01" ]

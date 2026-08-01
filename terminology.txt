@@ -1,0 +1,5 @@
+SSH - Secure Socket shell
+~   - tilde
+^   - Caret
+GUI - Graphical User Interface
+:

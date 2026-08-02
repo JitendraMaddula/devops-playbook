@@ -245,3 +245,38 @@ SonarQube Architecture and Configuration
 •	The official domain for the tool is sonarsource.com.
 •	By default, the SonarQube application runs on port 9000.
 •	The initial default credentials to log in are "admin" for the username and "admin" for the password.
+
+which jenkins plugin is used for sonarqube
+SonarQube Scanner plugin
+
+types of parameters in perameterized jobs?
+1. String Parameter
+2. Boolean Parameter
+3. Choice Parameter
+4. Password Parameter
+5. Multi-line String Parameter
+6. File Parameter
+7. Credentials Parameter
+8. Run Parameter
+
+What are upstream and downstream jobs
+An upstream job is the first task in a chain that triggers the next step when it finishes successfully. A downstream job is that next step, which waits for the upstream job to finish before starting its own work.
+
+Prioritise jobs on server
+By default, Jenkins runs jobs in the exact order they are triggered (first-come, first-served). To change this, I would install the Priority Sorter Plugin. This plugin lets me assign a priority number to important jobs—like a production deployment—so they jump to the front of the queue and run first.
+
+There are four teams in your organisation. How to priorize the builds of each team? so the jobs of team x will always run before team y for example.
+	1.	Organize the Jobs: First, I would organize the jobs so Jenkins can tell which team they belong to. The best way is to create separate Jenkins Folders for each of the four teams (e.g., a "Team X" folder and a "Team Y" folder).
+	2.	Create Job Groups: In the global Jenkins settings, the Priority Sorter Plugin allows you to create "Job Groups." I would create a group for each team's folder.
+	3.	Assign Priority Numbers: Finally, I would assign a priority number to each group. The rule is that lower numbers equal higher priority.
+•	Team X gets Priority 1 (Highest)
+•	Team Y gets Priority 2
+•	Team Z gets Priority 3
+•	Team W gets Priority 4 (Lowest)
+The Result: If the server is busy, and jobs from both Team X and Team Y enter the queue, the plugin will recognize the folders and always push Team X's jobs to the front of the line so they run first.
+
+use of throttle build plugin
+The Throttle plugin puts a strict speed limit on your Jenkins server. It restricts the maximum number of jobs that are allowed to run at the exact same time. You can set this limit for a single job or a group of jobs.
+
+How to automate builds
+To fully automate and scale our builds, I use a combination of Git Webhooks for the trigger, a Jenkinsfile for the execution, and a Jenkins Shared Library to keep the code clean and reusable.

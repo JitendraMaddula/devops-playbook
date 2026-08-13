@@ -236,9 +236,6 @@ What are Branch protection rules --> Branch protection rules are administrative 
 •	Forcing status checks (like CI/CD pipeline tests) to pass before merging.
 •	Preventing anyone (even admins) from force-pushing (rewriting history) or accidentally deleting the branch.
 
-A hotfix is an urgent, rapidly deployed code update designed to fix a specific, critical bug or security vulnerability in a live production environment.
-A software patch is a planned, routine update that bundles multiple bug fixes, security enhancements, and minor improvements into a single release.
-
 A detached HEAD means Git is pointing directly to a specific commit rather than a branch, making any new commits you make temporary unless you explicitly save them by creating a new branch.
 
 git rm <filename> --> To delete a complete file file in git (local) repo

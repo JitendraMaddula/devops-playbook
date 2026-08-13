@@ -54,28 +54,15 @@ Jenkins will also integrate:
 1. sonarqube analysis
 2. security analysis
 
+Advanced jenkins pipeline flow:
+code commit(webhook triggers)-->build-->Unit testing-->Static code analysis-->Image build-->Push Image-->Security scanning-->
+Integration/API testing -->Deploy to staging --> approval -->Deploy to Production --> status notifications
+
 API -> Application Programming Interface
 UI -> User Interface
 Jenkins has both UI and API.
 
 Triggers help to identify the changes made in github to let Jenkins know to initiate the process.
-
----
-
-Installation & EC2 Setup:
-- t2.medium is required for jenkins in ec2
-- 15 GB size gp3
-- Use ubuntu image
-- security group -> All traffic (Note: Fine for practice. Best practice is to restrict to Port 22 for SSH and Port 8080 for Jenkins UI)
-
-Install jenkins:
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt install openjdk-21-jdk -y
-use sudo wget commands from jenkins page
-sudo systemctl enable jenkins
-sudo systemctl start jenkins (Note: The wget package installation often starts Jenkins automatically)
-sudo systemctl status jenkins
 
 -> initial admin password is required in the Jenkins UI. You can retrieve it from your EC2 server by running:
    sudo cat /var/lib/jenkins/secrets/initialAdminPassword

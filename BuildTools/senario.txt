@@ -1,0 +1,91 @@
+Architecture and Infrastructure Scenarios
+Master vs Agent Configuration: How do you offload the execution of the actual build jobs to improve performance?
+To offload build jobs and improve performance, you utilize Jenkins' master-agent architecture. By configuring Jenkins agents, you can distribute the execution of builds across multiple remote machines, leaving the Master to solely manage the UI, job configurations, and schedules.
+
+Agent Diversity: What are the core benefits of using Jenkins agents to distribute these builds across multiple machines?
+Using Jenkins agents provides several core benefits: scalability to distribute the build load, platform diversity to run builds on different operating systems like Windows, Linux, or macOS, resource isolation for dedicated project requirements, and improved security by keeping build environments separate from the master node.
+
+Link Routing Issues: Which specific configuration file must be updated with the correct domain or IP address?
+You must update the jenkins.model.JenkinsLocationConfiguration.xml file, which is typically located in /var/lib/jenkins/. Updating the Jenkins URL with the correct IP address or domain in this file ensures correct link routing and resolves redirect issues.
+
+System Migration & Backup: Which directory must you secure, and what plugin can automate this backup?
+You must secure the Jenkins home directory, typically located at /var/lib/jenkins on Linux, as it holds all configurations, plugins, workspaces, and build history. To automate this backup process, you can use the ThinBackup Plugin.
+
+Security and Access Management Scenarios
+Admin Password Retrieval: How do you retrieve the initial admin password from the backend to access the UI?
+You can retrieve the initial admin password from the backend of the EC2 server by reading the secrets file with the following command: sudo cat /var/lib/jenkins/secrets/initialAdminPassword.
+
+Disabling Security (Lockout): How can you bypass the login screen from the backend configuration files to fix the issue? You can disable security by editing the Jenkins configuration file using sudo vi /var/lib/jenkins/config.xml. Locate the true tag, change it to false, and then restart the Jenkins service using sudo systemctl restart jenkins for the changes to take effect.
+
+Credential Protection: How do you securely handle and inject this secret in Jenkins without exposing it in the logs?
+You store the API token centrally and securely using the Credentials Plugin, which encrypts the secret on the Jenkins master node. You then use the Credentials Binding Plugin in your job configuration to inject it as a temporary environment variable, which automatically masks the value in the console logs to prevent exposure.
+
+Authentication vs Authorization: How do you configure the authentication and authorization?
+For authentication, you would integrate Jenkins with an external LDAP (Lightweight Directory Access Protocol) server so developers can log in using their normal work credentials. For authorization, you would use RBAC (Role-Based Access Control) to create specific roles (like Admin, Developer, or Tester) with predefined permissions and assign users to those roles based on their job titles.
+
+Granular Access: Which authorization method should you choose?
+You should choose the Project-based authorization method. This allows you to assign specific permissions on a per-project basis, such as allowing a user to edit and build "Project A" but only view "Project B".
+
+Secure Connections: Which specific type of credential manager entry should you create?
+You should create an "SSH Username with private key" credential. This type of entry is specifically used for secure connections like cloning private Git repositories or SSH-ing into remote servers.
+
+Privilege Escalation: What is the best practice alternative for granting Jenkins this access without requiring a password?
+Instead of editing the main sudoers file directly, the best practice alternative is to keep the /etc/sudoers file clean by creating a dedicated drop-in file for Jenkins (e.g., in /etc/sudoers.d/) and configuring it with jenkins ALL=(ALL:ALL) NOPASSWD:ALL.
+Pipeline and Job Configuration Scenarios
+
+Process Management: How do you bypass the Jenkins Process Tree Killer to keep the application alive?
+To bypass the Jenkins Process Tree Killer, you must set a specific environment variable before executing your command. You can set BUILD_ID=dontKillMe (or JENKINS_NODE_COOKIE=dontKillMe in newer Jenkins versions) to ensure the background script stays alive after the build completes.
+
+Job Chaining: How do you link these workflows together?
+You link them using the "Build after other projects are built" trigger. This automatically starts the deployment job as soon as the upstream testing project finishes successfully, creating sequential pipelines or dependent workflows.
+
+Automated Triggers: How do you configure GitHub to let Jenkins know to initiate the process immediately upon a code push?
+You configure a "GitHub hook trigger for GITScm polling" in your Jenkins job. Then, in your GitHub repository settings under "Webhooks", you add a new webhook pointing to your Jenkins server's payload URL, formatted as your Jenkins URL followed by /github-webhook/.
+
+Pipeline Optimization: How can you configure the job to execute these tasks simultaneously?
+You can optimize this by configuring the job to use parallel jobs (or parallel stages). This configuration allows you to execute multiple tasks simultaneously instead of waiting for one to finish before starting the next.
+
+Pipeline Types: What type of pipeline is this, and how does it differ from the alternative?
+A Jenkinsfile starting with a node block is a Scripted pipeline. This differs from a Declarative pipeline, which is a newer, more structured approach that always starts with a pipeline block.
+
+Remote Triggers: How do you configure Jenkins to allow this using an HTTP request and an authentication token?
+You configure the job with the "Trigger builds remotely" option. This allows the external application to start the job on demand by sending an HTTP request to a specific Jenkins URL containing the provided authentication token.
+
+Dynamic Inputs: What type of job configuration allows this?
+You should configure it as a Parameterized job. This type of job configuration allows the QA team to provide specific input values (parameters) right before the pipeline executes.
+
+Workspace Management: What is the default path where the project source code is cloned and builds are executed?
+The default workspace path where the project source code is cloned and built is /var/lib/jenkins/workspace.
+
+Artifact Storage: What are the common destinations Jenkins can push these artifacts to?
+Common destinations for Jenkins to push build packages to include JFrog Artifactory, Nexus, AWS ECR, and Docker Hub.
+
+DevSecOps Integration: Which specific tools does Jenkins typically integrate with for these two steps?
+For code analysis, Jenkins typically integrates with SonarQube. For code vulnerability scanning immediately following that stage, Jenkins often integrates with Trivy.
+
+Troubleshooting and Debugging Scenarios
+Troubleshooting (Git History): What Git history-related issue should you investigate first in the repository?
+You should investigate if a developer accidentally committed massive binary files or a database dump. These files bloat the Git repository size, which is a primary reason the checkout stage would suddenly become extremely slow.
+
+Troubleshooting (External Dependencies): What network or external dependency issue might be occurring?
+The Maven process is likely hanging while trying to download dependencies because an external registry (like Nexus, Artifactory, or Maven Central) is experiencing an outage, or the local cache on the agent was wiped.
+
+Troubleshooting (Infrastructure): What specific metrics should you check on the Jenkins agent to confirm if resource limits are the cause?
+You should check if the Jenkins agent's CPU is maxed out, if it is out of memory and aggressively swapping to disk, or if another heavy job is running concurrently on that same node causing resource exhaustion.
+
+Troubleshooting (Code & Tests): What is the best resolution step to take in this scenario?
+The best resolution step is to fail the pipeline and send it back to the developer to fix the infinite loop or timeout causing the hanging integration tests.
+
+Webhook Logic: According to Jenkins' matching logic, what internal database scan might be failing to find a match?
+When GitHub sends a webhook payload, Jenkins scans its internal database of jobs to match the repository URL in the payload against the Git URLs configured in your pipelines. If the Git URL in the Jenkins job does not exactly match the repository URL (e.g., due to SSH vs HTTPS differences, or trailing slashes), the matching logic fails and the job won't trigger.
+
+Polling vs Webhooks: How can you configure Jenkins to check for changes on its own?
+You can configure Jenkins to use the "Poll SCM" trigger. This makes Jenkins periodically check your source control system on a set schedule and initiate a build only when changes are detected.
+UI and Plugin Ecosystem Scenarios
+
+UI Improvements: What plugin upgrades this to a modern, visual dashboard?
+The Blue Ocean plugin upgrades the classic Jenkins interface to a modern, visual dashboard, making it much easier to monitor pipelines and troubleshoot failed builds.
+
+Modern Infrastructure: Which standard plugins allow you to run jobs inside containers rather than directly on the agent OS?
+The Docker Pipeline and Kubernetes plugins are standard for this architecture. They allow you to run your build jobs inside clean, isolated containers that spin up and down dynamically as needed.
+

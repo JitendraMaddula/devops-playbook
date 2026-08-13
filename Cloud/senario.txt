@@ -1,0 +1,11 @@
+Q: How do you securely access an EC2 instance in a private subnet without a Bastion Host?
+A: Use SSM Session Manager. Ensure the instance has the SSM Agent, the 'AmazonSSMManagedInstanceCore' IAM role, and configure SSM VPC Endpoints in the private subnet. No inbound ports or SSH keys are needed.
+
+Q: How can you safely run a script across 500 instances without crashing your application?
+A: Use SSM Run Command targeting the instances via Tags. Set a Concurrency limit (e.g., 10%) so they don't all execute/reboot at once, and set an Error Threshold to automatically stop the deployment if a certain number fail.
+
+Q: How do you prevent developers from hardcoding database passwords?
+A: Store the password as a SecureString in SSM Parameter Store (encrypted via KMS) or in AWS Secrets Manager. The application can then fetch the parameter at runtime using an IAM execution role.
+
+Q: Can SSM manage servers located in your on-premises data center?
+A: Yes, using SSM Hybrid Activation. You install the SSM Agent on the on-prem servers and register them with AWS.

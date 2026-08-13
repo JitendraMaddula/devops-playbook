@@ -1,0 +1,202 @@
+Is this notes okay or do you want to remove anything 
+PROBLEMS WITH TRADITIONAL ON-PREMISES APPROACH
+-------------------------------------------------
+- High Capital & Operational Costs: Significant upfront investment in hardware plus continuous spending on rent, power, and cooling, regardless of usage.
+- Slow Provisioning & Upgrades: Adding new capacity is a manual process involving procurement and physical setup, delaying critical business projects.
+- Heavy Operational Burden: Requires a dedicated 24/7 team for monitoring and maintenance, diverting skilled staff from innovation to basic upkeep.
+- Vulnerability to Disasters: A single data center is a single point of failure, making the business vulnerable to fires, floods, or power outages.
+- Limited & Inefficient Scaling: Capacity is fixed. You must either over-provision (and waste money) for peak loads or risk failure during traffic spikes.
+
+WHAT IS CLOUD COMPUTING?
+---------------------------
+Cloud computing is the delivery of computing services—including servers, storage, databases, networking, and software—over the internet. Instead of buying or keeping hard drives and physical servers, you rent access to these tools from a provider like Amazon Web Services and pay only for what you use.
+
+CLOUD DEPLOYMENT MODELS
+--------------------------
+- Private Cloud: A dedicated cloud environment used exclusively by a single organization. Provides maximum control and privacy. Requires organization to manage costs and maintenance.
+- Public Cloud: Resources owned/operated by a provider (like AWS) and delivered over the internet. Massive scalability and pay-as-you-go model.
+- Hybrid Cloud: A strategic blend of private and public cloud resources. Keeps critical systems on-premises while using the cloud for other workloads.
+
+ADVANTAGES OF CLOUD COMPUTING
+--------------------------------
+- Flexibility & Adaptability: Easily change resource types, OS, or software on the fly.
+- Cost-Effectiveness: Trade CapEx for OpEx. Pay only for consumed resources.
+- Scalability for Growth: Handle increased workloads by scaling up (power) or scaling out (more resources).
+- Elasticity for Demand: Automatically scale resources up or down in response to real-time demand.
+- High Availability & Fault Tolerance: Built-in resilience by deploying applications across multiple data centers.
+- Agility & Speed: Reduce provisioning time from weeks to minutes.
+
+CLOUD MARKET SHARE
+---------------------
+- AWS: 39.2%
+- Azure: 25.3%
+- GCP (Google Cloud): 16.5%
+- Alibaba: 11.4%
+- IBM: 5.1%
+- Oracle: 2.5%
+
+TYPES OF CLOUD COMPUTING
+---------------------------
+- Infrastructure as a Service (IaaS): Fundamental building blocks. Access to virtual servers, storage, networking. Highest flexibility. (Analogy: Leasing land and building materials).
+- Platform as a Service (PaaS): Provider manages infrastructure (hardware/OS). You focus on deploying/managing applications. Ideal for developers. (Analogy: Leasing land and a pre-built foundation).
+- Software as a Service (SaaS): Complete, ready-to-use software product delivered over the internet. Provider manages everything. (Analogy: Renting a fully furnished house). example AWS QuickSight
+
+AWS GLOBAL INFRASTRUCTURE
+-----------------------------
+- Regions: Distinct geographical areas around the world where AWS clusters its data centers.
+- Availability Zones (AZs): Multiple isolated locations within each Region. Distributing resources across AZs builds highly available/fault-tolerant applications.
+- Local Zones: Extension of an AWS Region bringing core services closer to large population centers for latency-sensitive applications.
+- Edge Locations: Global network of sites that cache content close to users for faster delivery.
+- AWS Regional Edge Caches: Positioned between origin servers and Edge Locations. Hold larger amounts of content to reduce fetching from origin.
+- Wavelength Zones: Embed AWS compute/storage directly within 5G networks for ultra-low latency.
+
+EC2 - ELASTIC COMPUTE CLOUD
+-------------------------------
+Amazon EC2 provides secure, resizable virtual servers (instances) in the cloud.
+
+AMAZON EC2 INSTANCE TYPES
+-----------------------------
+- General purpose (M and T family): Balance of compute, memory, and networking. Ideal for web servers.
+- Compute optimized (C family): For CPU-bound workloads requiring significant processing power (e.g., scientific modeling, video encoding, gaming servers).
+- Memory optimized (R, U, X, Z family): For processing large datasets in memory (e.g., SAP HANA, Spark, Redis). Lowest cost per GiB of RAM.
+- Storage optimized (D, H, I family): For high, sequential read/write access to large datasets on local NVMe SSDs (e.g., NoSQL databases like Cassandra, Data warehousing).
+- Accelerated computing (P, G, Inf family): Hardware accelerators (GPUs, AWS Trainium) for machine learning, 3D visualizations, graphics processing.
+- High-performance computing (HPC family): Best price-performance for complex HPC workloads (e.g., weather forecasting, genomic sequencing) using high-speed networking (EFA).
+
+AMI - AMAZON MACHINE IMAGE
+------------------------------
+A master template or blueprint for a server (pre-configured package).
+- Includes: Operating System (Linux, Windows), additional software (web server, DB), and necessary configurations.
+- "Golden Image": Create the setup once on a single instance, save it perfectly configured as a custom AMI, and then launch identical servers instantly in minutes.
+
+AMAZON EC2 PRICING MODELS
+-----------------------------
+- On-Demand: Pay-per-second/hour. No upfront costs. Best for unpredictable workloads or dev/test environments.
+- Reserved Instances: Up to 75% savings for 1-3 year commitments. Best for steady-state production. (Standard and Convertible options).
+- Savings Plans: Up to 72% savings over 1-3 years for flexible compute commitments.
+- Spot Instances: Up to 90% savings using spare AWS capacity. Can be interrupted with a 2-minute warning. Best for fault-tolerant, batch processing workloads.
+- Dedicated Hosts: Rent entire physical servers. Required for BYOL (Bring Your Own License) and strict compliance.
+- Capacity Reservations: Guarantees compute capacity in specific AZs. Pay On-Demand rates only when used. Critical for disaster recovery and peak events.
+
+AWS IAM - Identity and Access Management
+=========================================
+AUTHENTICATION (AuthN) VS AUTHORIZATION (AuthZ)
+--------------------------------------------------
+- Authentication: Verifying identity ("Who are you?"). e.g., Username/Password, Access Keys, MFA.
+- Authorization: Granting permissions ("What are you allowed to do?"). e.g., IAM Policies, Roles. 
+- Rule: AuthN always precedes AuthZ. You can be authenticated but have zero authorization.
+
+IAM CORE COMPONENTS
+----------------------
+- IAM User: Represents a person or application with long-term credentials (Password for Console, Access/Secret Keys for CLI/API).
+- IAM Group: Collection of IAM users. Used to manage permissions at scale.
+  * Rules: Users can be in up to 10 groups. No nested groups. Cannot assign roles to groups.
+- IAM Role: Temporary access credentials assumable by trusted entities (users, services, federated identities). Powered by AWS STS (Security Token Service).
+- IAM Policy: JSON documents defining permissions. Attached to identities or resources.
+
+DEEP DIVE: IAM ROLES (HIGH YIELD FOR INTERVIEWS)
+---------------------------------------------------
+Unlike users, roles do not have long-term credentials. They provide temporary security credentials (valid 15 mins to 12 hours) via STS.
+A role requires two policies:
+1. Trust Policy: Defines WHO can assume the role (e.g., EC2 service, another AWS account).
+2. Permissions Policy: Defines WHAT the entity can do once the role is assumed.
+
+Key Interview Use Cases for Roles:
+- AWS Service Access: e.g., Attaching a role to an EC2 instance so it can securely access S3 without hardcoded keys.
+- Cross-Account Access: Granting users in Account A access to resources in Account B.
+- Identity Federation: Allowing corporate (Active Directory/SAML) or Web (Google/Facebook) users to access AWS resources.
+
+DEEP DIVE: IAM POLICIES & EVALUATION LOGIC
+---------------------------------------------
+Policy JSON Structure Elements: 
+- Effect (Allow/Deny), Action (e.g., s3:GetObject), Resource (ARN), Condition (Optional, e.g., specific IP or MFA).
+
+Types of Policies:
+- Identity-Based: Attached to Users, Groups, or Roles.
+  * AWS Managed: Built-in, maintained by AWS (e.g., AdministratorAccess).
+  * Customer Managed: Custom, version-controlled by you. (Best practice).
+  * Inline: 1:1 relationship embedded directly in an entity (Use sparingly).
+- Resource-Based: Attached directly to a resource (e.g., S3 Bucket Policy). Essential for cross-account access. Must contain a "Principal" element.
+
+*** Policy Evaluation Logic (CRITICAL) ***
+1. Explicit Deny: Always overrides any Allow.
+2. Explicit Allow: Grants access if no Explicit Deny exists.
+3. Default Deny (Implicit Deny): If there is no Allow and no Deny, access is denied.
+
+SECURITY BEST PRACTICES
+--------------------------
+- Root Account: Never use for daily tasks. Lock away credentials and mandate MFA.
+- Principle of Least Privilege: Grant only the minimum permissions required.
+- Credential Management: Rotate access keys (e.g., every 90 days), mandate MFA for console access, never share credentials.
+- Use Roles over Users: Always prefer IAM roles and temporary credentials for applications/EC2 instances instead of hardcoding access keys.
+- Auditing: Enable AWS CloudTrail globally to log all API calls. Use IAM Access Analyzer to find overly permissive resource sharing.
+
+TROUBLESHOOTING SCENARIOS
+----------------------------
+- "Access Denied" Checklist: 
+  1. Does the user/role have an 'Allow' policy?
+  2. Is the Resource ARN perfectly correct?
+  3. Is there an 'Explicit Deny' overriding the allow? (Check SCPs if using AWS Organizations).
+  4. Are boundary conditions met?
+- Role Assumption Failures (sts:AssumeRole):
+  1. Verify the Assuming Entity has 'sts:AssumeRole' permissions.
+  2. Verify the Target Role's Trust Policy explicitly lists the assuming entity as a trusted Principal.
+
+AWS SYSTEMS MANAGER (SSM) - INTERVIEW QUICK REFERENCE GUIDE
+===========================================================
+
+WHAT IS AWS SYSTEMS MANAGER (SSM)?
+-------------------------------------
+A centralized management service for EC2 instances and on-premises servers. It allows you to automate operational tasks across your AWS resources without needing SSH, key pairs, or open inbound ports.
+
+HOW SSM WORKS (THE AGENT MODEL)
+----------------------------------
+- SSM uses an Agent-based model. The SSM Agent runs ON your instance.
+- The Agent makes OUTBOUND calls to the SSM service over HTTPS (port 443). 
+- The SSM service NEVER calls IN to your instance, meaning you DO NOT need to open any inbound ports (like Port 22 for SSH).
+
+THREE PREREQUISITES FOR SSM TO WORK (CRITICAL)
+-------------------------------------------------
+1. SSM Agent Installed: Pre-installed on Amazon Linux and Ubuntu. Must be manually installed on some others (RHEL, CentOS).
+2. IAM Role: The instance must have an IAM role attached with the 'AmazonSSMManagedInstanceCore' policy.
+3. Network Connectivity: The instance must be able to reach SSM endpoints (via Internet Gateway, NAT Gateway, or VPC Endpoints).
+
+SSM IN PRIVATE SUBNETS (VPC ENDPOINTS)
+-----------------------------------------
+To use SSM on instances in private subnets with NO internet access, you must configure 3 VPC Endpoints (PrivateLink):
+1. `com.amazonaws.{region}.ssm` (Core SSM API)
+2. `com.amazonaws.{region}.ssmmessages` (Session Manager terminal connections)
+3. `com.amazonaws.{region}.ec2messages` (Run Command message delivery)
+
+CORE CAPABILITIES (HIGH YIELD FOR INTERVIEWS)
+------------------------------------------------
+
+A. SESSION MANAGER (The "SSH Killer")
+- Purpose: Secure, browser-based or CLI terminal access to instances.
+- Benefits over SSH: No port 22 needed, no key pairs, no bastion hosts required.
+- Security/Auditing: Every command typed is logged to S3 or CloudWatch and tied to the IAM user identity (great for compliance).
+
+B. RUN COMMAND
+- Purpose: Execute scripts/commands on multiple instances simultaneously without connecting to them.
+- Targeting: Best practice is to target instances using Tags (e.g., Environment=Production).
+- Rate Control (Crucial for safety):
+  * Concurrency: How many instances run the command at the same time.
+  * Error Threshold: How many instances can fail before the entire operation is halted.
+
+C. PARAMETER STORE vs SECRETS MANAGER
+- Parameter Store: Key-value store for configuration (String, StringList) and secrets (SecureString - encrypted via KMS). Standard tier is FREE. Does not natively support auto-rotation.
+- Secrets Manager: Costs money ($0.40/secret/month). Supports native, automatic rotation of database passwords (e.g., RDS) and cross-account access.
+- Rule of Thumb: Use Parameter Store for general config and static secrets; use Secrets Manager when auto-rotation is strictly required.
+
+D. PATCH MANAGER
+- Purpose: Automates OS patching across your fleet.
+- Key terms: 
+  * Patch Baseline (rules defining which patches to auto-approve).
+  * Maintenance Window (scheduled time to apply patches to avoid business disruption).
+
+E. STATE MANAGER
+- Purpose: Configuration management. Ensures instances maintain a "desired state" (e.g., ensuring a specific agent is always running) to prevent configuration drift.
+
+F. INVENTORY
+- Purpose: Automatically collects metadata from instances (installed software, OS versions, running services). Useful for security audits (e.g., finding out which servers have a vulnerable software version).
+

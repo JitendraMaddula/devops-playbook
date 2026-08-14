@@ -1,4 +1,3 @@
---- Introduction to Build Tools ---
 Build tools: It is the program which helps to automate the process of turning raw source code into executable files.
 
 Extensions:
@@ -17,20 +16,13 @@ Difference between interpreter and compiler:
 Dependencies:
 A project may rely on other modules. For example, a calculator app might depend on addition.jar, Sub, Div, Multiplication.
 
-Manual process (without build tools):
-calc.java (stays in github) -> compiled (C.class) (compiler called javac) -> calc.jar (application)
-
 Build tools are:
 - Maven (Java -> Maven, Ant, Gradle)
-- Ant
-- Gradle
 - (C/C++ -> make)
 
 Difference between ant and maven
 •	Approach: Ant is procedural, meaning you have to write explicit, step-by-step scripts telling it exactly how to build the project. Maven is declarative and uses 'convention over configuration.' Because Maven has a standardized project structure, it already knows how to build the project—you just tell it what you need it to do.
-•	Dependency Management: Maven automatically downloads and manages third-party libraries and their sub-dependencies via a central repository. With Ant, you traditionally have to download, store, and link those library files manually."
-
-This process is controlled by writing instructions in a pom.xml file.
+•	Dependency Management: Maven automatically downloads and manages third-party libraries and their sub-dependencies via a central repository. With Ant, you traditionally have to download, store, and link those library files manually.
 
 --- Java Executable Files (Artifacts) ---
 Java can output 3 different executable files:
@@ -45,52 +37,25 @@ Windows: .exe
 Linux/macOS: .out
 
 build.xml -->Configuration file in case of ant 
-configuration file for make (build tool for c and C++) is makefile
+pom.xml -->Configuration file in case of maven 
+makefile -->Configuration file in case of make 
 
 Difference between unit testing, integration testing and UAT and PRE-PROD
   Unit Testing
-    •	What it is: Testing the smallest individual, testable parts of an application (like a single function, method, or class) in complete isolation.
+    Testing the smallest individual, testable parts of an application (like a single function, method, or class) in complete isolation.
     testing tool is JUnit
   Integration Testing
-    •	What it is: Grouping individual software modules together and testing them as a combined entity.
+    Grouping individual software modules together and testing them as a combined entity.
     Testing tools is selenium
   User Acceptance Testing (UAT)
-    •	What it is: The final phase of testing performed in a real-world scenario by the intended audience or client.
+    The final phase of testing performed in a real-world scenario by the intended audience or client.
     Testing tool is Jira
   Pre-Production (PRE-PROD)
     A testing environment that is an exact replica of the live production environment, used by technical teams to perform final load, performance, security, and deployment testing before the software goes live.
     Testing tool is JMeter
 
-Standalone app manual creation process:
-calc.java (source code)
-  |
-javac (Compiler)  <-- This is to convert java to .jar manually
-  |
-calc.class (bytecode. This is not a human readable format)
-  |
-.jar (artifact will be created)
-
 --- Maven Overview ---
 Maven is an opensource build automation & project management tool which is primarily used for java applications.
-* Opensource means anyone can use it without paying anything.
-
-pom.xml (Project Object Model): A required file where we can write instructions which maven should follow.
-
-Example of a pom.xml structure:
-<project>
-  <groupId>kms-api-examples</groupId>
-  <artifactId>kms-api-examples</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <dependencies>
-    <dependency>
-    </dependency>
-  </dependencies>
-</project>
-
---- Installation & Prerequisites ---
-- When installing a new package on a machine, first run `sudo yum update` & `sudo yum upgrade`.
-- To install Maven on Debian/Ubuntu systems, use: `sudo apt-get install maven`
-- To install Maven, Java should be installed first.
 
 --- Maven Goals / Maven Lifecycle ---
 (Execute these commands in the directory where pom.xml is stored)
@@ -120,11 +85,6 @@ Difference between maven install and maven clean install
 Maven will look for dependencies in the below order:
 local repo --> remote repo (if does not exist) --> central repo
 
---- Maven Installation Directories ---
-bin/
-conf/ -> configurations
-lib/ -> libraries
-
 Python Build Tools
 •	Core Concepts
 •	pip: The primary installer for Python.
@@ -150,9 +110,9 @@ Node.js Build Tools
 Difference between build process of c,c++,java, python and nodes
   	1.	C/C++ (Ahead-of-Time): You explicitly compile the code directly into a native machine binary. The Trade-off: Extremely fast execution, but not portable (it is tied to the specific OS/hardware).
 	  2.	Java (Hybrid): You explicitly compile the code into intermediate bytecode. At runtime, the JVM (Java Virtual Machine) translates it to machine code. The Trade-off: Slower startup, but highly portable ('Write Once, Run Anywhere').
-	  3.	Python & Node.js (Interpreted/JIT): There is no explicit build step; you just execute the source file. Python runs via an interpreter, and Node.js JIT-compiles the code at runtime. The Trade-off: Very fast development cycle, but generally slower raw execution speed than C++."
+	  3.	Python & Node.js (Interpreted/JIT): There is no explicit build step; you just execute the source file. Python runs via an interpreter, and Node.js JIT-compiles the code at runtime. The Trade-off: Very fast development cycle, but generally slower raw execution speed than C++.
 
-Compliers used in java, C, C++, Python and nodejs
+Compilers used in java, C, C++, Python and nodejs
 Java-->javac
 C-->gcc
 C++-->g++

@@ -1,5 +1,3 @@
-Jenkins Notes
-
 SDLC -> Software development life cycle
 7 phases of SDLC:
    1. Planning
@@ -9,15 +7,6 @@ SDLC -> Software development life cycle
    5. Testing
    6. Deployment
    7. Maintenance
-
-For 1 developer:
-dev -> github -> git clone -> mvn goals (package creation) -> java -jar <jar file>
-
-For 20 developers:
-dev -> github -> CI (Continuous Integration) -> CD (Continuous Deployment)
-- clone
-- maven
-- java
 
 Jenkins -> CI/CD tool / opensource tool / Java
 

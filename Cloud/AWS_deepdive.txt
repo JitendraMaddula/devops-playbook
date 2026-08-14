@@ -1,4 +1,3 @@
-Is this notes okay or do you want to remove anything 
 PROBLEMS WITH TRADITIONAL ON-PREMISES APPROACH
 -------------------------------------------------
 - High Capital & Operational Costs: Significant upfront investment in hardware plus continuous spending on rent, power, and cooling, regardless of usage.

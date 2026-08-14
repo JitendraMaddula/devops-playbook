@@ -169,7 +169,6 @@ To use SSM on instances in private subnets with NO internet access, you must con
 
 CORE CAPABILITIES (HIGH YIELD FOR INTERVIEWS)
 ------------------------------------------------
-
 A. SESSION MANAGER (The "SSH Killer")
 - Purpose: Secure, browser-based or CLI terminal access to instances.
 - Benefits over SSH: No port 22 needed, no key pairs, no bastion hosts required.
@@ -199,3 +198,23 @@ E. STATE MANAGER
 F. INVENTORY
 - Purpose: Automatically collects metadata from instances (installed software, OS versions, running services). Useful for security audits (e.g., finding out which servers have a vulnerable software version).
 
+Amazon EBS (Elastic Block Store)
+Amazon Elastic Block Store (EBS) is a high-performance, block-level storage service designed for use with Amazon EC2 virtual servers in the AWS cloud. 
+
+What Problem Does EBS Solve?
+•	Data Persistence: "The most critical problem EBS solves is data persistence. With local instance storage, if an EC2 instance crashes or is terminated, all that data is gone forever. EBS decouples the storage from the compute layer, meaning your data survives independently and can easily be reattached to a new instance if the original one fails."
+•	Seamless Capacity Scaling: "It also solves the headache of running out of space. Without EBS, hitting your storage limit meant resizing the entire machine or migrating workloads. With EBS, you can dynamically increase your volume size or attach a brand new volume on the fly, with zero downtime."
+•	Dynamic Performance Tuning: "Similarly, EBS allows for real-time performance adjustments. If an application suddenly requires faster read/write speeds, you can upgrade the volume type—for example, moving from a standard gp3 volume to a high-performance io2 volume—without having to migrate data to a new server."
+•	Simplified Backups: "EBS drastically simplifies disaster recovery. Instead of engineering complex, manual backup scripts to save local files, EBS allows you to take one-click, incremental snapshots that are automatically and securely stored in Amazon S3."
+•	Data Mobility: "It also makes moving data much faster. Rather than copying gigabytes of files across a network to transfer data between servers, you can simply detach an EBS volume from one instance and immediately mount it to another."
+•	Effortless Security: "Finally, EBS streamlines security and compliance. Rather than configuring complex, OS-level encryption yourself, EBS provides a native, one-click solution that uses AES-256 to encrypt your data both at rest and in transit."
+
+EBS Volume Types:
+SSD-Based (Random I/O — databases, boot volumes):
+  ├── gp3 / gp2  — General Purpose SSD  (the Honda Civic — reliable, affordable)
+  └── io2 / io1  — Provisioned IOPS SSD  (the Ferrari — expensive, blazing fast)
+HDD-Based (Sequential I/O — big data, logs, archives):
+  ├── st1  — Throughput Optimized HDD  (the cargo truck — moves lots of data)
+  └── sc1  — Cold HDD  (the warehouse — cheap, rarely accessed)
+
+  

@@ -9,3 +9,15 @@ A: Store the password as a SecureString in SSM Parameter Store (encrypted via KM
 
 Q: Can SSM manage servers located in your on-premises data center?
 A: Yes, using SSM Hybrid Activation. You install the SSM Agent on the on-prem servers and register them with AWS.
+
+TROUBLESHOOTING SCENARIOS
+- "Access Denied" Checklist: 
+  1. Does the user/role have an 'Allow' policy?
+  2. Is the Resource ARN perfectly correct?
+  3. Is there an 'Explicit Deny' overriding the allow? (Check SCPs if using AWS Organizations).
+  4. Are boundary conditions met?
+- Role Assumption Failures (sts:AssumeRole):
+  1. Verify the Assuming Entity has 'sts:AssumeRole' permissions.
+  2. Verify the Target Role's Trust Policy explicitly lists the assuming entity as a trusted Principal.
+
+  

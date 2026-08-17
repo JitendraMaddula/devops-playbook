@@ -29,8 +29,6 @@ Alternatives:
 - Gitlab cicd
 - Tekton
 
----
-
 Jenkins Pipeline Flow:
 Dev -> push -> Github -> Triggers Jenkins Job -> Jenkins
 From Jenkins:
@@ -68,7 +66,6 @@ Important plugins of jenkins
 •	Docker Pipeline / Kubernetes: These plugins are standard for modern infrastructure, allowing you to run your build jobs inside clean, isolated containers that spin up and down as needed.
 •	Role-Based Access Control (RBAC): Important for teams, this allows you to define specific permissions (view, build, configure) for different users or groups.
 
----
 Different types of jenkins jobs:
    Freestyle Project
    Pipeline Project

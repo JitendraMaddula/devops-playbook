@@ -522,30 +522,16 @@ Command to switch from one shell to another shell --> chsh -s /bin/bash username
 fdisk (Format Disk) --> Used to view, create, delete, and modify disk partitions on your hard drive.
 journalctl --> it is a Linux command used to read and search through the centralized logs for your operating system and its running applications in one convenient place.
 Log rotation --> It is the automated process of managing log files by archiving, compressing, renaming, or deleting older logs once they reach a certain size or age. This prevents log files from growing indefinitely, consuming all available disk space, and becoming too large or slow to open and search efficiently.
-A log rotation policy --> It is the specific set of rules configured to determine exactly when and how log rotation occurs.
+Log rotation policy --> It is the specific set of rules configured to determine exactly when and how log rotation occurs.
 nohup --> nohup stands for "no hangup." It is a Linux/Unix command used to run a process in the background and ensure it keeps running even if you log out, close your terminal session, or lose your SSH connection.
 pgrep --> greps PID using Process name
 pkill --> kills process using process name
-The getfacl (Get File Access Control Lists) command in Linux is used to view the extended access permissions of files and directories.
+getfacl (Get File Access Control Lists) command in Linux is used to view the extended access permissions of files and directories.
 Difference between init process, sshd process and systemd process
     •	init: The traditional first process (PID 1) started by the kernel that sequentially launches all other system services using basic scripts.
     •	systemd: The modern replacement for init (also PID 1) that boots the system, manages services in parallel, and comprehensively handles system resources.
     •	sshd: A standard background network daemon, managed by systemd or init, that listens for and handles incoming secure remote login connections.
-The lsblk (list block devices) command in Linux is used to display information about all available or specified storage devices attached to the system. 
+
+lsblk (list block devices) command in Linux is used to display information about all available or specified storage devices attached to the system. 
 last -->This is the most common command. It displays a historical list of all successful user logins, logouts, and system reboots by reading the /var/log/wtmp file.
 The halt command is used to terminate all running processes and safely stop the CPU from executing any further instructions, bringing the operating system to a complete stop.
-
-Ssh connection is being delayed, how do you troubleshoot it?
-    1. Diagnose with Verbose Mode
-        Before making any changes, find out exactly which step is causing the lag. Run your SSH command with the verbose flag (-v or -vvv for maximum detail):
-        ssh -v username@hostname    
-    2. Disable Reverse DNS Lookups (Server-Side)
-        The most common cause of SSH delays is the server attempting to perform a reverse DNS lookup on your client's IP address. If the server cannot resolve the IP, it will wait until the request times out before proceeding.
-    3.  Check Network and Firewall Latency
-        If the connection is still slow after tweaking the SSH configurations, the issue might be network-related.
-        Run a ping or traceroute to the server to check for high latency or dropped packets.
-    
-What are the 2/2 or 3/3 status checks done while connecting to a ec2 instance
-    1. System Status Check --> it checks wether the AWS host hardware OK? such as power, network connectivity, and the hypervisor.
-    2. Instance Status Check --> It checks is your operating system reachable? 
-    3. Attached EBS Status Check --> It checks Can the attached EBS volumes perform I/O properly?

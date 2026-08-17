@@ -1,0 +1,9 @@
+Ssh connection is being delayed, how do you troubleshoot it?
+    1. Diagnose with Verbose Mode
+        Before making any changes, find out exactly which step is causing the lag. Run your SSH command with the verbose flag (-v or -vvv for maximum detail):
+        ssh -v username@hostname    
+    2. Disable Reverse DNS Lookups (Server-Side)
+        The most common cause of SSH delays is the server attempting to perform a reverse DNS lookup on your client's IP address. If the server cannot resolve the IP, it will wait until the request times out before proceeding.
+    3.  Check Network and Firewall Latency
+        If the connection is still slow after tweaking the SSH configurations, the issue might be network-related.
+        Run a ping or traceroute to the server to check for high latency or dropped packets.

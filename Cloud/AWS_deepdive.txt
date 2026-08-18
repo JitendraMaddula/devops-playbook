@@ -58,6 +58,8 @@ A master template or blueprint for a server (pre-configured package).
 - Includes: Operating System (Linux, Windows), additional software (web server, DB), and necessary configurations.
 - "Golden Image": Create the setup once on a single instance, save it perfectly configured as a custom AMI, and then launch identical servers instantly in minutes.
 
+A Placement Group is an AWS feature that lets you influence the physical placement of your Amazon EC2 instances within the underlying hardware of an AWS Data Center.
+
 AMAZON EC2 PRICING MODELS
 - On-Demand: Pay-per-second/hour. No upfront costs. Best for unpredictable workloads or dev/test environments.
 - Reserved Instances: Up to 75% savings for 1-3 year commitments. Best for steady-state production. (Standard and Convertible options).
@@ -191,6 +193,8 @@ Out of these 5 are reserved for
   4.AWS reserves for future use
   5.Broadcast address (not used in VPC but reserved anyway)
 
+The largest single CIDR block you can assign is /16 (65,536 IP addresses), and the smallest single CIDR block you can assign is /28 (16 IP addresses).
+
 VPC COMPONENTS
 1. Internet Gateway -> connects your Virtual Private Cloud (VPC) to the public internet.
 2. Route tables
@@ -199,13 +203,32 @@ VPC COMPONENTS
 5. Security groups-> inbound traffic at instance level and has ability to only allow rules
 6. NAT gateways -> a managed service that lets resources in a private subnet connect to the internet or other external services.
 
-bastion host / jump server ->
-capex and OpEx
-What is high Availability
+bastion host / jump server -> It is a specialized Amazon EC2 instance placed in a public subnet. It acts as a secure, controlled gateway allowing administrators to connect via SSH or RDP to other EC2 instances residing in private subnets that have no direct internet access.
 
-AWS STS secure token service
-assume role (important)
-trust and permission policies
-Can SSM manage on-prem servers
-What is permission boundary
-resources quotas od VPC
+capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
+Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.
+
+What is high Availability -> High availability (HA) in AWS is a system design approach that ensures your applications and data remain accessible with minimal downtime, even if a component like a server or data center fails.
+
+AWS STS secure token service -> a web service that lets you request temporary, limited-privilege credentials for IAM users or federated users.
+
+assume role (important) -> It is an AWS STS API operation that grants an application or user temporary security credentials to access AWS resources they normally cannot reach.
+
+trust and permission policies -> 
+•	Trust Policy (Resource-based policy): This defines WHO is allowed to assume the role. It is literally a policy attached to the role that answers the question: "Who do I trust to wear this identity?" This could be an AWS service (like EC2), a specific IAM user, or another AWS account entirely.
+•	Permission Policy (Identity-based policy): This defines WHAT the principal can do once they have successfully assumed the role. It answers the question: "What AWS actions can this role perform, and on which resources?" (e.g., Read access to an S3 bucket or full access to DynamoDB).
+
+What is permission boundary -> A permission boundary is an advanced IAM feature used to set the absolute maximum permissions that an identity-based policy can grant to an IAM entity 
+
+resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Private Cloud (VPC) resources. While many of these are "soft limits" that can be raised by submitting a request to AWS Support
+
+Statefull and stateless ->
+In computing and software architecture, stateful and stateless describe whether a system, application, or protocol remembers previous interactions or treats every single request as a completely blank slate.
+
+local and default routes->
+local route allows all subnets inside the VPC to talk to each other automatically. A default route, on the other hand, is a rule you manually add to send all unknown, external internet traffic to a gateway.
+
+AWS Key Management Service (KMS)-> It is a fully managed service that makes it easy for you to create and manage cryptographic keys. It controls how data is encrypted across your AWS services and applications.
+
+Service Control Policies (SCPs) and IAM Policies are both JSON structures used to manage access in AWS, but they operate at different levels of the cloud hierarchy.The core difference is that SCPs set the maximum permission boundaries across entire AWS accounts, while IAM Policies grant specific permissions to users and roles within a single account.
+

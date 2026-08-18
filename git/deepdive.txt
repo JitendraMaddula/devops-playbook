@@ -261,3 +261,25 @@ What is snapshot
 
 Real time use case of githooks with reference to opt pipelines
 A primary real-world use case for Git hooks is protecting our CI/CD pipelines by 'shifting left.' We configure local pre-commit hooks on the developers' machines to run fast, lightweight checks—such as scanning for hardcoded secrets or formatting errors—before a commit is even allowed. By blocking bad code locally, we prevent it from ever reaching the repository, which stops our main Jenkins pipelines from wasting compute time and money on builds that are guaranteed to fail."
+
+Branching stretegy:
+Trunk-Based Development (TBD)In Trunk-Based Development, all developers merge their changes into a single central branch—usually called main or trunk—frequently throughout the day.
+    How it works: Developers pull from main, make small changes locally or in short-lived feature branches, and merge back immediately. Incomplete features are hidden using feature flags (or feature toggles) so the code can sit safely in production without breaking user experiences.
+GitHub flow: GitHub Flow is a lightweight, agile, and branch-focused workflow designed around regular deployments
+    How it works: The main branch is always stable and ready to deploy. When a developer wants to add a feature or fix a bug, they create a descriptive branch off of main. They push their commits to this branch, open a Pull Request (PR) for review, test the changes, and finally merge the branch back into main.
+Git flow: GitFlow is a strict, highly structured branching model that dictates distinct roles for different branches. It isolates development from production preparation.
+    How it works: It relies on two long-lived branches: master (production) and develop (pre-production integration). Supporting branches include short-lived feature/* branches (built off develop), release/* branches (forked from develop for final testing and merged into both master and develop), and hotfix/* branches (forked from master to address emergency production bugs).
+
+Deployment types:
+1. Rolling Deployment-> In a Rolling Deployment, the application instances are upgraded incrementally in small batches rather than all at once.
+    How it works: The deployment system takes a subset of servers or pods offline, updates them with the new software version, verifies their health, and returns them to service. This process repeats sequentially until the entire fleet runs the new code.
+2. Blue-Green Deployment -> A Blue-Green Deployment is an environment-switching strategy that eliminates risk by running two identical production environments.
+    How it works: One environment (Blue) hosts the live production traffic. The new version is deployed and thoroughly tested in the idle environment (Green). Once the new version passes all health checks, a load balancer or routing layer switches all traffic instantly from Blue to Green.
+3. Canary Deployment-> A Canary Deployment exposes a small, controlled percentage of live users to the new software version before rolling it out to the entire infrastructure.
+    How it works: The new version is deployed to a tiny fraction of infrastructure (e.g., 5% of servers). The routing layer sends 5% of live traffic to this "canary" group. DevOps teams monitor error logs, latency, and system performance. If the metrics look good, the traffic allocation is progressively increased to 100%.
+4. A/B Testing (Dark Launching) -> While often confused with Canary, A/B Testing is a business-centric deployment type focused on testing feature performance or user behavior rather than infrastructure stability.
+    How it works: The new feature code is deployed to production but kept hidden behind feature flags. Based on specific user demographics, geolocations, or cookie tracking, specific user segments are routed to the new feature while the rest see the old version.
+5. Recreate Deployment (All-At-Once)-> The Recreate Deployment is a legacy approach where the existing application is entirely shut down before the new version is brought online.
+    How it works: All active server instances running version 1.0 are terminated simultaneously. Once the infrastructure is cleared, the system boots up version 2.0. Users experience an explicit maintenance window during the transition.
+
+Git submodules-> A Git submodule is a feature that allows you to keep one Git repository as a subdirectory of another Git repository. 

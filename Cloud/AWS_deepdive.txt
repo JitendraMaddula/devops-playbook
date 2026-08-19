@@ -68,6 +68,13 @@ AMAZON EC2 PRICING MODELS
 - Dedicated Hosts: Rent entire physical servers. Required for BYOL (Bring Your Own License) and strict compliance.
 - Capacity Reservations: Guarantees compute capacity in specific AZs. Pay On-Demand rates only when used. Critical for disaster recovery and peak events.
 
+example: Amazon EC2 Pricing using a standard general-purpose m5.large instance (Linux, US East/N. Virginia region) as a concrete baseline example: per hour
+1. ondemand: 0.096 USD
+2. reserved instance: 0.041 USD
+3. savings plan: 0.060
+4. spot instance: btwn 0.041-0.046 USD
+5. dediated host: 4.22 USD
+
 2/2 or 3/3 status checks done while connecting to a ec2 instance
     1. System Status Check --> it checks wether the AWS host hardware OK? such as power, network connectivity, and the hypervisor.
     2. Instance Status Check --> It checks is your operating system reachable? 
@@ -88,13 +95,8 @@ IAM CORE COMPONENTS
 DEEP DIVE: IAM ROLES (HIGH YIELD FOR INTERVIEWS)
 Unlike users, roles do not have long-term credentials. They provide temporary security credentials (valid 15 mins to 12 hours) via STS.
 A role requires two policies:
-1. Trust Policy: Defines WHO can assume the role (e.g., EC2 service, another AWS account).
-2. Permissions Policy: Defines WHAT the entity can do once the role is assumed.
-
-Key Interview Use Cases for Roles:
-- AWS Service Access: e.g., Attaching a role to an EC2 instance so it can securely access S3 without hardcoded keys.
-- Cross-Account Access: Granting users in Account A access to resources in Account B.
-- Identity Federation: Allowing corporate (Active Directory/SAML) or Web (Google/Facebook) users to access AWS resources.
+1.Trust Policy (Resource-based policy): This defines WHO is allowed to assume the role. It is literally a policy attached to the role that answers the question: "Who do I trust to wear this identity?" This could be an AWS service (like EC2), a specific IAM user, or another AWS account entirely.
+2.Permission Policy (Identity-based policy): This defines WHAT the principal can do once they have successfully assumed the role. It answers the question: "What AWS actions can this role perform, and on which resources?" (e.g., Read access to an S3 bucket or full access to DynamoDB).
 
 DEEP DIVE: IAM POLICIES & EVALUATION LOGIC
 Policy JSON Structure Elements: 
@@ -112,14 +114,7 @@ Policy Evaluation Logic (CRITICAL)
 2. Explicit Allow: Grants access if no Explicit Deny exists.
 3. Default Deny (Implicit Deny): If there is no Allow and no Deny, access is denied.
 
-SECURITY BEST PRACTICES
-- Root Account: Never use for daily tasks. Lock away credentials and mandate MFA.
-- Principle of Least Privilege: Grant only the minimum permissions required.
-- Credential Management: Rotate access keys (e.g., every 90 days), mandate MFA for console access, never share credentials.
-- Use Roles over Users: Always prefer IAM roles and temporary credentials for applications/EC2 instances instead of hardcoding access keys.
-- Auditing: Enable AWS CloudTrail globally to log all API calls. Use IAM Access Analyzer to find overly permissive resource sharing.
-
-AWS SYSTEMS MANAGER (SSM) - INTERVIEW QUICK REFERENCE GUIDE
+AWS SYSTEMS MANAGER (SSM)- default port is 443
 WHAT IS AWS SYSTEMS MANAGER (SSM)?
 A centralized management service for EC2 instances and on-premises servers. It allows you to automate operational tasks across your AWS resources without needing SSH, key pairs, or open inbound ports.
 
@@ -214,10 +209,6 @@ AWS STS secure token service -> a web service that lets you request temporary, l
 
 assume role (important) -> It is an AWS STS API operation that grants an application or user temporary security credentials to access AWS resources they normally cannot reach.
 
-trust and permission policies -> 
-•	Trust Policy (Resource-based policy): This defines WHO is allowed to assume the role. It is literally a policy attached to the role that answers the question: "Who do I trust to wear this identity?" This could be an AWS service (like EC2), a specific IAM user, or another AWS account entirely.
-•	Permission Policy (Identity-based policy): This defines WHAT the principal can do once they have successfully assumed the role. It answers the question: "What AWS actions can this role perform, and on which resources?" (e.g., Read access to an S3 bucket or full access to DynamoDB).
-
 What is permission boundary -> A permission boundary is an advanced IAM feature used to set the absolute maximum permissions that an identity-based policy can grant to an IAM entity 
 
 resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Private Cloud (VPC) resources. While many of these are "soft limits" that can be raised by submitting a request to AWS Support
@@ -232,3 +223,10 @@ AWS Key Management Service (KMS)-> It is a fully managed service that makes it e
 
 Service Control Policies (SCPs) and IAM Policies are both JSON structures used to manage access in AWS, but they operate at different levels of the cloud hierarchy.The core difference is that SCPs set the maximum permission boundaries across entire AWS accounts, while IAM Policies grant specific permissions to users and roles within a single account.
 
+VPC resource quota deep diversity and how many in security groups rules, peerining connections, elastic ip's
+how many routes can a routable contain for ipv4 and ipv6
+vpc peering
+default quota for vpc peering
+what are VPC endpoints and types
+transit gateway
+what is ipv4 and ipv6

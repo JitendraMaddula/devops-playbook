@@ -238,26 +238,13 @@ What are Branch protection rules --> Branch protection rules are administrative 
 
 A detached HEAD means Git is pointing directly to a specific commit rather than a branch, making any new commits you make temporary unless you explicitly save them by creating a new branch.
 
-git rm <filename> --> To delete a complete file file in git (local) repo
-
-Logic behind web hooks of GitHub and jenkins
-    When you configure a webhook in GitHub and link it to a Jenkins pipeline, the following sequence of logical steps occurs:
-	1.	The Triggering Event: A developer performs an action in GitHub. This is usually a git push to a repository, but it can also be the creation of a Pull Request, a merged branch, or a new release tag.
-	2.	The Payload Generation: GitHub packages all the details about that event into a JSON file (the payload). This includes the repository name, the specific branch updated, the commit ID, the commit message, and the user who made the change.
-	3.	The HTTP POST Request: GitHub acts as a client and sends an HTTP POST request containing that JSON payload to a specific URL hosted by your Jenkins server (e.g., [https://your-jenkins-server.com/github-webhook/](https://your-jenkins-server.com/github-webhook/)).
-	4.	The Jenkins Reception: The Jenkins server is listening on that URL. It catches the POST request and reads the JSON payload.
-	5.	The Matching Logic: Jenkins scans its internal database of jobs/pipelines. It looks for any job that is configured to build the specific GitHub repository and branch mentioned in the payload.
-	6.	The Execution: Once a match is found, Jenkins automatically triggers the pipeline to run (compiling code, running tests, deploying, etc.).
-	7.	The Feedback Loop (Optional but common): After the build finishes, Jenkins can use the GitHub API to send a status check back to GitHub, displaying a green checkmark (Success) or a red cross (Failure) directly on the GitHub commit or Pull Request.
+git rm <filename> --> To delete a complete file in git (local) repo
 
 Difference between git reflog and git log
     git log is the official biography of your project. It shows the public, permanent history of the code.
     git reflog is your private, local journal. It records absolutely everything you did on your specific machine, including the mistakes, the erased history, and the dead ends.
 
 git clean --> Its sole purpose is to permanently remove untracked files—files that are currently in your project folder but have not been added to Git's tracking via git add
-
-What is snapshot
-    A snapshot is a complete, point-in-time capture of a system's exact state, whether that means saving an entire file tree in Git or backing up a storage drive in cloud infrastructure. Across all of these tools, its primary purpose is to provide a reliable, historical record that you can instantly revert to if something goes wrong.
 
 Real time use case of githooks with reference to opt pipelines
 A primary real-world use case for Git hooks is protecting our CI/CD pipelines by 'shifting left.' We configure local pre-commit hooks on the developers' machines to run fast, lightweight checks—such as scanning for hardcoded secrets or formatting errors—before a commit is even allowed. By blocking bad code locally, we prevent it from ever reaching the repository, which stops our main Jenkins pipelines from wasting compute time and money on builds that are guaranteed to fail."
@@ -269,17 +256,5 @@ GitHub flow: GitHub Flow is a lightweight, agile, and branch-focused workflow de
     How it works: The main branch is always stable and ready to deploy. When a developer wants to add a feature or fix a bug, they create a descriptive branch off of main. They push their commits to this branch, open a Pull Request (PR) for review, test the changes, and finally merge the branch back into main.
 Git flow: GitFlow is a strict, highly structured branching model that dictates distinct roles for different branches. It isolates development from production preparation.
     How it works: It relies on two long-lived branches: master (production) and develop (pre-production integration). Supporting branches include short-lived feature/* branches (built off develop), release/* branches (forked from develop for final testing and merged into both master and develop), and hotfix/* branches (forked from master to address emergency production bugs).
-
-Deployment types:
-1. Rolling Deployment-> In a Rolling Deployment, the application instances are upgraded incrementally in small batches rather than all at once.
-    How it works: The deployment system takes a subset of servers or pods offline, updates them with the new software version, verifies their health, and returns them to service. This process repeats sequentially until the entire fleet runs the new code.
-2. Blue-Green Deployment -> A Blue-Green Deployment is an environment-switching strategy that eliminates risk by running two identical production environments.
-    How it works: One environment (Blue) hosts the live production traffic. The new version is deployed and thoroughly tested in the idle environment (Green). Once the new version passes all health checks, a load balancer or routing layer switches all traffic instantly from Blue to Green.
-3. Canary Deployment-> A Canary Deployment exposes a small, controlled percentage of live users to the new software version before rolling it out to the entire infrastructure.
-    How it works: The new version is deployed to a tiny fraction of infrastructure (e.g., 5% of servers). The routing layer sends 5% of live traffic to this "canary" group. DevOps teams monitor error logs, latency, and system performance. If the metrics look good, the traffic allocation is progressively increased to 100%.
-4. A/B Testing (Dark Launching) -> While often confused with Canary, A/B Testing is a business-centric deployment type focused on testing feature performance or user behavior rather than infrastructure stability.
-    How it works: The new feature code is deployed to production but kept hidden behind feature flags. Based on specific user demographics, geolocations, or cookie tracking, specific user segments are routed to the new feature while the rest see the old version.
-5. Recreate Deployment (All-At-Once)-> The Recreate Deployment is a legacy approach where the existing application is entirely shut down before the new version is brought online.
-    How it works: All active server instances running version 1.0 are terminated simultaneously. Once the infrastructure is cleared, the system boots up version 2.0. Users experience an explicit maintenance window during the transition.
 
 Git submodules-> A Git submodule is a feature that allows you to keep one Git repository as a subdirectory of another Git repository. 

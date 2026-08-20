@@ -165,6 +165,9 @@ What Problem Does EBS Solve?
 •	Data Mobility: "It also makes moving data much faster. Rather than copying gigabytes of files across a network to transfer data between servers, you can simply detach an EBS volume from one instance and immediately mount it to another."
 •	Effortless Security: "Finally, EBS streamlines security and compliance. Rather than configuring complex, OS-level encryption yourself, EBS provides a native, one-click solution that uses AES-256 to encrypt your data both at rest and in transit."
 
+What is snapshot
+    A snapshot is a complete, point-in-time capture of a system's exact state, whether that means saving an entire file tree in Git or backing up a storage drive in cloud infrastructure. Across all of these tools, its primary purpose is to provide a reliable, historical record that you can instantly revert to if something goes wrong.
+
 EBS Volume Types:
 SSD-Based (Random I/O — databases, boot volumes):
   ├── gp3 / gp2  — General Purpose SSD  (the Honda Civic — reliable, affordable)
@@ -174,6 +177,9 @@ HDD-Based (Sequential I/O — big data, logs, archives):
   └── sc1  — Cold HDD  (the warehouse — cheap, rarely accessed)
 
 AWS VPC (Virtual Private Cloud) is a  Virtual Private Cloud (VPC) in cloud computing is a logically isolated, private network within a public cloud
+
+difference between ipv4 and ipv6
+ IPv4 uses a 32-bit architecture (yielding ~4.3 billion addresses), while IPv6 uses a 128-bit architecture (yielding 340 undecillion addresses) to solve the global problem of running out of unique IPv4 addresses.
 
 CIDR
 Classless Inter-Domain Routing, is a method for allocating IP addresses and routing internet traffic more efficiently.
@@ -198,7 +204,54 @@ VPC COMPONENTS
 5. Security groups-> inbound traffic at instance level and has ability to only allow rules
 6. NAT gateways -> a managed service that lets resources in a private subnet connect to the internet or other external services.
 
+how many routes can a routable contain for ipv4 and ipv6
+An AWS route table can contain up to 500 IPv4 routes AND 500 IPv6 routes by default.
+
 bastion host / jump server -> It is a specialized Amazon EC2 instance placed in a public subnet. It acts as a secure, controlled gateway allowing administrators to connect via SSH or RDP to other EC2 instances residing in private subnets that have no direct internet access.
+
+vpc peering
+it is a direct networking connection between two Virtual Private Clouds (VPCs) that routes traffic using private IPv4 or IPv6 addresses.
+  Key Rules:
+    No overlapping CIDRs — If both VPCs use 10.0.0.0/16, peering is impossible. This is why CIDR planning matters!
+    Not transitive — If A↔B and B↔C, A CANNOT reach C through B. You need a separate A↔C peering.
+    Cross-region supported — VPC in Mumbai can peer with VPC in Virginia.
+    Cross-account supported — Your VPC can peer with another AWS account's VPC.
+    Route tables required — You must manually add routes in BOTH VPCs.
+
+Use peering when:
+  Dev VPC needs to access shared services in a Prod VPC
+  Two departments need to share a database but keep environments separate
+  Cross-account access (your VPC + partner's VPC)
+  Don't use peering when you have 10+ VPCs — that's 45 peering connections (n×(n-1)/2). Use Transit Gateway instead."
+
+transit gateway
+It is a centralized cloud router that connects multiple VPCs and on-premises networks through a single hub.
+What Can Attach to Transit Gateway?
+  1. VPC Attachment--> Connects a VPC to the TGW
+  2. VPN Attachment-->	Connects a Site-to-Site VPN tunnel
+  3. Direct Connect Gateway-->	Connects a dedicated physical line
+  4. TGW Peering	Connects--> to a TGW in another region (inter-region)
+  5. Connect Attachment-->	For SD-WAN appliances (GRE/BFD)
+
+resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Private Cloud (VPC) resources. While many of these are "soft limits" that can be raised by submitting a request to AWS Support
+  components with default limits->
+    VPCs per Region: 5  
+    Subnets per VPC: 200
+    Security Groups per Region: 2500
+    Security Group Rules per SG: 60
+    Internet Gateways per Region: 5
+    Network ACLs (NACL) per vpc: 200
+    Route Tables per vpc: 200
+    Routes per route table: 50
+    NAT gateways per AZ: 5
+    Elastic IP's per region: 5
+    VPC peering connections per VPC: 50
+
+what are VPC endpoints and types
+A VPC Endpoint is a secure, private network connection that allows you to connect your VPC to supported AWS services and VPC endpoint services without using an Internet Gateway, NAT Gateway, VPN connection, or AWS Direct Connect.
+  1. The Three Types of VPC Endpoints
+  2. Gateway Endpoints
+  3. Gateway Load Balancer (GWLB) Endpoints
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.
@@ -211,8 +264,6 @@ assume role (important) -> It is an AWS STS API operation that grants an applica
 
 What is permission boundary -> A permission boundary is an advanced IAM feature used to set the absolute maximum permissions that an identity-based policy can grant to an IAM entity 
 
-resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Private Cloud (VPC) resources. While many of these are "soft limits" that can be raised by submitting a request to AWS Support
-
 Statefull and stateless ->
 In computing and software architecture, stateful and stateless describe whether a system, application, or protocol remembers previous interactions or treats every single request as a completely blank slate.
 
@@ -223,10 +274,8 @@ AWS Key Management Service (KMS)-> It is a fully managed service that makes it e
 
 Service Control Policies (SCPs) and IAM Policies are both JSON structures used to manage access in AWS, but they operate at different levels of the cloud hierarchy.The core difference is that SCPs set the maximum permission boundaries across entire AWS accounts, while IAM Policies grant specific permissions to users and roles within a single account.
 
-VPC resource quota deep diversity and how many in security groups rules, peerining connections, elastic ip's
-how many routes can a routable contain for ipv4 and ipv6
-vpc peering
-default quota for vpc peering
-what are VPC endpoints and types
-transit gateway
-what is ipv4 and ipv6
+measured service
+Measured Service is a reference framework defined by the National Institute of Standards and Technology (NIST) stating that cloud systems must automatically monitor, control, optimize, and report resource usage using a built-in metering capability.
+
+what is Elasticity
+Elasticity is the ability of a cloud computing system to automatically scale its infrastructure resources up or down in real-time to match changing workload demands

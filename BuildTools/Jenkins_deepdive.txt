@@ -80,17 +80,12 @@ To use sudo command in Jenkins:
 sudo visudo /etc/sudoers
 -> jenkins ALL=(ALL:ALL) NOPASSWD:ALL
 
-(Best Practice Alternative: Keep the main sudoers file clean by creating a dedicated drop-in file)
-sudo visudo  /etc/sudoers
--> jenkins ALL=(ALL:ALL) NOPASSWD:ALL
-
 Default Installation Directory:
    /var/lib/jenkins
 
 To Bypass Login (Disable Security):
    Edit the configuration file: `sudo vi /var/lib/jenkins/config.xml`
    Find the tag `<useSecurity>true</useSecurity>` and change it to `<useSecurity>false</useSecurity>`.
-   (Note: You must restart the Jenkins service for this to take effect, e.g., `sudo systemctl restart jenkins`).
 
 Jenkins Location Configuration:
    File: `/var/lib/jenkins/jenkins.model.JenkinsLocationConfiguration.xml`
@@ -106,7 +101,7 @@ Keeping Background Processes Alive After Build:
    Example: `daemonize -E BUILD_ID=dontKillMe /path/to/command` or simply exporting the variable before executing a background script.
 
 Importance of Jenkins home directory:
-In Jenkins, the home directory (which your notes correctly identified as /var/lib/jenkins for Linux) is the brain and heart of the entire application.
+In Jenkins, the home directory is the brain and heart of the entire application.
    It Holds All Configurations
    It Stores All Plugins
    It Contains the Workspace
@@ -125,7 +120,7 @@ Difference between monolithic app and micro service app
    •	Microservices Architecture breaks the application down into small, independent services (e.g., login, payment, cart) that communicate via APIs. Because they are loosely coupled, you can update, deploy, and scale each service individually without affecting the rest of the application.
 
 Jenkins Build Triggers
-   Trigger builds remotely (e.g., from scripts) - Allows you to trigger a build by sending an HTTP request to a specific Jenkins URL with an authentication token, enabling external scripts, tools, or third-party applications to start jobs on demand.
+   Trigger builds remotely - Allows you to trigger a build by sending an HTTP request to a specific Jenkins URL with an authentication token, enabling external scripts, tools, or third-party applications to start jobs on demand.
    Build after other proiects are built - Automatically starts a build as soon as a specified "upstream" project finishes running, linking jobs together to create sequential pipelines or dependent workflows (e.g., deploying only after the testing job succeeds).
    Build periodically - Schedule builds to run at specific times using cron-like syntax, regardless of code changes.
    GitHub hook trigger for GITScm polling - GitHub sends a notification to Jenkins immediately when code is pushed, triggering an instant build.
@@ -137,6 +132,16 @@ How to Set Up a GitHub Hook Trigger for Jenkins:
    3. In the "Payload URL" field, enter your Jenkins URL followed by `/github-webhook/`.
    Example: http://0.0.0.0:8080/github-webhook/
    4. Click "Add webhook" and save your changes.
+
+Logic behind web hooks of GitHub and jenkins
+    When you configure a webhook in GitHub and link it to a Jenkins pipeline, the following sequence of logical steps occurs:
+	1.	The Triggering Event: A developer performs an action in GitHub. This is usually a git push to a repository, but it can also be the creation of a Pull Request, a merged branch, or a new release tag.
+	2.	The Payload Generation: GitHub packages all the details about that event into a JSON file (the payload). This includes the repository name, the specific branch updated, the commit ID, the commit message, and the user who made the change.
+	3.	The HTTP POST Request: GitHub acts as a client and sends an HTTP POST request containing that JSON payload to a specific URL hosted by your Jenkins server (e.g., [https://your-jenkins-server.com/github-webhook/]).
+	4.	The Jenkins Reception: The Jenkins server is listening on that URL. It catches the POST request and reads the JSON payload.
+	5.	The Matching Logic: Jenkins scans its internal database of jobs/pipelines. It looks for any job that is configured to build the specific GitHub repository and branch mentioned in the payload.
+	6.	The Execution: Once a match is found, Jenkins automatically triggers the pipeline to run (compiling code, running tests, deploying, etc.).
+	7.	The Feedback Loop (Optional but common): After the build finishes, Jenkins can use the GitHub API to send a status check back to GitHub, displaying a green checkmark (Success) or a red cross (Failure) directly on the GitHub commit or Pull Request.
 
 A parameterized job In Jenkins is a build job or pipeline that is configured to accept input values (parameters) right before it executes.
 
@@ -167,19 +172,6 @@ Security Concepts in Jenkins:
 
 How to securely store credentials in Jenkins?
    To securely store credentials in Jenkins, you store them centrally using the Credentials Plugin, which encrypts them on the Jenkins master node. To safely use them in a job, you use the Credentials Binding Plugin to inject them as temporary environment variables, which automatically masks the values in the console logs to prevent exposure. 
-
-Senario-> how to debug on why build is taking long time
-   "Whenever a build suddenly spikes in duration, my first goal is to isolate exactly where the time is being spent rather than guessing.
-   Phase 1: Triage and Isolation
-      I would immediately open the Jenkins pipeline UI (like Blue Ocean) and compare the current slow run to a previous fast run. I need to identify which specific stage is causing the delay. Is it the Git checkout, the compilation, the unit tests, or the artifact upload?
-   Phase 2: Targeted Investigation
-      Once I find the bottleneck stage, I look at the console logs and infrastructure metrics. The issue almost always falls into one of four categories:
-      •	Infrastructure & Resource Exhaustion: I check the Jenkins agent. Is the CPU maxed out? Is it out of memory and aggressively swapping? Is another heavy job running concurrently on the same node?
-      •	Network & External Dependencies: If it's failing in the build stage, is Maven or npm hanging while trying to download dependencies? Often, an external registry (like Nexus, Artifactory, or npmjs) is experiencing an outage, or the local cache was wiped.
-      •	Code & Tests: If the test stage is dragging, I look for hanging integration tests. Did someone introduce a test that waits for a database connection that never happens? Are UI/Selenium tests timing out?
-      •	Git History: If the checkout stage is slow, did a developer accidentally commit massive binary files or a database dump, bloating the repository size?
-   Phase 3: Resolution & Prevention
-      Once identified, I apply the specific fix. If it's a caching issue, I ensure dependency caching is properly configured on the agent. If it's resource exhaustion, I might scale up the agent or restrict concurrent builds. If it's hanging tests, I would fail the pipeline and send it back to the developer to fix the infinite loop or timeout."
 
 Types of credentials manager in jenkins
    •	Secret text: A single sensitive string, like a GitHub API token or a webhook URL.
@@ -253,3 +245,15 @@ The Throttle plugin puts a strict speed limit on your Jenkins server. It restric
 
 How to automate builds
 To fully automate and scale our builds, I use a combination of Git Webhooks for the trigger, a Jenkinsfile for the execution, and a Jenkins Shared Library to keep the code clean and reusable.
+
+Deployment types:
+1. Rolling Deployment-> In a Rolling Deployment, the application instances are upgraded incrementally in small batches rather than all at once.
+    How it works: The deployment system takes a subset of servers or pods offline, updates them with the new software version, verifies their health, and returns them to service. This process repeats sequentially until the entire fleet runs the new code.
+2. Blue-Green Deployment -> A Blue-Green Deployment is an environment-switching strategy that eliminates risk by running two identical production environments.
+    How it works: One environment (Blue) hosts the live production traffic. The new version is deployed and thoroughly tested in the idle environment (Green). Once the new version passes all health checks, a load balancer or routing layer switches all traffic instantly from Blue to Green.
+3. Canary Deployment-> A Canary Deployment exposes a small, controlled percentage of live users to the new software version before rolling it out to the entire infrastructure.
+    How it works: The new version is deployed to a tiny fraction of infrastructure (e.g., 5% of servers). The routing layer sends 5% of live traffic to this "canary" group. DevOps teams monitor error logs, latency, and system performance. If the metrics look good, the traffic allocation is progressively increased to 100%.
+4. A/B Testing (Dark Launching) -> While often confused with Canary, A/B Testing is a business-centric deployment type focused on testing feature performance or user behavior rather than infrastructure stability.
+    How it works: The new feature code is deployed to production but kept hidden behind feature flags. Based on specific user demographics, geolocations, or cookie tracking, specific user segments are routed to the new feature while the rest see the old version.
+5. Recreate Deployment (All-At-Once)-> The Recreate Deployment is a legacy approach where the existing application is entirely shut down before the new version is brought online.
+    How it works: All active server instances running version 1.0 are terminated simultaneously. Once the infrastructure is cleared, the system boots up version 2.0. Users experience an explicit maintenance window during the transition.

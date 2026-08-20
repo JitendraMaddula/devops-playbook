@@ -20,4 +20,4 @@ TROUBLESHOOTING SCENARIOS
   1. Verify the Assuming Entity has 'sts:AssumeRole' permissions.
   2. Verify the Target Role's Trust Policy explicitly lists the assuming entity as a trusted Principal.
 
-  
+How do you convert private to public subnet

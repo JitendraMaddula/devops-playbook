@@ -236,22 +236,22 @@ What Can Attach to Transit Gateway?
 resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Private Cloud (VPC) resources. While many of these are "soft limits" that can be raised by submitting a request to AWS Support
   components with default limits->
     VPCs per Region: 5  
+    Internet Gateways per Region: 5
+    Route Tables per vpc: 200
+    Routes per route table: 500
+    Network ACLs (NACL) per vpc: 200
     Subnets per VPC: 200
     Security Groups per Region: 2500
     Security Group Rules per SG: 60
-    Internet Gateways per Region: 5
-    Network ACLs (NACL) per vpc: 200
-    Route Tables per vpc: 200
-    Routes per route table: 50
     NAT gateways per AZ: 5
     Elastic IP's per region: 5
     VPC peering connections per VPC: 50
 
 what are VPC endpoints and types
 A VPC Endpoint is a secure, private network connection that allows you to connect your VPC to supported AWS services and VPC endpoint services without using an Internet Gateway, NAT Gateway, VPN connection, or AWS Direct Connect.
-  1. The Three Types of VPC Endpoints
-  2. Gateway Endpoints
-  3. Gateway Load Balancer (GWLB) Endpoints
+  The Two Types of VPC Endpoints
+    1. Interface Endpoints
+    2. Gateway Endpoints
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.

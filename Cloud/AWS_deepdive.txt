@@ -114,6 +114,9 @@ Policy Evaluation Logic (CRITICAL)
 2. Explicit Allow: Grants access if no Explicit Deny exists.
 3. Default Deny (Implicit Deny): If there is no Allow and no Deny, access is denied.
 
+What are the roles in AWS does developer need to get for temporary access
+To get temporary access in AWS, a developer typically needs an IAM role that assumes specific permissions via AWS STS (Security Token Service). Common roles include read-only or power-user roles for development environments, managed via AWS IAM Identity Center (SSO) with short-term credentials lasting from one to 12 hours.
+
 AWS SYSTEMS MANAGER (SSM)- default port is 443
 WHAT IS AWS SYSTEMS MANAGER (SSM)?
 A centralized management service for EC2 instances and on-premises servers. It allows you to automate operational tasks across your AWS resources without needing SSH, key pairs, or open inbound ports.
@@ -250,8 +253,47 @@ resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Priva
 what are VPC endpoints and types
 A VPC Endpoint is a secure, private network connection that allows you to connect your VPC to supported AWS services and VPC endpoint services without using an Internet Gateway, NAT Gateway, VPN connection, or AWS Direct Connect.
   The Two Types of VPC Endpoints
-    1. Interface Endpoints
-    2. Gateway Endpoints
+    1. Interface Endpoints - Creates an Elastic Network Interface (ENI) with a private IP address from your subnet to route TCP/UDP traffic securely.
+    2. Gateway Endpoints - Acts as a virtual router target in your route table using a prefix list rather than an IP address.
+
+What can be done if we want more NAT gateways before rising a request to AWS
+  Add secondary IPs: Associate up to 7 secondary private or Elastic IP addresses to an existing NAT gateway to expand concurrent connection limits per destination.
+  Use Gateway Endpoints: Route traffic to Amazon S3 and Amazon DynamoDB via free gateway endpoints instead of a NAT gateway
+  Deploy Interface Endpoints: Use AWS PrivateLink interface endpoints for internal service communication to reduce packet load and lower data processing costs
+  Consolidate subnets: Share a single well-utilized NAT gateway across multiple smaller private subnets if traffic volume and packet rates remain safely below the 100 Gbps or 10 million packets-per-second thresholds
+
+Elastic Load Balancer (ELB): Automatically distributes incoming application traffic across multiple targets (EC2 instances, containers, Lambdas) in one or more Availability Zones to ensure fault tolerance.
+
+ELB types:
+1. Application Load Balancer (ALB) --> Layer 7 --> HTTP/HTTPS
+2. Network Load Balancer (NLB) --> Layer 4 --> TCP/UDP/TLS 
+3. Gateway Load Balancer (GWLB) --> Layer 3 --> IP
+4. Classic Load Balancer (CLB) --> Layer 4/7 --> TCP/HTTP
+
+Auto Scaling Groups (ASG)
+It is a service that manages a collection of server instances, automatically adding or removing servers to match fluctuating user traffic. This ensures your application remains responsive during peak times and cost-effective during quiet periods.
+
+Key components
+ 1. Capacity Settings - Minimum,maximum,desired
+ 2. Launch Template - The blueprint for new instances. Every instance ASG launches uses this template. lik -> AMI, Instance type, Key pair, Security Groups, User Data, IAM Role, Network, Storage
+ 3. AZ Distribution - Auto Scaling Groups attempt to distribute instances evenly across the selected Availability Zones to ensure high availability and fault tolerance.
+ 4 Scaling Policies - There are four primary types of scaling policies:
+    *   **Target Tracking Scaling:** Adjusts capacity to maintain a specific metric (e.g., keeping average CPU utilization at 50%).
+    *   **Step Scaling:** Adjusts capacity based on the size of the alarm breach (e.g., add 1 instance if CPU is > 60%, add 3 if CPU is > 80%).
+    *   **Simple Scaling:** A legacy policy that adjusts capacity based on a single alarm, typically requiring a cooldown period.
+    *   **Scheduled Scaling:** Adjusts capacity based on a predictable schedule (e.g., scale up at 8 AM and scale down at 6 PM daily).
+
+SNS (Simple Notification Service)
+AWS SNS stands for Amazon Simple Notification Service. It is a fully managed, push-based publish-subscribe (pub/sub) service that lets you send messages or alerts from applications to multiple subscribers or other services instantly.
+
+SNS Core concepts
+  Publishers (Producers): Send a message to a logical communication channel called a Topic.
+  Topics: A central access point where the message is received and broadcasted.
+  Characters-> Name, type (Standard and FIFO), ARN and Max Topics
+  Subscribers (Consumers): Register or subscribe to a topic to receive every message sent to it
+
+SQS (Simple Queue Service)
+AWS SQS stands for Amazon Simple Queue Service. It is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications.
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.

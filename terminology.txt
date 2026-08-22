@@ -1,50 +1,41 @@
-SSH - Secure Socket shell
-~   - tilde
-^   - Caret
-GUI - Graphical User Interface
+---> Use below terminologies in interview to look professional
 
-Linux & System Administration
-•	OS - Operating System
-•	CLI - Command Line Interface
-•	GUI - Graphical User Interface
-•	SUDO - Super User Does
-•	PID - Process ID
-•	UID / GID - User ID and Group ID
-•	pwd - Print Working Directory
-•	$ - Command prompt ending that indicates you are a regular user
-•	# - Command prompt ending that indicates you are the root (admin) user
-•	GRUB - GRand Unified Bootloader
-•	LILO - LInux LOader
-•	MBR / EFI - Boot Sector
-Networking & Security
-•	SSH - Secure Shell or Secure Socket Shell
-•	SCP - Secure Copy used to copy files/directories over SSH
-•	TCP - Transmission Control Protocol
-•	UDP - User Datagram Protocol
-•	DNS - Domain Name System
-•	SSL - Secure Sockets Layer
-•	TLS - Transport Layer Security
-•	LDAP - Lightweight Directory Access Protocol
-•	RBAC - Role-Based Access Control
-•	HTTP / HTTPS - Web communication protocols utilizing Port 80 and 443, respectively
-•	FTP - File Transfer Protocol utilizing Port 21 for connections and 20 for sending actual files
-DevOps, CI/CD, & Cloud
-•	SDLC - Software Development Life Cycle
-•	CI - Continuous Integration
-•	CD (Delivery) - Continuous Delivery
-•	CD (Deployment) - Continuous Deployment
-•	EC2 - Elastic Compute Cloud
-•	EBS - Elastic Block Store
-•	API - Application Programming Interface
-•	UI - User Interface
-•	UAT - User Acceptance Testing
-•	PRE-PROD - Pre-Production
-Build Tools & Programming
-•	POM - Project Object Model, used as the required pom.xml configuration file in Maven
-•	JVM - Java Virtual Machine
-•	JIT - Just-In-Time compilation
-•	NVM - Node Version Manager
-•	npm - Node Package Manager
-•	.jar - Java Archive, representing a standalone application
-•	.war - Web Archive, containing java classes and web content like HTML/CSS
-•	.ear - Enterprise Archive, which is a combination of a .jar and a .war
+1. Layman: Give / Hand out (e.g., "I gave them access")
+⚬	Professional: Grant, Provision, Allocate
+⚬	Example: "I provisioned a new EC2 instance and granted the developers SSH access."
+
+2. Layman: Make / Set up (e.g., "I made a pipeline")
+⚬	Professional: Configure, Implement, Architect, Establish
+⚬	Example: "I configured a Jenkins CI/CD pipeline and architected the underlying infrastructure."
+
+3. Layman: Fix (e.g., "I fixed the server issue")
+⚬	Professional: Troubleshoot, Remediate, Resolve, Mitigate
+⚬	Example: "I troubleshot the network latency and remediated the bottleneck in the database."
+
+4. Layman: Use (e.g., "We used Docker for this")
+⚬	Professional: Leverage, Utilize, Employ
+⚬	Example: "We leveraged Docker for containerization to utilize our compute resources more efficiently."
+
+5. Layman: Check / Look at (e.g., "I checked the logs")
+⚬	Professional: Monitor, Audit, Analyze, Inspect
+⚬	Example: "I analyzed the system metrics in top and continuously monitored the application's uptime."
+
+6. Layman: Start / Turn on (e.g., "I started the build")
+⚬	Professional: Initiate, Trigger, Deploy, Execute
+⚬	Example: "The GitHub webhook automatically triggers the deployment process."
+
+7. Layman: Stop / Take down (e.g., "I stopped the old server")
+⚬	Professional: Decommission, Terminate, Deprecate
+⚬	Example: "We decommissioned the legacy on-premise servers and terminated the unused EC2 instances."
+
+8. Layman: Change (e.g., "I changed the code")
+⚬	Professional: Refactor, Modify, Streamline, Optimize
+⚬	Example: "I refactored the shell script to streamline the automated backup process."
+
+9. Layman: Work with (e.g., "I worked with the QA team")
+⚬	Professional: Collaborate, Coordinate, Liaise
+⚬	Example: "I collaborated with the QA team to integrate automated testing into the deployment flow."
+
+10. Layman: Hide / Keep safe (e.g., "I hid the passwords")
+⚬	Professional: Secure, Encrypt, Mask, Obfuscate
+⚬	Example: "I used the Credentials Binding plugin to securely encrypt and mask the API tokens in the Jenkins logs."

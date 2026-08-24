@@ -257,3 +257,16 @@ Deployment types:
     How it works: The new feature code is deployed to production but kept hidden behind feature flags. Based on specific user demographics, geolocations, or cookie tracking, specific user segments are routed to the new feature while the rest see the old version.
 5. Recreate Deployment (All-At-Once)-> The Recreate Deployment is a legacy approach where the existing application is entirely shut down before the new version is brought online.
     How it works: All active server instances running version 1.0 are terminated simultaneously. Once the infrastructure is cleared, the system boots up version 2.0. Users experience an explicit maintenance window during the transition.
+
+Fingerprints and usecases
+Jenkins fingerprinting is a built-in feature that creates a unique MD5 checksum of build artifacts or files. It tracks file usage across different jobs and builds without storing the actual file content, mapping out a clear dependency tree of which upstream build produced a file and which downstream build consumed it.
+Dependency Tracking: Identify exactly which version of a shared library, jar, or binary artifact was used in a specific downstream build or release job
+Traceability & Auditing: Audit the complete lifecycle of a file to see every single build that created, tested, or deployed that exact asset.
+Upstream/Downstream Coordination: Automatically trigger or inform downstream projects when a new, specific version of an upstream dependency is built and fingerprinted.
+Integrity Verification: Quickly verify if a file has unexpectedly changed or become corrupted between the compilation phase and the deployment phase
+
+build success rates, queue wait times, system resource usage, and agent node status. are the metrices to watch in Jenkins.
+
+To stop or prevent multiple deployment jobs from running at the same time in Jenkins, use the disableConcurrentBuilds() option inside your pipeline script,
+
+In Jenkins, a timeout is used to automatically terminate a build, stage, or step if it takes too long to execute. This prevents stuck jobs from indefinitely consuming system resources.

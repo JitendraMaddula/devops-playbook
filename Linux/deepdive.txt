@@ -535,3 +535,12 @@ Difference between init process, sshd process and systemd process
 lsblk (list block devices) command in Linux is used to display information about all available or specified storage devices attached to the system. 
 last -->This is the most common command. It displays a historical list of all successful user logins, logouts, and system reboots by reading the /var/log/wtmp file.
 The halt command is used to terminate all running processes and safely stop the CPU from executing any further instructions, bringing the operating system to a complete stop.
+
+lsns -> To get the processes running inside a specific Linux namespace.
+
+journalctl -f (or) tail -f /var/log/syslog -> -f flag to view these logs in live.
+
+inotifywait: Listens for and streams real-time file events (like open, close, delete, modify). Ideal for running scripts when a file changes.
+inotifywatch: Collects and outputs a summary count table of how many times file events occurred over a set duration.
+
+curl -> The curl command (short for "Client URL") is a powerful command-line tool used to transfer data to or from a network server using one of dozens of supported protocols

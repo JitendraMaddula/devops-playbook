@@ -258,3 +258,17 @@ Git flow: GitFlow is a strict, highly structured branching model that dictates d
     How it works: It relies on two long-lived branches: master (production) and develop (pre-production integration). Supporting branches include short-lived feature/* branches (built off develop), release/* branches (forked from develop for final testing and merged into both master and develop), and hotfix/* branches (forked from master to address emergency production bugs).
 
 Git submodules-> A Git submodule is a feature that allows you to keep one Git repository as a subdirectory of another Git repository. 
+
+Interactive rebase->
+An interactive rebase is a powerful Git tool that allows you to rewrite, clean up, and reorganize your commit history before sharing it with others.
+
+Signed commits->
+Signed commits are code updates in Git that include a cryptographic signature. They use GPG, SSH, or X.509 keys to prove the code came from your real identity and was not changed after you signed it. Hosting platforms display a green "Verified" badge next to these commits
+
+how git identifies/detects file rename->
+Git does not track file renames. Instead, Git records snapshots of your files' contents over time and detects renames dynamically after the fact whenever you run a command like git status, git diff, or perform a merge.
+
+gir rerere ->
+git rerere stands for "Reuse Recorded Resolution" and is a hidden feature that allows Git to remember how you resolved a merge conflict so that the next time it encounters the exact same conflict, it can resolve it for you automatically.
+
+A force push overwrites the commit history of a remote repository with your local repository's history.

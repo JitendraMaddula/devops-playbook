@@ -60,6 +60,14 @@ A master template or blueprint for a server (pre-configured package).
 
 A Placement Group is an AWS feature that lets you influence the physical placement of your Amazon EC2 instances within the underlying hardware of an AWS Data Center.
 
+Types:
+  Cluster Placement Group -> Packs instances close together inside a single Availability Zone.
+  Spread Placement Group -> Places a small group of instances on completely distinct underlying hardware racks, each with independent power and network sources.
+  Partition Placement Group -> Spreads your instances across logical chunks called partitions.
+  Precision Time Placement Group -> Places instances onto specialized hardware that features direct, low-latency access to high-precision clock sources (such as NTP time services).
+
+  Instance profile -> An AWS instance profile is a container that holds an IAM role and passes its permissions to an Amazon EC2 instance at startup.
+
 AMAZON EC2 PRICING MODELS
 - On-Demand: Pay-per-second/hour. No upfront costs. Best for unpredictable workloads or dev/test environments.
 - Reserved Instances: Up to 75% savings for 1-3 year commitments. Best for steady-state production. (Standard and Convertible options).
@@ -70,10 +78,10 @@ AMAZON EC2 PRICING MODELS
 
 example: Amazon EC2 Pricing using a standard general-purpose m5.large instance (Linux, US East/N. Virginia region) as a concrete baseline example: per hour
 1. ondemand: 0.096 USD
-2. reserved instance: 0.041 USD
-3. savings plan: 0.060
-4. spot instance: btwn 0.041-0.046 USD
-5. dediated host: 4.22 USD
+2. reserved instance: 0.060 USD (1-year) 0.041 USD (3-years)
+3. savings plan: 0.060 USD (1-year) 0.041 USD (3-years)
+4. spot instance: btwn 0.043-0.047 USD
+5. dediated host: 5.069 USD
 
 2/2 or 3/3 status checks done while connecting to a ec2 instance
     1. System Status Check --> it checks wether the AWS host hardware OK? such as power, network connectivity, and the hypervisor.
@@ -91,6 +99,10 @@ IAM CORE COMPONENTS
   * Rules: Users can be in up to 10 groups. No nested groups. Cannot assign roles to groups.
 - IAM Role: Temporary access credentials assumable by trusted entities (users, services, federated identities). Powered by AWS STS (Security Token Service).
 - IAM Policy: JSON documents defining permissions. Attached to identities or resources.
+
+The Principle of Least Privilege (PoLP) -> It means giving users, programs, and systems only the bare minimum access and permissions they need to do their specific jobs, and nothing more
+
+AWS STS secure token service -> a web service that lets you request temporary, limited-privilege credentials for IAM users or federated users.
 
 DEEP DIVE: IAM ROLES (HIGH YIELD FOR INTERVIEWS)
 Unlike users, roles do not have long-term credentials. They provide temporary security credentials (valid 15 mins to 12 hours) via STS.
@@ -132,7 +144,6 @@ THREE PREREQUISITES FOR SSM TO WORK (CRITICAL)
 3. Network Connectivity: The instance must be able to reach SSM endpoints (via Internet Gateway, NAT Gateway, or VPC Endpoints).
 
 CORE CAPABILITIES (HIGH YIELD FOR INTERVIEWS)
-
 A. SESSION MANAGER (The "SSH Killer")
 - Purpose: Secure, browser-based or CLI terminal access to instances.
 - Benefits over SSH: No port 22 needed, no key pairs, no bastion hosts required.
@@ -207,9 +218,6 @@ VPC COMPONENTS
 5. Security groups-> inbound traffic at instance level and has ability to only allow rules
 6. NAT gateways -> a managed service that lets resources in a private subnet connect to the internet or other external services.
 
-how many routes can a routable contain for ipv4 and ipv6
-An AWS route table can contain up to 500 IPv4 routes AND 500 IPv6 routes by default.
-
 bastion host / jump server -> It is a specialized Amazon EC2 instance placed in a public subnet. It acts as a secure, controlled gateway allowing administrators to connect via SSH or RDP to other EC2 instances residing in private subnets that have no direct internet access.
 
 vpc peering
@@ -262,6 +270,15 @@ What can be done if we want more NAT gateways before rising a request to AWS
   Deploy Interface Endpoints: Use AWS PrivateLink interface endpoints for internal service communication to reduce packet load and lower data processing costs
   Consolidate subnets: Share a single well-utilized NAT gateway across multiple smaller private subnets if traffic volume and packet rates remain safely below the 100 Gbps or 10 million packets-per-second thresholds
 
+Osi layers->
+Layer 7: Application 
+Layer 6: Presentation
+Layer 5: Session 
+Layer 4: Transport 
+Layer 3: Network
+Layer 2: Data Link 
+Layer 1: Physical 
+
 Elastic Load Balancer (ELB): Automatically distributes incoming application traffic across multiple targets (EC2 instances, containers, Lambdas) in one or more Availability Zones to ensure fault tolerance.
 
 ELB types:
@@ -293,14 +310,26 @@ SNS Core concepts
   Subscribers (Consumers): Register or subscribe to a topic to receive every message sent to it
 
 SQS (Simple Queue Service)
-AWS SQS stands for Amazon Simple Queue Service. It is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications.
+AWS SQS stands for Amazon Simple Queue Service. It s a fully managed message queuing service that lets you send, store, and receive messages between software components at any volume. 
+
+CloudWatch
+CloudWatch is AWS's monitoring and observability service. It does FIVE things:
+  Metrics      — Numbers over time (CPU, memory, requests)
+  Alarms       — "Alert me when X crosses Y threshold"
+  Logs          — Text output from applications and services
+  Dashboards    — Visual graphs on a single screen
+  Events/EB     — "When X happens, trigger Y" (now called EventBridge)
+
+Common Default Metrics by AWS Service
+  Amazon EC2: CPUUtilization, NetworkIn, NetworkOut, DiskReadBytes, and StatusCheckFailed.
+  Amazon RDS: CPUUtilization, DatabaseConnections, and FreeStorageSpace.
+  Amazon EBS: VolumeReadBytes, VolumeWriteBytes, and VolumeQueueLength.
+  Amazon S3: BucketSizeBytes and NumberOfObjects.
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.
 
 What is high Availability -> High availability (HA) in AWS is a system design approach that ensures your applications and data remain accessible with minimal downtime, even if a component like a server or data center fails.
-
-AWS STS secure token service -> a web service that lets you request temporary, limited-privilege credentials for IAM users or federated users.
 
 assume role (important) -> It is an AWS STS API operation that grants an application or user temporary security credentials to access AWS resources they normally cannot reach.
 

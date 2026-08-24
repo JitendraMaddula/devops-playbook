@@ -118,3 +118,5 @@ C-->gcc
 C++-->g++
 Python-->CPython
 Node.js-->V8 Engine
+
+Maven Surefire Plugin is used to execute the unit tests of an application during the test phase of the Maven build lifecycle. It acts as the bridge between Maven and test frameworks like JUnit.

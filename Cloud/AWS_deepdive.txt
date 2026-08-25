@@ -66,7 +66,7 @@ Types:
   Partition Placement Group -> Spreads your instances across logical chunks called partitions.
   Precision Time Placement Group -> Places instances onto specialized hardware that features direct, low-latency access to high-precision clock sources (such as NTP time services).
 
-  Instance profile -> An AWS instance profile is a container that holds an IAM role and passes its permissions to an Amazon EC2 instance at startup.
+Instance profile -> An AWS instance profile is a container that holds an IAM role and passes its permissions to an Amazon EC2 instance at startup.
 
 AMAZON EC2 PRICING MODELS
 - On-Demand: Pay-per-second/hour. No upfront costs. Best for unpredictable workloads or dev/test environments.
@@ -325,6 +325,25 @@ Common Default Metrics by AWS Service
   Amazon RDS: CPUUtilization, DatabaseConnections, and FreeStorageSpace.
   Amazon EBS: VolumeReadBytes, VolumeWriteBytes, and VolumeQueueLength.
   Amazon S3: BucketSizeBytes and NumberOfObjects.
+
+Amazon EFS (Elastic File System)
+Amazon Elastic File System (EFS) is a serverless, fully elastic file storage service designed to provide shared file systems for compute workloads across multiple Amazon EC2 instances.
+
+EFS Storage Classes:
+⚬	EFS Standard (the bustling office — fast, everyday shared access)
+⚬	EFS Standard-Infrequent Access (the filing cabinet — cheaper, accessed less often)
+⚬	EFS One Zone (the local branch — cheaper, limited to one AZ)
+⚬	EFS One Zone-Infrequent Access (the local basement archive — cheapest, rarely accessed)
+
+Amazon S3 (Simple Storage Service)
+Amazon Simple Storage Service (S3) is a highly scalable, object storage service designed to store and retrieve any amount of data from anywhere on the web.
+
+S3 Storage Classes:
+⚬	S3 Standard (the display shelf — immediately available, frequently accessed)
+⚬	S3 Intelligent-Tiering (the smart organizer — automatically moves items based on changing usage)
+⚬	S3 Standard-Infrequent Access (the storage closet — low cost, occasional use)
+⚬	S3 Glacier Flexible Retrieval (the offsite vault — very cheap, takes hours to retrieve)
+⚬	S3 Glacier Deep Archive (the time capsule — cheapest, takes days to retrieve)
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.

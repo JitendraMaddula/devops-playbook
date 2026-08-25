@@ -101,3 +101,13 @@ Senario-> how to debug on why build is taking long time
       •	Git History: If the checkout stage is slow, did a developer accidentally commit massive binary files or a database dump, bloating the repository size?
    Phase 3: Resolution & Prevention
       Once identified, I apply the specific fix. If it's a caching issue, I ensure dependency caching is properly configured on the agent. If it's resource exhaustion, I might scale up the agent or restrict concurrent builds. If it's hanging tests, I would fail the pipeline and send it back to the developer to fix the infinite loop or timeout."
+
+There are four teams in your organisation. How to priorize the builds of each team? so the jobs of team x will always run before team y for example.
+	1.	Organize the Jobs: First, I would organize the jobs so Jenkins can tell which team they belong to. The best way is to create separate Jenkins Folders for each of the four teams (e.g., a "Team X" folder and a "Team Y" folder).
+	2.	Create Job Groups: In the global Jenkins settings, the Priority Sorter Plugin allows you to create "Job Groups." I would create a group for each team's folder.
+	3.	Assign Priority Numbers: Finally, I would assign a priority number to each group. The rule is that lower numbers equal higher priority.
+•	Team X gets Priority 1 (Highest)
+•	Team Y gets Priority 2
+•	Team Z gets Priority 3
+•	Team W gets Priority 4 (Lowest)
+The Result: If the server is busy, and jobs from both Team X and Team Y enter the queue, the plugin will recognize the folders and always push Team X's jobs to the front of the line so they run first.

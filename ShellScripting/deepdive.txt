@@ -370,3 +370,11 @@ ${} (Parameter Expansion)   : The standard way to reference variables. It allows
 << / <<<                    : Feed input to a command (Piping)
 
 Crown job for last day of every month --> 0 0 28-31 * * [ "$(date +\%d -d tomorrow)" = "01" ]
+
+exit status codes-->
+0: Success. The command or script finished completely without any errors.
+1: General Error. A generic catch-all for failures like a permission denied error, division by zero, or a script failing without a custom error number.
+2: Misuse of Shell Builtins. Usually triggered by syntax errors, missing keywords, or invalid arguments passed to a basic command
+126: Command Cannot Execute. The file exists, but the user doesn't have the necessary execution permissions, or it isn't an executable binary.
+127: Command Not Found. The command does not exist, there is a typo, or it is completely missing from your system path $PATH.
+128: Invalid Argument to Exit. Triggered if an exit command is given a non-integer or out-of-bounds parameter

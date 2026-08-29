@@ -39,7 +39,7 @@ AWS GLOBAL INFRASTRUCTURE
 - Availability Zones (AZs): Multiple isolated locations within each Region. Distributing resources across AZs builds highly available/fault-tolerant applications.
 - Local Zones: Extension of an AWS Region bringing core services closer to large population centers for latency-sensitive applications.
 - Edge Locations: Global network of sites that cache content close to users for faster delivery.
-- AWS Regional Edge Caches: Positioned between origin servers and Edge Locations. Hold larger amounts of content to reduce fetching from origin.
+- AWS Regional Edge Caches: Positioned between origin servers and Edge Locations. Hold larger amounts of content to reduce fetching from origin. eg: cloud front
 - Wavelength Zones: Embed AWS compute/storage directly within 5G networks for ultra-low latency.
 
 EC2 - ELASTIC COMPUTE CLOUD
@@ -195,6 +195,12 @@ AWS VPC (Virtual Private Cloud) is a  Virtual Private Cloud (VPC) in cloud compu
 difference between ipv4 and ipv6
  IPv4 uses a 32-bit architecture (yielding ~4.3 billion addresses), while IPv6 uses a 128-bit architecture (yielding 340 undecillion addresses) to solve the global problem of running out of unique IPv4 addresses.
 
+address allocation
+
+
+
+
+
 CIDR
 Classless Inter-Domain Routing, is a method for allocating IP addresses and routing internet traffic more efficiently.
 
@@ -246,8 +252,9 @@ What Can Attach to Transit Gateway?
 
 resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Private Cloud (VPC) resources. While many of these are "soft limits" that can be raised by submitting a request to AWS Support
   components with default limits->
+    CIDR per VPC: 5
     VPCs per Region: 5  
-    Internet Gateways per Region: 5
+    Internet Gateways per Region: 5 (cannot increase on soft limit)
     Route Tables per vpc: 200
     Routes per route table: 500
     Network ACLs (NACL) per vpc: 200
@@ -300,6 +307,13 @@ Key components
     *   **Simple Scaling:** A legacy policy that adjusts capacity based on a single alarm, typically requiring a cooldown period.
     *   **Scheduled Scaling:** Adjusts capacity based on a predictable schedule (e.g., scale up at 8 AM and scale down at 6 PM daily).
 
+Auto scaling Health checks
+
+
+
+
+
+
 SNS (Simple Notification Service)
 AWS SNS stands for Amazon Simple Notification Service. It is a fully managed, push-based publish-subscribe (pub/sub) service that lets you send messages or alerts from applications to multiple subscribers or other services instantly.
 
@@ -308,6 +322,11 @@ SNS Core concepts
   Topics: A central access point where the message is received and broadcasted.
   Characters-> Name, type (Standard and FIFO), ARN and Max Topics
   Subscribers (Consumers): Register or subscribe to a topic to receive every message sent to it
+
+SNS fanout
+
+
+
 
 SQS (Simple Queue Service)
 AWS SQS stands for Amazon Simple Queue Service. It s a fully managed message queuing service that lets you send, store, and receive messages between software components at any volume. 
@@ -325,6 +344,10 @@ Common Default Metrics by AWS Service
   Amazon RDS: CPUUtilization, DatabaseConnections, and FreeStorageSpace.
   Amazon EBS: VolumeReadBytes, VolumeWriteBytes, and VolumeQueueLength.
   Amazon S3: BucketSizeBytes and NumberOfObjects.
+
+Cloudwatch agent
+
+
 
 Amazon EFS (Elastic File System)
 Amazon Elastic File System (EFS) is a serverless, fully elastic file storage service designed to provide shared file systems for compute workloads across multiple Amazon EC2 instances.
@@ -344,6 +367,15 @@ S3 Storage Classes:
 ⚬	S3 Standard-Infrequent Access (the storage closet — low cost, occasional use)
 ⚬	S3 Glacier Flexible Retrieval (the offsite vault — very cheap, takes hours to retrieve)
 ⚬	S3 Glacier Deep Archive (the time capsule — cheapest, takes days to retrieve)
+
+s3 versioning
+
+
+
+S3 replication
+
+
+
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.
@@ -369,3 +401,47 @@ Measured Service is a reference framework defined by the National Institute of S
 
 what is Elasticity
 Elasticity is the ability of a cloud computing system to automatically scale its infrastructure resources up or down in real-time to match changing workload demands
+
+
+Cloud trail
+
+
+Cloud front
+
+
+
+NFS
+
+
+
+ARN
+
+
+
+AWs Organisations
+
+
+
+
+AWS CLI
+
+
+
+addrmetadata service
+
+
+
+Difference between High availibility, Fault tolerance and disaster recovery
+
+
+
+
+shared responsibility model
+
+
+
+IAM access analizer
+
+
+
+

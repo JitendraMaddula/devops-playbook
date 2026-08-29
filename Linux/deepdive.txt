@@ -544,3 +544,9 @@ inotifywait: Listens for and streams real-time file events (like open, close, de
 inotifywatch: Collects and outputs a summary count table of how many times file events occurred over a set duration.
 
 curl -> The curl command (short for "Client URL") is a powerful command-line tool used to transfer data to or from a network server using one of dozens of supported protocols
+
+command to rename multiple files
+
+
+
+ps-fp

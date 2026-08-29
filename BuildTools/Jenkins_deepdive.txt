@@ -260,3 +260,16 @@ build success rates, queue wait times, system resource usage, and agent node sta
 To stop or prevent multiple deployment jobs from running at the same time in Jenkins, use the disableConcurrentBuilds() option inside your pipeline script,
 
 In Jenkins, a timeout is used to automatically terminate a build, stage, or step if it takes too long to execute. This prevents stuck jobs from indefinitely consuming system resources.
+
+Capture shell commands in Jenkins
+
+
+
+Jenkins shared library
+
+
+
+Secret masking mechanasim
+
+
+

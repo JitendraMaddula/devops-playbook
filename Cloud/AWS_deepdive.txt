@@ -196,10 +196,8 @@ difference between ipv4 and ipv6
  IPv4 uses a 32-bit architecture (yielding ~4.3 billion addresses), while IPv6 uses a 128-bit architecture (yielding 340 undecillion addresses) to solve the global problem of running out of unique IPv4 addresses.
 
 address allocation
-
-
-
-
+Address allocation in Amazon Web Services (AWS) manages how public and private IP addresses are assigned to your cloud resources.
+VPC IP Address Manager (IPAM): A tool that helps you plan, track, and monitor IP addresses for your workloads.
 
 CIDR
 Classless Inter-Domain Routing, is a method for allocating IP addresses and routing internet traffic more efficiently.
@@ -308,11 +306,12 @@ Key components
     *   **Scheduled Scaling:** Adjusts capacity based on a predictable schedule (e.g., scale up at 8 AM and scale down at 6 PM daily).
 
 Auto scaling Health checks
-
-
-
-
-
+Auto Scaling health checks monitor your cloud instances and replace any that fail, ensuring your application stays online and healthy.
+Main Types of Health Checks
+  EC2 Status Checks: Looks at the underlying hardware and hypervisor. If the physical host or instance status fails, Auto Scaling replaces it.
+  Elastic Load Balancing (ELB) Checks: Tests if your application responds properly to web requests (HTTP/HTTPS) on a specific path. If the app crashes, the load balancer reports it, and Auto Scaling replaces the instance.
+  Custom Health Checks: Lets you push your own health data from an external system directly into Amazon EC2 Auto Scaling.
+  Amazon EBS Checks: Monitors storage volume performance and replaces instances if the attached block storage becomes impaired.
 
 SNS (Simple Notification Service)
 AWS SNS stands for Amazon Simple Notification Service. It is a fully managed, push-based publish-subscribe (pub/sub) service that lets you send messages or alerts from applications to multiple subscribers or other services instantly.
@@ -324,9 +323,7 @@ SNS Core concepts
   Subscribers (Consumers): Register or subscribe to a topic to receive every message sent to it
 
 SNS fanout
-
-
-
+An Amazon SNS fanout is a messaging design pattern where a single message published to an Amazon SNS topic is automatically replicated and pushed in parallel to multiple subscribed endpoints, such as Amazon SQS queues, Lambda functions, or HTTP endpoints
 
 SQS (Simple Queue Service)
 AWS SQS stands for Amazon Simple Queue Service. It s a fully managed message queuing service that lets you send, store, and receive messages between software components at any volume. 
@@ -346,8 +343,7 @@ Common Default Metrics by AWS Service
   Amazon S3: BucketSizeBytes and NumberOfObjects.
 
 Cloudwatch agent
-
-
+The Amazon CloudWatch Agent is a software package you install on servers to collect system-level metrics, logs, and traces.
 
 Amazon EFS (Elastic File System)
 Amazon Elastic File System (EFS) is a serverless, fully elastic file storage service designed to provide shared file systems for compute workloads across multiple Amazon EC2 instances.
@@ -357,6 +353,8 @@ EFS Storage Classes:
 ⚬	EFS Standard-Infrequent Access (the filing cabinet — cheaper, accessed less often)
 ⚬	EFS One Zone (the local branch — cheaper, limited to one AZ)
 ⚬	EFS One Zone-Infrequent Access (the local basement archive — cheapest, rarely accessed)
+
+An Amazon EFS file system supports a hard quota of up to 25,000 concurrent client connections.
 
 Amazon S3 (Simple Storage Service)
 Amazon Simple Storage Service (S3) is a highly scalable, object storage service designed to store and retrieve any amount of data from anywhere on the web.
@@ -369,13 +367,10 @@ S3 Storage Classes:
 ⚬	S3 Glacier Deep Archive (the time capsule — cheapest, takes days to retrieve)
 
 s3 versioning
-
-
+Versioning in Amazon S3 is a feature that keeps multiple variants or copies of an object in the same bucket.
 
 S3 replication
-
-
-
+Amazon S3 Replication is a fully managed, asynchronous service that automatically copies objects and their metadata between S3 buckets.
 
 capex and OpEx -> Capital Expenditure (CapEx) is a major, one-time upfront investment in physical assets.
 Operational Expenditure (OpEx) is an ongoing, day-to-day cost spent to run a business without upfront commitments.
@@ -402,46 +397,39 @@ Measured Service is a reference framework defined by the National Institute of S
 what is Elasticity
 Elasticity is the ability of a cloud computing system to automatically scale its infrastructure resources up or down in real-time to match changing workload demands
 
-
 Cloud trail
+AWS CloudTrail is a monitoring and logging service that records user activity and API (Application Programming Interface) calls across your Amazon Web Services infrastructure.
 
+Difference between CloudWatch and CloudTrail
+  The primary difference is their focus: AWS CloudTrail logs who did what in your account (identity and API actions), while Amazon CloudWatch monitors how your resources are performing (metrics and performance).
 
 Cloud front
+AWS CloudFront (Amazon CloudFront) is a fast, globally distributed content delivery network (CDN) service that securely delivers websites, videos, applications, and APIs to users with low latency and high transfer speeds
 
-
+How It Works
+  Edge Locations: CloudFront delivers content through a worldwide network of data centers called edge locations and points of presence (PoPs).
+  Caching Content: When a user requests data, CloudFront routes the request to the nearest edge location to provide the lowest possible delay.
+  Origin Servers: If the file is cached at the edge, it is delivered immediately. If not, CloudFront fetches it from an origin server—such as an Amazon S3 bucket, an EC2 instance, or a custom HTTP server.
 
 NFS
-
-
+In AWS, NFS (Network File System) is not a standalone AWS product, but rather a standard network protocol used by multiple AWS storage services to let Linux-based EC2 instances, containers, and on-premises servers mount and share files over a network. 
 
 ARN
+An ARN (Amazon Resource Name) is a unique string that identifies a specific resource in Amazon Web Services (AWS).
 
-
-
-AWs Organisations
-
-
-
+AWS Organisations
+AWS Organizations is a free account management service that lets you centrally govern and manage multiple Amazon Web Services (AWS) accounts under one unified structure
 
 AWS CLI
-
-
-
-addrmetadata service
-
-
+The AWS Command Line Interface (AWS CLI) is an open-source, unified tool from Amazon Web Services that allows you to control, manage, and automate AWS cloud resources directly from your local terminal or command prompt
 
 Difference between High availibility, Fault tolerance and disaster recovery
-
-
-
+High Availability (HA): Minimizes system downtime through quick, automated switching to backup servers during minor hardware or software failures.
+Fault Tolerance: Eliminates downtime completely by using identical, fully mirrored systems that instantly take over without interrupting the user.
+Disaster Recovery (DR): Restores the entire system and data from a remote location after a major event like a fire, flood, or widespread outage.
 
 shared responsibility model
-
-
+The shared responsibility model is a cloud security framework that divides security and compliance duties between your cloud provider and your business
 
 IAM access analizer
-
-
-
-
+AWS IAM Access Analyzer is an Amazon Web Services tool that helps security teams and administrators monitor and analyze access to cloud resources to achieve the principle of least privilege

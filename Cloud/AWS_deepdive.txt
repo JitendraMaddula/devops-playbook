@@ -433,3 +433,62 @@ The shared responsibility model is a cloud security framework that divides secur
 
 IAM access analizer
 AWS IAM Access Analyzer is an Amazon Web Services tool that helps security teams and administrators monitor and analyze access to cloud resources to achieve the principle of least privilege
+
+S3 object lock
+Prevents Amazon S3 objects from being deleted or overwritten for a fixed amount of time or indefinitely. It uses a Write-Once-Read-Many (WORM) model and is primarily used to meet regulatory compliance requirements.
+
+client side architecture
+Refers to the frontend components (e.g., web browsers, mobile apps, IoT devices) that interact directly with the user. In AWS, this often involves static assets hosted on S3 and distributed via CloudFront, interacting with backend services through API Gateway or AWS Amplify.
+
+server side architecture
+Refers to the backend infrastructure handling business logic, data storage, and processing. In AWS, this includes compute services (EC2, ECS, Lambda), databases (RDS, DynamoDB), and internal networking securely deployed within a VPC.
+
+detanative queues
+Dead Letter Queues (Assuming "detanative queues")
+An Amazon SQS queue or SNS topic destination where messages that fail to process successfully after a maximum number of attempts are sent. This isolates proble
+
+cloudwatch custom matix
+Metrics that you manually publish to Amazon CloudWatch from your own applications or scripts (using the PutMetricData API). This allows you to monitor application-specific data (e.g., memory utilization on EC2, user sign-ups) that AWS does not collect by default.
+
+difference between application, network, gateway and classic load balancers
+
+⚬	Application Load Balancer (ALB): Operates at Layer 7 (HTTP/HTTPS). Routes traffic based on URL paths, hostnames, and HTTP headers. Ideal for microservices and modern web applications.
+⚬	Network Load Balancer (NLB): Operates at Layer 4 (TCP/UDP). Provides ultra-high performance, ultra-low latency, and uses static IP addresses. Ideal for high-throughput network traffic.
+⚬	Gateway Load Balancer (GWLB): Operates at Layer 3/4. Routes traffic to third-party virtual appliances like firewalls and intrusion detection systems.
+⚬	Classic Load Balancer (CLB): A legacy load balancer supporting Layer 4 and Layer 7. AWS recommends using ALB or NLB for new deployments.
+
+Purpose of default route
+In a VPC Route Table, the default route (typically 0.0.0.0/0 for IPv4) acts as a catch-all. It directs any network traffic that does not explicitly match other specific routes to a designated gateway, such as an Internet Gateway (for public access) or a NAT Gateway (for outbound-only internet access).
+
+DNS resolution
+The process of translating human-readable domain names (e.g., example.com) into IP addresses. Amazon Route 53 provides highly available public and private DNS services. Within a VPC, the default AWS DNS resolver (AmazonProvidedDNS) automatically resolves internal hostnames.
+
+steps for vpc peering connections
+	1.	Request: The owner of the requester VPC initiates a peering request to the accepter VPC (can be in the same or a different AWS account/Region).
+	2.	Accept: The owner of the accepter VPC accepts the peering request.
+	3.	Update Route Tables: Both VPCs must update their respective route tables to point traffic destined for the peer's CIDR block to the peering connection ID.
+	4.	Update Security: Adjust Security Groups and Network ACLs in both VPCs to allow the desired inbound and outbound traffic.
+
+What is meant by transitive
+In AWS networking, transitive routing means routing traffic through an intermediate network to reach a final destination. 
+
+Can IAM role have passwords --> No
+
+Is S3 Regional
+Yes. While the S3 namespace is global (bucket names must be unique across all AWS accounts) and the console provides a global view, the actual data is stored in a specific AWS Region chosen at the time of bucket creation. Data does not leave that region unless explicitly configured to do so (e.g., Cross-Region Replication).
+
+Data encryption and types
+⚬	Server-Side Encryption (SSE): AWS handles encryption before saving to disk. Options include SSE-S3 (Amazon managed keys), SSE-KMS (KMS managed keys), and SSE-C (Customer provided keys).
+⚬	Client-Side Encryption (CSE): You encrypt the data within your application before sending it to AWS.
+
+Decoupling
+An architectural pattern where distributed system components remain independent and unaware of each other's underlying operations. If one component fails, it does not bring down the entire system. In AWS, this is achieved using asynchronous integration services like Amazon SQS (message queues), Amazon SNS (pub/sub notifications), and Amazon EventBridge.
+
+VPC flow logs
+A feature that captures metadata about the IP traffic flowing into, out of, and across network interfaces in your VPC. The logs are published to Amazon CloudWatch Logs or Amazon S3 and are essential for troubleshooting network connectivity, auditing security group rules, and monitoring network traffic patterns.
+
+Multitire architecture
+A software architecture that divides an application into logical, distinct tiers—typically a Presentation (Web) tier, an Application (Logic) tier, and a Data (Database) tier. In AWS, this is physically mapped by deploying resources into different subnets (e.g., public subnets for web servers, private subnets for application servers and databases) to restrict access and improve security.
+
+AMS
+A service where AWS operates your cloud infrastructure on your behalf. AMS provides an enterprise-grade operating model, handles day-to-day management (patching, backups, monitoring, incident response), and ensures compliance and security, allowing organizations to focus on application development rather than infrastructure operations.

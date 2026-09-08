@@ -451,7 +451,6 @@ cloudwatch custom matix
 Metrics that you manually publish to Amazon CloudWatch from your own applications or scripts (using the PutMetricData API). This allows you to monitor application-specific data (e.g., memory utilization on EC2, user sign-ups) that AWS does not collect by default.
 
 difference between application, network, gateway and classic load balancers
-
 ⚬	Application Load Balancer (ALB): Operates at Layer 7 (HTTP/HTTPS). Routes traffic based on URL paths, hostnames, and HTTP headers. Ideal for microservices and modern web applications.
 ⚬	Network Load Balancer (NLB): Operates at Layer 4 (TCP/UDP). Provides ultra-high performance, ultra-low latency, and uses static IP addresses. Ideal for high-throughput network traffic.
 ⚬	Gateway Load Balancer (GWLB): Operates at Layer 3/4. Routes traffic to third-party virtual appliances like firewalls and intrusion detection systems.

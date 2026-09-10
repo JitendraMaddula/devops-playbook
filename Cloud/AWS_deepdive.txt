@@ -403,6 +403,13 @@ AWS CloudTrail is a monitoring and logging service that records user activity an
 Difference between CloudWatch and CloudTrail
   The primary difference is their focus: AWS CloudTrail logs who did what in your account (identity and API actions), while Amazon CloudWatch monitors how your resources are performing (metrics and performance).
 
+How many days of data can CloudTrail keep?
+AWS CloudTrail keeps data for 90 days by default in its standard event history, but you can store it much longer using trails or CloudTrail Lake.
+
+If you need CloudTrail data for more than 90 days, what can you do?
+Option 1: Send Data to Amazon S3 
+Option 2: Use CloudTrail Lake (Best for easy searching) - CloudTrail Lake is a managed feature that lets you store and run database queries on your logs directly inside CloudTrail.
+
 Cloud front
 AWS CloudFront (Amazon CloudFront) is a fast, globally distributed content delivery network (CDN) service that securely delivers websites, videos, applications, and APIs to users with low latency and high transfer speeds
 
@@ -491,3 +498,86 @@ A software architecture that divides an application into logical, distinct tiers
 
 AMS
 A service where AWS operates your cloud infrastructure on your behalf. AMS provides an enterprise-grade operating model, handles day-to-day management (patching, backups, monitoring, incident response), and ensures compliance and security, allowing organizations to focus on application development rather than infrastructure operations.
+
+amazon inspector
+an automated vulnerability management service that continually scans your cloud resources for security flaws and network exposure.
+
+How does Inspector get into/access the EC2 instance? Does it require any access?
+Amazon Inspector accesses EC2 instances using either an agent-based method via the AWS Systems Manager (SSM) Agent or an agentless method using Amazon EBS volume snapshots, depending on your configured scan mode.
+
+If SSM is not configured and Inspector uses an EBS snapshot, is the snapshot alone enough to identify vulnerabilities?
+Yes, the EBS snapshot alone is enough for Amazon Inspector to identify software vulnerabilities.
+
+If Inspector finds a vulnerability, what is the next action?
+1. Review and Prioritize (Find the Worst Bugs First) - Inspector gives every vulnerability an Amazon Inspector Risk Score. This is a smart score that looks at how dangerous the bug is and whether your instance is actually exposed to the internet.
+2. Remediate (Fix the Problem) - The finding will tell you exactly what is wrong and how to fix it.
+3. Automate the Next Actions (Optional) - Most companies do not just look at the Inspector dashboard. They set up AWS to automatically route the alert to the right people:
+4. Re-scan and Close - Once you update the software or change the network settings, Inspector will notice the change during its next automatic scan. If the vulnerability is gone, Inspector will automatically change the status of the finding to Closed.
+
+Where will the Inspector finding be sent?
+By default, Amazon Inspector findings are automatically sent to the Amazon Inspector Console.
+
+How will the finding be triggered?
+An Amazon Inspector finding is not triggered by a person clicking a button. Instead, Inspector is fully automated and runs continuously in the background.
+
+How will all the team members be informed about the vulnerability?
+To inform all your team members about a vulnerability, you need to connect Amazon Inspector to the communication tools your team already uses every day.
+
+Does Inspector scan EC2 instances and container images? What other capabilities does it have?
+It scans Amazon EC2 instances for operating system and application bugs. For container images, it integrates directly with Amazon ECR (Elastic Container Registry) to inspect your container layers. and also scans AMI's
+
+Is the scanning Amazon Inspector in scheduled or triggered?
+Amazon Inspector relies primarily on an event-driven, triggered approach rather than a traditional clock-based schedule.
+
+Lambda has a 15-minute maximum execution time — how does Inspector scan Lambda?
+Amazon Inspector does not execute your Lambda functions to scan them; instead, it performs static analysis by directly inspecting the function's deployment package and code stored in AWS Lambda.
+
+If the Lambda function takes more than 15 minutes, what will you do?
+AWS Lambda has a hard maximum timeout limit of 15 minutes (900 seconds), so the function will be automatically terminated by the service when it reaches this limit.
+
+what is Amazon Macie
+Amazon Macie is a fully managed data security and privacy service that uses machine learning and pattern matching to discover, classify, and protect sensitive data stored in Amazon S3 and also scans ECR images
+
+Is Amazon Macie scanning scheduled or triggered?
+Amazon Macie uses a combination of both scheduled and continuous automated processes.
+
+If an object is put into an S3 bucket, does Macie scan immediately, at a particular time, or at the end of the day?
+When you put a new object into an Amazon S3 bucket, Amazon Macie does not scan it immediately out-of-the-box.
+1. Automated Sensitive Data Discovery (Daily Evaluation) - If you are using Macie's default Automated Sensitive Data Discovery feature, Macie runs a daily evaluation cycle
+2. Targeted Discovery Jobs (Scheduled by You) - If you created a custom Sensitive Data Discovery Job, you control the timing
+3. Immediate Scanning (Requires Custom Setup) - If you absolutely need the object to be scanned immediately upon upload, Macie cannot do this natively because its backend architecture is optimized for processing large batches of data rather than real-time streams.
+
+Where are Macie findings sent?
+the raw details are saved inside the Macie Console. 
+
+Are the findings sent to CloudWatch or somewhere else?
+No, raw security findings are not sent directly to CloudWatch Logs. Instead, Amazon Macie publishes its findings to Amazon EventBridge (which used to be called CloudWatch Events)
+
+How does image scanning work after the image is pushed to ECR?
+the scanning workflow activates automatically based on the specific scanning frequency you have configured
+Step 1: The Initial Trigger (Scan on Push)
+Step 2: Running the Scan (Basic vs. Enhanced)
+Step 3: Life After the Push (The Re-Scan Mechanism)
+Step 4: Outputting Results
+
+AWS WAF
+AWS WAF (Web Application Firewall) is a cloud security service that protects web applications and APIs from common web attacks and malicious traffic
+
+What kind of rules do we add in AWS WAF?
+AWS WAF rules tell the firewall exactly what traffic to let in and what traffic to block. You can mix and match different types of rules to protect your application.
+1. Managed Rule Groups - These are pre-made rules created and updated by AWS or security experts.
+2. Custom Rules (Rules You Make) - You can create your own rules to match specific patterns in the incoming traffic.
+3. Advanced Rules - These rules look at the behavior of the traffic rather than just the code.
+
+Where can WAF be configured? Which AWS services can use WAF?
+AWS WAF cannot be deployed anywhere as a standalone tool. Instead, it must be attached directly to specific AWS services that handle your incoming web traffic like Amazon CloudFront, Application Load Balancer (ALB), Amazon API Gateway, AWS AppSync, Amazon Cognito.
+
+If the image is in ECR, how does Trivy get the image to scan?
+Trivy connects directly to Amazon Elastic Container Registry (ECR) using your built-in AWS credentials and pulls the image layers locally for analysis.
+
+Is GuardDuty enabled by default?
+Amazon GuardDuty is a managed threat detection service that continuously monitors your AWS accounts, workloads, and data for malicious or unauthorized behavior
+
+Is GuardDuty a global service or region-specific service?
+region specific
+

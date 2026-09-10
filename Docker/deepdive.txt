@@ -1,209 +1,110 @@
 Docker is a software platform for building applications based on containers 
-------------------------------------------------------------------------------------------------------
+
 Containers & Virtual Machines:
-
-One of the goals of modern software development is to keep applications on the same host
-or cluster isolated from one another so they don’t interfere with each other’s operation or maintenance.
-
 Virtual Machines:
-One solution to this problem has been virtual machines, which keep applications on the same hardware 
-entirely separate, and reduce conflicts among software components and competition for hardware resources
-to a minimum. 
-
-But virtual machines are bulky each requires its own OS, so is typically gigabytes in size and 
-difficult to maintain and upgrade.
-
+One solution to this problem has been virtual machines, which keep applications on the same hardware entirely separate, and reduce conflicts among software components and competition for hardware resources to a minimum. 
+But virtual machines are bulky each requires its own OS, so is typically gigabytes in size and difficult to maintain and upgrade.
 Containers:
-Containers, by contrast, share the same underlying kernel and isolate applications 
-execution environments from one another. Due to this they are usually in megabytes and boot up instantly.
-------------------------------------------------------------------------------------------------------
+Containers, by contrast, share the same underlying kernel and isolate applications execution environments from one another. Due to this they are usually in megabytes and boot up instantly.
 A container is a standalone unit of software that packages together applications with all its 
 dependencies and configurations.
-------------------------------------------------------------------------------------------------------
+
 Docker Architecture:
-
-Docker daemon: It is also referred to as ‘dockerd’ and it accepts Docker API requests 
-and manages Docker objects such as images, containers, networks, and volumes. 
-It can also communicate with other daemons to manage Docker services.
-Note: A daemon is a service process that runs in the background and functionality to other processes.
-
-Docker Client: It is the way that enables users to interact with Docker. 
-It sends the docker commands to docker daemon. The Docker client can communicate 
-with more than one daemon.
-
-Docker Registry: It hosts the Docker images and is used to pull and push the docker images 
-from registry. Docker Hub is the public registry that anyone can use, 
-and Docker is configured to look for images on Docker Hub by default.
-
+Docker daemon: It is also referred to as ‘dockerd’ and it accepts Docker API requests and manages Docker objects such as images, containers, networks, and volumes. It can also communicate with other daemons to manage Docker services.
+    Note: A daemon is a service process that runs in the background and functionality to other processes.
+Docker Client: It is the way that enables users to interact with Docker. It sends the docker commands to docker daemon. The Docker client can communicate with more than one daemon.
+Docker Registry: It hosts the Docker images and is used to pull and push the docker images from registry. Docker Hub is the public registry that anyone can use, and Docker is configured to look for images on Docker Hub by default.
 Docker Host: It is the physical host on which Docker Daemon is running 
 and docker images and containers are created.
-------------------------------------------------------------------------------------------------------
+
 Docker Images:
+Docker is used to create, run and deploy applications in containers. It contains application code, libraries, tools, dependencies and other files needed to make an application run.
+    In simple words a Docker image is an executable file, that creates a Docker container. 
+    A Docker image is comparable to an AMI in AWS.
+Docker images are a reusable and can be deployed on any host. Developers can take the Docker image from one project and use them in another. This saves the user time, because they do not have to recreate an image from scratch.
 
-Docker is used to create, run and deploy applications in containers. 
-A Docker image contains application code, libraries, tools, dependencies and other files 
-needed to make an application run.
-
-In simple words a Docker image is an executable file, that creates a Docker container. 
-A Docker image is comparable to an AMI in AWS.
-
-Docker images are a reusable and can be deployed on any host. Developers can take the Docker image 
-from one project and use them in another. This saves the user time, because they do not have to 
-recreate an image from scratch.
-------------------------------------------------------------------------------------------------------
 Docker Image Repository:
+Docker images can be stored in private or public repositories, such as Docker Hub, Amazon Container Registry etc. 
 
-Docker images can be stored in private or public repositories, 
-such as Docker Hub, Amazon Container Registry etc. 
-
-https://hub.docker.com/
-------------------------------------------------------------------------------------------------------
 Commands:
-
 docker search <image-name> --> To search for Images in Docker Hub
-
 docker pull <image>:<tag> --> To pull an image from a registry/artifactory to our local system
-
 docker image ls or docker images -> To list the images present locally
-
 docker rmi <image>:<tag>/<image-id> --> To delete an docker image
-------------------------------------------------------------------------------------------------------
+
 Containers:
-
 docker run <image>:<tag> --> To create a container
-
 docker run -it <image>:<tag> --> To create a container with a terminal and interact with it
-
-Examples:
-
-docker run -it ubuntu --> To create a container with ubuntu Image [When no tag is provided - Docker uses latest as tag]
-docker run -it ubuntu:24.04 --> To create a container with Ubuntu Image with tag 24.04
-
-docker run jenkins/jenkins --> To create a container with Jenkins Image
-
 docker ps --> To list all the running containers
 docker ps -a --> To list all the containers
-
 docker rm <container-name/container-id> --> To remove a stopped container
 docker rm <container-name/container-id> --force --> To remove a container
-
 docker stop <container-name/container-id> --> To stop a running container
-
 docker start <container-name/container-id> --> To start a stopped container
 docker start -i <container-name/container-id> --> To start a stopped container and interact with it [Attach to Base Proces]
-
-ctrl p+q --> To exit from the container wihtout killing the shell terminal [Esacpe Sequence]
-
+    ctrl p+q --> To exit from the container wihtout killing the shell terminal [Esacpe Sequence]
 docker attach <container-name/container-id> --> To attach to the base process of the container 
-
     1. If the base process is a shell terminal - The command attaches to the sheel and gives you a terminal to access
     2. If the base process is an application - The command attaches to the stdout and stderr of the application
-
 docker exec <container-name/container-id> <command> --> To execute a command inside a running container
 docker exec -it <container-name/container-id> bash/sh --> To get inside a container with an interactive terminal
-
 docker logs <container-name/container-id> --> To see the logs of the application/base process
-
 docker run -p <host-machine-port>:<container-port> <image> --> To create a container with port publishing [Exposing Applications]
+    Example:
+    docker run -d -p 8080:8080 jenkins/jenkins
 
-Example:
-
-docker run -d -p 8080:8080 jenkins/jenkins
-docker run -d -p 80:80 nginx
-------------------------------------------------------------------------------------------------------
 Dockerfile:
 it is a plane text file, that contains a set of instructions used to create a custom docker image, Default file name is Dockerfile
-
 Default Name: Dockerfile
-
 Commands:
-
 docker build -t <image>:<tag> . --> To build a custom docker image using Dockerfile
-
 docker build -t <image>:<tag> -f <dockerfile-path> . --> To build a custom docker image with a different Dockerfile name or path
-
 docker build -t <image>:<tag> <context-path> --> To build a custom docker image with custom context path [Where docker build commands are executed]
-------------------------------------------------------------------------------------------------------
-Dockerfile Instructions:
 
+Dockerfile Instructions:
 1. FROM
 this instruction is used to set the base image for the docker file. It acts as a starting point for every other instruction. A vaild docker file must always start with a From instruction.
 The From instruction can appear multiple times in the Dockerfile making it a multi-stage build process.
 Syntax:
 FROM <image>:<tag>
-Example:
-- FROM alpine
-- FROM maven
-- FROM amazoncorretto
-------------------------------------------------------------------------------------------------------
+
 2. RUN
 This instruction is used to execute commands during the image build process. Useful in installing packages, creating directories, compiling code etc.
 Every RUN instruction creates a new intermediate image layer but too many layers makes the image inefficient.
 Syntax:
-
 RUN <command>
 
-Example:
-
-RUN apt update
-RUN apt install -y git
-
-(or)
-
-RUN apt update && apt install -y git
-------------------------------------------------------------------------------------------------------
 3. COPY
-his instruction is used to copy the files or directories from the host machine to the image.
+This instruction is used to copy the files or directories from the host machine to the image.
 Syntax:
-
 COPY <host-machine-path> <image-path>
 COPY --chown=<user>:<group> <host-machine-path> <image-path>
 
-Example:
-
-COPY script.sh scripts/script.sh
-------------------------------------------------------------------------------------------------------
 4. ADD
 This instruction is also used to copy files and directories, however, the add instruction does two extra things, 
-1. auto extract tar archives to the destination, 
-2. can download files from an URL.
+    1. auto extract tar archives to the destination, 
+    2. can download files from an URL.
 Syntax:
-
 ADD <host-machine-path> <image-path>
 ADD --chown=<user>:<group> <host-machine-path> <image-path>
 ADD <url> <image-path>
 ADD <tar-archive> <image-path>
 
-Example:
-
-ADD script.sh scripts/script.sh
-ADD apache-tomcat-9.0.121.tar.gz /opt/
-ADD https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.121/bin/apache-tomcat-9.0.121.tar.gz /opt/
-------------------------------------------------------------------------------------------------------
 5. CMD
 this instruction is used to seta default entry point of the container. If a docker file has multiple CMD instructions only the last ones gets executed
 # Syntax:
 CMD <command>
 
-# Examples:
-CMD ["bash", "script.sh"]
-CMD ["java", "-jar", "app.jar"]
-------------------------------------------------------------------------------------------------------
 6. ENTRYPOINT
 This instruction is also used to set the default execution point just like CMD if multiple ENTRYPOINT are defined in Dockerfile only the last one gets executed. 
 # Syntax:
 ENTRYPOINT <command>
-
-# Examples:
-ENTRYPOINT ["bash", "script.sh"]
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
 # To override the entrypoint during docker run:
 docker run --entrypoint <command> <image> 
-------------------------------------------------------------------------------------------------------
+
 Difference B/W CMD and ENTRYPOINT:
 While both the instructions are used to set a default entry point of the container in case of CMD if a command is passed during docker run the original CMD instruction set in the docker file get completely replaced. But with ENTRYPOINT if a command is passed during docker run that command will be taken as an orgument to the original ENTRYPOINT.
-------------------------------------------------------------------------------------------------------
+
 Assingment:
 
 1. Create a Custom Docker Image Using Dockerfile that clones a repository and generates a .jar file and runs it at container startup.

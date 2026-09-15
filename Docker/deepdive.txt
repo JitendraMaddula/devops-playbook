@@ -105,31 +105,203 @@ docker run --entrypoint <command> <image>
 Difference B/W CMD and ENTRYPOINT:
 While both the instructions are used to set a default entry point of the container in case of CMD if a command is passed during docker run the original CMD instruction set in the docker file get completely replaced. But with ENTRYPOINT if a command is passed during docker run that command will be taken as an orgument to the original ENTRYPOINT.
 
-Assingment:
+7. ENV
+Sets environment variables that persist during the remainder of the image build process and inside the final running container.
+# Syntax:
+ENV <KEY>=<VALUE>
+# Set env vars during docker run:
+docker run --env <key>=<value> --env <key>=<value> <image>
+# Set env vars using an environment file:
+docker run --env-file <file-path> <image>
 
-1. Create a Custom Docker Image Using Dockerfile that clones a repository and generates a .jar file and runs it at container startup.
-
-2. Verify the behavior of these permutations:
-
-i. Without passing any command during Docker Run
-ii. By passing a command during Docker Run
-
-a.  CMD []
-    EP []
-
-b.  EP []
-    CMD []
-
-c.  EP []
-    EP []
-
-d.  CMD []
-    CMD []
-
-e.  EP []
-    CMD []
-    CMD []
-------------------------------------------------------------------------------------------------------
-ARG:
+8. ARG
 This instruction is used to set variables in dockerfiles whose value can be passed during docker build process.
+# Syntax:
+ARG <variable>
+# (or)
+ARG <variable>=<default-value>
+# Passing value during docker build:
+docker build --build-arg VERSION=24.04 -t <image>:<tag> .
 
+9. WORKDIR
+Sets the current working directory for any subsequent RUN, CMD, ENTRYPOINT, COPY, and ADD instructions. If the specified directory does not exist, Docker will create it automatically.
+Syntax:
+WORKDIR /path/to/directory
+
+10. EXPOSE
+Informs Docker that the container listens on specific network ports at runtime. This acts as documentation between the person who builds the image and the person who runs the container; it does not actually publish the port to the host machine (which requires the -p flag when running).
+Syntax:
+EXPOSE <port> [<port>/<protocol>...]
+
+11. USER
+Sets the username (or UID) and optionally the user group (or GID) to use for the remainder of the build process and as the default user when the container runs. This is commonly used to drop root privileges for security.
+Syntax:
+USER <user>[:<group>]
+# or
+USER <UID>[:<GID>]
+
+12. VOLUME
+Creates a mount point and marks it as holding externally mounted volumes from the native host or other containers. It prevents data stored in that directory from being committed to the container's image layer.
+Syntax:
+VOLUME ["/path/to/directory"]
+# or
+VOLUME /path/to/directory
+
+13. SHELL
+Overrides the default shell used for the shell form of commands (like RUN, CMD, and ENTRYPOINT). The default on Linux is ["/bin/sh", "-c"] and on Windows is ["cmd", "/S", "/C"].
+Syntax:
+SHELL ["executable", "parameters"]
+(Example: SHELL ["powershell", "-command"])
+
+Docker tag
+docker tag <old-image>:<tag> <new-image-name>:<tag> --> To retag an image with another name
+
+
+Docker Push
+1. Dockerhub
+Naming Convention: <account/username>/<repository>:<tag>
+
+Pre-Requisites:
+1. Create a Dockerhub account and authenticate on the host machine using docker login command
+2. Tag or Retag your local image to follow Dockerhub's required naming convention
+
+Commands:
+docker login -- authenticate to docker hub interactively
+echo "<password>" | docker login -u <username> --password-stdin --> authenticate non-interactively [Useful for CI/CD]
+docker push <username>/<repository>:<tag> --> To Push image to DockerHub
+
+2. ECR
+Naming Convention: <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<repository>:<tag>
+a. Using AWS ECR Get Login - Temporary Session [12 Hours]
+Pre-Requisites:
+1. Setup AWS CLI and configure Access Key and Secret Key
+2. Authenticate to AWS ECT on the host machine using aws ecr get-login-password command
+3. Create a repository in ECR
+4. Tag or Retag your local image to follow AWS ECR required naming convention
+Commands:
+aws ecr get-login-password | docker login -u AWS --pasword-stdin  <aws-account-id>.dkr.ecr.<region>.amazonaws.com
+
+b. Using ECR-Credential Helper [Permanent Connection]
+Pre-Requisites:
+1. Setup AWS CLI and configure Access Key and Secret Key
+2. Install AWS ECR Credential Helper
+3. Edit config.json file under .docker folder to enable credential helper
+4. Tag or Retag your local image to follow AWS ECR required naming convention
+
+sudo apt install amazon-ecr-credential-helper --> To install cred-store plugin
+Edit the config.json file under .docker folder
+vi ~/.docker/config.json
+{
+    "credStore": "ecr-login"
+}
+
+Volumes:
+In Docker, containers are ephemeral [Short Lived], which means any data written inside a container is lost when the container is removed. To solve this problem, Docker provides volumes and mounts to persist data even after container lifecycle.
+
+1. Docker Volumes:
+Docker volumes are the preferred and most managed way to persist data in Docker. A Docker volume is created and managed by Docker itself and is stored in Docker’s internal directory on the host system. Docker volumes are independent of containers, meaning they continue to exist even after containers are deleted. 
+Docker volumes are portable, safer, and work consistently across different environments.
+Path: /var/lib/docker/volumes
+Commands:
+docker volume ls -- To list all docker volumes on the host machine
+docker volume create <volume-name> --> To create a Docker Volume
+docker volume rm <volume-name> --> To remove a Docker Volume
+docker run -v <docker-volume-name>:<container-path> <image> --> To create container with Docker Volume
+
+2. Bind Mount:
+Bind mounts allow you to mount a specific directory or file from the host system directly into a container. Unlike Docker volumes, bind mounts depend heavily on the host’s directory structure and path. 
+Any changes made inside the container are immediately reflected on the host, and vice versa. 
+Bind mounts are less portable and can cause permission or security issues if not handled carefully.
+Commands:
+docker run -v <host-path>:<container-path> <image> --> To create a container with Bind Mount
+
+3. Anonymous Volumes:
+Anonymous volumes are similar to Docker volumes but do not have a user-defined name. Docker automatically creates them when a container starts, usually when a volume is defined in the Dockerfile without a name.
+
+Docker Networks:
+1. Bridge [--network bridge]
+The default network driver of Docker is Docker Bridge and the network name is Docker0. By
+default, all the containers created without specific network configuration during Docker Run
+will be attached to the default network
+To access these containers from outside we need to map the ports using publish during
+Docker run
+
+2. Host Network [--network host]
+Host network will remove any network isolation between the docker host and the containers.
+For instance, if you run a container on port 5000, it will be accessible on the same port on the docker host 
+without any explicit port mapping. The containers also don’t get their own ip-address.
+
+Host network is generally used for single container nodes as it provides high performance. It
+is also used when we have to map large number of ports to the container.
+
+3. Null Network [--network none]
+the None network keeps the container in complete isolation, i.e. they are not connected to
+any network or container.
+One use case might be to run batch jobs which are scheduled programs that are assigned to
+
+Commands:
+docker network ls --> To list all the Docker networks on the host machine
+docker network create <network-name> --> To create a custom bridge network
+docker network rm <network-name> --> To delete a docker network
+docker run --network <network-name> <image> --> To create a container attached to a specific network
+docker network connect <network-name> <container-name> --> To connect a running container to a network
+docker network disconnect <network-name> <container-name> --> To disconnect a running container from a network
+
+Docker Prune:
+As we start working with Docker, it’s also easy to accumulate an excessive number of unused
+images, containers, and data volumes that clutter the output and consume disk space.
+Docker provides a single command that will help to clean up images, containers, volumes, and
+networks which are dangling
+
+Commands:
+docker system prune --> Removes all dangling images, Unused Networks, Stopped Containers and unused build cache
+docker system prune -a --> Removes all unused images, Unused Networks, Stopped Containers and unused build cache
+docker image prune --> Removes all dangling images
+docker image prune -a --> Removes all Unused images
+docker network prune --> Removes all unused networks
+docker container prune --> Removes all stopped containers
+docker volume prune --> Removes all unused anonymous volumes
+docker volume prune -a --> Removes all unused volumes
+docker builder prune --> Removes all unused dangling build caches
+docker builder prune -a --> Removes all unused build caches
+
+Dangling Images
+A dangling image in Docker unused image with no name and tag. It’s leftover when you update or rebuild an image. It just takes up space and can be deleted to free storage.
+docker image ls -a --> To list both tagged and dangling images
+docker image ls -a -f dangling=true --> To list only dangling images
+docker image prune --> To remove Dangling Images
+
+Miscellaneous Commands:
+docker ps -a -f status=exited --> To list all stopped [exited] containers
+docker ps -aq --> To list the container ID's only [-q for quiet mode]
+docker ps -aq | xargs docker rm --force --> To remove all containers
+docker ps -q | xargs docker stop --> To stop all running containers
+
+Docker Multi Stage Builds:
+One of the most challenging things about building images is keeping the image size down. 
+The docker multi-stage builds are a way of organizing Dockerfile to minimize the size of the 
+final docker image, container and ultimately improve the performance of the container.
+In a multi-stage build we will have multiple FROM instructions in a single Dockerfile and each FROM instruction 
+begins a new stage. We can selectively copy artifacts from one stage to another.
+Basically, instead of keeping all the unnecessary supported libraries, dependency files etc. 
+using multi-stage builds we can discord all these components to make our application light and less vulnerable.
+
+Docker Compose:
+Docker Compose is used to run multiple containers as a single service. With Docker compose
+file we can start all the required containers as a service without the need to start each one of
+them separately.
+
+Commands:
+docker compose up --> To start the services
+docker compose -f <file-name> up --> To use a specific file
+docker compose up -d --> To start services in background
+docker compose down --> To bring down the services
+docker compose ps --> To list the running containers managed by docker compose
+
+what are rest api'S
+diff btwn COPY nad ADD at interprise level
+Diff btwn docker hub and ECR
+Docker push workflow
+what is meant by digest and hw is it different from tag
+docker prune 
+.docker ignore

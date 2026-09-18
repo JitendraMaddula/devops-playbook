@@ -1,0 +1,125 @@
+Kubernetes
+--------------------------------------------------------------------------------------------------------------
+16-09-26 - class 1
+--------------------------------------------------------------------------------------------------------------
+K8S Master - t2.medium
+K8S Workers - t2.micro
+
+kubeadm token create --print-join-command --> To create a new join command
+
+kubectl get nodes --> To list all the nodes of the cluster
+--------------------------------------------------------------------------------------------------------------
+Pod Definition File:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: lb
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+
+kubectl apply -f <manifest>.yaml --> To apply a Kubernetes Manifest file
+--------------------------------------------------------------------------------------------------------------
+Commands:
+
+kubectl run <pod-name> --image <image> --> To create a pod using kubectl CLI
+
+kubectl get pods --> To list the pods
+kubectl get pods -o wide --> To see more information
+
+kubectl describe <object-kind> <object-name> --> To describe a kubernetes object
+
+kubectl delete <object-kind> <object-name> --> To delete a kubernetes object
+--------------------------------------------------------------------------------------------------------------
+Manifest File Fields:
+
+1. apiVersion:
+
+Ex: v1, apps/v1, storage.k8s.io/v1, autoscaling/v2
+
+kubectl api-versions --> To list all the api-versions available in Kubernetes
+--------------------------------------------------------------------------------------------------------------
+2. kind:
+
+Ex: Pod, Deployment, ConfigMap, Service etc
+
+kubectl api-resources --> To list all the resources/objects that can be created in kubernetes
+--------------------------------------------------------------------------------------------------------------
+3. metadata:
+
+Fields: name, namespace, labels and annotations
+--------------------------------------------------------------------------------------------------------------
+4. labels:
+
+Ex:
+
+labels:
+  app: frontend
+
+labels:
+  app: frontend
+  env: prod
+--------------------------------------------------------------------------------------------------------------
+5. selectors:
+
+a. equity-based selectors:
+
+Operators Supported: =, !=, ==
+
+b. set-based selectors:
+
+Operators Supported: In, NotIn, Exist
+
+Commands:
+
+kubectl get po -l app=frontend --? To use equity based selectors for selecting pods with labels app=frontend
+kubectl get po -l 'app in (frontend, backend)' --> To use set based selectors for selecting pods with labels app is either frontend or backend
+--------------------------------------------------------------------------------------------------------------
+6. spec:
+--------------------------------------------------------------------------------------------------------------
+Pod Phases/Lifecycle:
+
+1. Pending
+2. Running:
+3. Succeeded/Completed:
+4. Failed:
+5. Unknown:
+--------------------------------------------------------------------------------------------------------------
+
+Manifest files fileds1. API version
+It is used to define the version of api kubernetes uses to create an object.
+
+2. Kind
+It specifies the type of kubernetes object being created. 
+
+	3. Metadata
+It is used to set information about the object we are creating like name of the object/pod, labels to be used for the object namespace and annotations 
+
+4. Labels
+These are key value pairs attached to kubernetes objects for identification and grouping, commonly used by services and selectors
+
+5.Selectors
+They are used to identify kubernetes objects using there labels.
+There are two types of selectors in kubernetes1. Equity-based selectors
+Used to identify objects by exact and key and value.
+2. Set based selectors
+Used to identify objects by keys based on set of values.
+
+6.State
+This is used to define the core information that is the desired state of the kubernetes object
+
+
+Pod phases/Lifecycles
+1.Pending
+The pod has been accepted by kubernetes cluster but it is not yet running.
+2.Running
+The pod is scheduled on a node and alll the containers have been created.
+3. Succeeded/Completed
+All the containers in the pod have terminated in success that is containers exited with 0 exit code
+4. FailedAll the containers in the pod have terminated but atleast one container exited with non-zero exit code 
+5.Unknown
+the state could not be determined due to an error in communication with the nod where the pod was running

@@ -582,3 +582,21 @@ Is GuardDuty a global service or region-specific service?
 region specific
 
 Cross region replication
+
+Can we attach one EBS from one region to another region
+No
+
+What is meant by scaleup/scaledown and scalein/scaleout
+
+types of IAM policies (restructered)
+
+Types of monitoring in AWS and while explaing give examples of few matrices of different services
+
+detach keys and modifications
+
+three states of alaram
+
+explain a proper features of s3 storage classess and also lifecycle policies
+
+How to transfer the resources from one account to another
+

@@ -298,12 +298,41 @@ docker compose down --> To bring down the services
 docker compose ps --> To list the running containers managed by docker compose
 
 what are rest api'S
-diff btwn COPY nad ADD at interprise level
+It is an architectural style that allows different software applications to communicate with one another over the internet. 
+
 Diff btwn docker hub and ECR
+The primary difference between Docker Hub and Amazon Elastic Container Registry (ECR) is their ecosystem focus and target audience. Docker Hub is a cloud-agnostic, public-first registry designed for community sharing and open-source projects, while Amazon ECR is a fully managed, private-first registry built explicitly for organizations deeply integrated into the Amazon Web Services (AWS) ecosystem.
+
 Docker push workflow
+A Docker push workflow automates building your application container, authenticating with a secure registry, and publishing the final image
+
 what is meant by digest and hw is it different from tag
-docker prune 
+A digest is a unique, unchangeable cryptographic hash (like a SHA-256 string) calculated directly from a container image's content, while a tag is a human-readable, movable label (like v1.0 or latest) that points to an image
+ 
 .docker ignore
+A .dockerignore file is a configuration file used to specify which files and directories should be excluded from the Docker build context.
+
+docker ps --filter "status=exited" -->List only stopped containers
+
+docker kill <container_id> --> kill a container
+
+docker context --> By default, when you run commands like docker ps or docker run, your terminal talks to a local Docker daemon running on your machine via a Unix socket. This default setup is called the default context.
+
+What is layer Caching --> Docker layer caching is a optimization mechanism that reuses previously built Docker image layers to drastically speed up subsequent image builds.
+
+How dangling images are generated --> Dangling images are generated when a container image loses its repository name and tag—appearing as <none>:<none>—because a new build or re-tagging action supersedes it
+
+Which one is faster in docker vilume or bind mount
+bind mount is faster
+
+How to restrict a container on how much resource to use 
+softlimit An advisory, flexible boundary or a guaranteed reservation. and hardlimit  An absolute, non-negotiable ceiling for a resource.
+
+How to check resource utilization of a container
+docker stats
+
+docker inspect
+The docker inspect command provides low-level, detailed information about Docker-managed constructs (such as containers, images, volumes, networks, and configs) in a comprehensive JSON array format
 
 Assignment
 Create Jenkins JobMultiple agentscheckout, test using sonarqube,buid docker image, scan using trivy, push it to ECR & deploy as a container on docker using master slave

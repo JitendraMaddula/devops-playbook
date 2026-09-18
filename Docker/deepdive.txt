@@ -230,7 +230,6 @@ Docker run
 Host network will remove any network isolation between the docker host and the containers.
 For instance, if you run a container on port 5000, it will be accessible on the same port on the docker host 
 without any explicit port mapping. The containers also don’t get their own ip-address.
-
 Host network is generally used for single container nodes as it provides high performance. It
 is also used when we have to map large number of ports to the container.
 
@@ -305,3 +304,6 @@ Docker push workflow
 what is meant by digest and hw is it different from tag
 docker prune 
 .docker ignore
+
+Assignment
+Create Jenkins JobMultiple agentscheckout, test using sonarqube,buid docker image, scan using trivy, push it to ECR & deploy as a container on docker using master slave

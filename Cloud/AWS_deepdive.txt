@@ -102,8 +102,6 @@ IAM CORE COMPONENTS
 
 The Principle of Least Privilege (PoLP) -> It means giving users, programs, and systems only the bare minimum access and permissions they need to do their specific jobs, and nothing more
 
-AWS STS secure token service -> a web service that lets you request temporary, limited-privilege credentials for IAM users or federated users.
-
 DEEP DIVE: IAM ROLES (HIGH YIELD FOR INTERVIEWS)
 Unlike users, roles do not have long-term credentials. They provide temporary security credentials (valid 15 mins to 12 hours) via STS.
 A role requires two policies:
@@ -120,6 +118,7 @@ Types of Policies:
   * Customer Managed: Custom, version-controlled by you. (Best practice).
   * Inline: 1:1 relationship embedded directly in an entity (Use sparingly).
 - Resource-Based: Attached directly to a resource (e.g., S3 Bucket Policy). Essential for cross-account access. Must contain a "Principal" element.
+- Session-Based: AWS STS secure token service -> a web service that lets you request temporary, limited-privilege credentials for IAM users or federated users.
 
 Policy Evaluation Logic (CRITICAL)
 1. Explicit Deny: Always overrides any Allow.
@@ -341,6 +340,10 @@ Common Default Metrics by AWS Service
   Amazon RDS: CPUUtilization, DatabaseConnections, and FreeStorageSpace.
   Amazon EBS: VolumeReadBytes, VolumeWriteBytes, and VolumeQueueLength.
   Amazon S3: BucketSizeBytes and NumberOfObjects.
+
+types of Alarms
+1.Metric Alarms - A metric alarm watches a single CloudWatch metric, the result of a metric math expression, or a Metrics Insights query over a specified time period. It triggers actions when the value breaches a defined threshold for a given number of evaluation periods
+2.Composite Alarms - A composite alarm targets multiple other alarms (metric or composite) using Boolean logic (AND, OR, NOT). It changes state only when the underlying combination of states resolves to true.
 
 Cloudwatch agent
 The Amazon CloudWatch Agent is a software package you install on servers to collect system-level metrics, logs, and traces.
@@ -603,5 +606,8 @@ How to transfer the resources from one account to another
 What are the multiple aspects we will look before deploying a service in a specific region
 
 Session persistance or stickyness in load balancer
+Session persistence, also known as session stickiness or session affinity, is a load balancing technique that ensures all sequential requests from a single client are routed to the exact same backend server for the duration of a session
 
 How S3 helps in static website hosting
+
+Difference between VPC flow logs, cloudwatch log and cloud trail logs

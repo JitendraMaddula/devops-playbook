@@ -273,3 +273,9 @@ Secret masking mechanasim
 
 Gearmen plugin 
 The Gearman Plugin for Jenkins integrates the Gearman job server to coordinate and distribute build execution across multiple Jenkins controllers and shared agent networks.
+
+What is Gearmen server
+
+What is use of fleet manager
+
+end-to-end CI/CD pipeline deepdive by including kubernetes

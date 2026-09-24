@@ -316,7 +316,9 @@ docker ps --filter "status=exited" -->List only stopped containers
 
 docker kill <container_id> --> kill a container
 
-docker context --> By default, when you run commands like docker ps or docker run, your terminal talks to a local Docker daemon running on your machine via a Unix socket. This default setup is called the default context.
+docker context -->
+docker context: Manages the connection endpoint of your CLI (where commands get executed).Build Context: The set of files local to your computer passed into a docker build . command so the daemon can read the Dockerfile and assemble an image.
+ By default, when you run commands like docker ps or docker run, your terminal talks to a local Docker daemon running on your machine via a Unix socket. This default setup is called the default context.
 
 What is layer Caching --> Docker layer caching is a optimization mechanism that reuses previously built Docker image layers to drastically speed up subsequent image builds.
 

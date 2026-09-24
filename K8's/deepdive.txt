@@ -1,14 +1,24 @@
 Architecture:
 Master (Control Plane):
-1. API Server: It  is the main management point of the enDre cluster. When we interact with the Kubernetes cluster using kubectl command, we are communicaDng with the master API Server component.
+1. API Server: It is the main management point of the entire cluster. When we interact with the Kubernetes cluster using kubectl command, we are communicaing with the master API Server component.
 2. etcd: etcd is a distributed, consistent key-value store used to store the configuration data of the complete Kubernetes cluster.
 3. Scheduler: The Scheduler watches for unscheduled pods and binds them to nodes via the /binding pod subresource API.
-4. Controller (Control Manager): The Kubernetes Controller Manager is a daemon which runs a never-ending core control loop (also known as “controllers”). Basically, a controller watches the state of the cluster through the API Server watch feature and, when it gets noDfied, it makes the necessary changes attempting to move the current state towards the desired state.
+4. Controller (Control Manager): The Kubernetes Controller Manager is a daemon which runs a never-ending core control loop (also known as “controllers”). Basically, a controller watches the state of the cluster through the API Server watch feature and, when it gets notfied, it makes the necessary changes attempting to move the current state towards the desired state.
 Node (Worker): A node is a worker machine, and this is where containers inside the pods will be launched by Kubernetes.
-1. Container Runtime:The container runDme is the underlying software that is used to run containers. In our case, it happens to be Docker. Kubernetes supports several runtimes: Docker, containerd, cri-o, rktlet etc.
+1. Container Runtime:The container runtime is the underlying software that is used to run containers. In our case, it happens to be Docker. Kubernetes supports several runtimes: Docker, containerd, cri-o, rktlet etc.
 2. Kubelet: Kubelet is the agent that runs on each node in the cluster. The agent is responsible for making sure that the containers are running on the nodes as expected.
 3. Kube Proxy: This is a proxy service which runs on each node and helps in making services available to the external host. It helps in forwarding the request to correct containers and can perform primiDve load balancing.
 4. Pod: A pod is the smallest deployable unit that can be managed by Kubernetes. A pod is a logical group of one or more containers that share the same IP address and port space.
+
+What happens internally when you run kubectl apply -f deployment.yaml?
+● Client Side: kubectl parses the YAML file, validates the schema, converts it into an HTTP request, and transmits it to the API server.
+● Authentication & Authorization: The kube-apiserver receives the request, authenticates the client credentials (via certificates/tokens), and authorizes permissions using RBAC.
+● Admission Control & Storage: The request passes through Mutating and Validating Admission Controllers before kube-apiserver writes the deployment configuration directly into etcd.
+● Deployment Controller: The controller detects the newly created/updated Deployment resource via watch mechanisms and instantiates a corresponding ReplicaSet.
+● ReplicaSet Controller: The ReplicaSet controller evaluates the replica count and generates unassigned Pod definitions (without nodeName set).
+● Scheduler Execution: The kube-scheduler observes unscheduled Pods, filters suitable nodes based on resource capacity/tolerations/affinity,scores eligible candidates, and assigns each Pod to a designated node.
+● Node Launch via Kubelet: The kubelet agent on the assigned node registers the scheduling decision, triggers the container runtime (e.g.,containerd) to pull images and execute containers, and initiates configured probes.
+● Networking & Proxying: kube-proxy writes routing rules (via iptables or IPVS) on cluster nodes to direct traffic to the active Pod network.
 
 Pod Definition File:
 apiVersion: v1
@@ -106,7 +116,6 @@ kubectl scale replicaset <name> --replicas=8
 kubectl edit <object-kind> <name>
 
 2. Deployment Controller:
-
 It is the most common controller used for deploying applications in K8’s this controller manages replica sets to ensure the desired number of pod replicas are running. With this controller we can effortlessly roll out application updates, rollback the updates without breaking the user experience.
 
 apiVersion: apps/v1
@@ -242,8 +251,63 @@ Cluster IP is the default service type in kubernetes and is used to expose appli
 This service exposes the applications on a specific port on each node enabling access from outside the cluster.
 3. LoadBalancer:
 This service provisions an external load balancer usually via cloud provider to expose the applications externally
+4. Headless Service
+●A Service configured with clusterIP: None.
+●Instead of providing a single load-balancing virtual IP, CoreDNS directly returns the individual IP addresses of all underlying Pods.
+● Widely used with StatefulSets (e.g., MongoDB, Cassandra) where clients or master/replica nodes need to communicate directly with specific peer Pods rather than random load balancing.
 
+Service Discovery?
+● It is how applications automatically find and connect to other services without needing hardcoded IP addresses.
+● Kubernetes achieves this through CoreDNS: when you create a Service named auth-svc in namespace default, any Pod in the cluster can reach it simply by using its DNS name (auth-svc or auth-svc.default.svc.cluster.local).
 
+Kubernetes Volumes:
+Types:
+1. Ephemeral Volumes:
+Ephemeral Volumes are short lived, they are tightly dependant with the lifetime of the pods
+and they are deleted if the pod goes down
+An emptyDir is a temporary (ephemeral) volume tied directly to a Pod's lifecycle. It is automatically created empty when a Pod starts on a node. The data inside stays intact if a container inside the Pod crashes and restarts. However, once the Pod is deleted, removed, or rescheduled, all data in the emptyDir is permanently erased.
+Advantages
+🤝 Container Collaboration: It allows multiple containers within the same Pod to easily share data and files in real-time.
+⚡ High-Speed Memory Option: By setting medium: Memory, you can store files directly in the node's RAM (tmpfs) for ultra-fast performance.
+⚙️ Zero Lifecycle Management: You do not need to provision external disks or worry about cleanup; Kubernetes automatically creates the storage on startup and destroys it on deletion.
+🛠️ Perfect Scratch Space: It provides a lightweight, throwaway disk environment ideal for temporary caching, data transformation, or heavy processing tasks.
+
+2. Persistent Volumes:
+Persistent Volumes are meant for long term storage and are independent of the Pods or
+Nodes life cycle. Once created, persistent volumes can be bonded to a pod using a Persistent
+Volume Claims (PVC)
+
+Types of Persistent Volumes:
+1. Static Provisioning:
+In Static provisioning an administrator manually creates pools of persistent volumes.
+PV --> PVC --> Mount
+PVC:
+With Persistent Volume Claim we can use the Persistent Volumes Pools created by an administrator. 
+Persistent Volume Claims are a way for an developer to request storage for the application.
+
+2. Dynamic Provisioning:
+In Dynamic Volumes we configure storage classes to dynamically create persistent volumes.
+The main goal of storage classes is to eliminate the need for administrators to pre-provision
+storage and volumes are created dynamically on-demand.
+Storage Class --> PVC --> Mount
+
+Storage Class:
+A StorageClass in Kubernetes defines how storage volumes should be dynamically provisioned. It provides a template for creating PersistentVolumes (PVs) automatically when a PersistentVolumeClaim (PVC) requests storage.
+Instead of an administrator manually pre-creating PVs, a StorageClass automatically provisions backend cloud storage (like AWS gp3, Azure Disk, or GCP Persistent Disk) the moment a user creates a PVC.
+
+The access modes:
+ReadWriteOnce -- the volume can be mounted as read-write by a single node
+ReadOnlyMany -- the volume can be mounted as read-only by many nodes
+ReadWriteMany -- the volume can be mounted as read-write by many nodes
+
+Reclaim Policies:
+Retain: When the PersistentVolumeClaim is deleted, the PersistentVolume will still exists,
+and the volume is considered "released". But it is not yet available for another claim because the
+previous claimant's data remains on the volume. An administrator must manually reclaim the volume.
+Delete: Delete reclaim policy removes both the PersistentVolume object from Kubernetes,
+as well as the associated storage
+Recycle: recycle reclaim policy performs a basic scrub (rm -rf /thevolume/*) on the volume
+and makes it available again for a new claim.
 
 How do we take backup of etcd
 We use etcdctl command to take snapshot
@@ -255,5 +319,68 @@ Why generally prefers odd number of nodes in a cluster what is the reason
 Kubernetes prefers an odd number of control plane (master) or etcd nodes to maintain a majority vote (quorum) efficiently and prevent tie votes during failures.
 
 co-run in kubernetes
+"Co-run" in Kubernetes generally refers to running multiple containers together within the same Pod so they can share resources and work as a single cohesive unit.
 
 what options do we have in deployment controller to pull private image from docker hub or ECR
+Option 1: imagePullSecrets (Standard for Docker Hub & Cross-Cloud ECR)The most common approach across all Kubernetes environments is referencing a Kubernetes secret directly inside your Deployment manifest.
+Option 2: Node or Service-Level IAM Roles (Best Practice for Amazon ECR)If your Kubernetes cluster is running on AWS (EKS) or your nodes have AWS credentials, you can bypass Kubernetes secrets entirely for Amazon ECR. The underlying container runtime (kubelet) authenticates automatically using AWS IAM permissions.
+Option 3: ServiceAccount Default Secrets (Global Application)If you don't want to type imagePullSecrets out on every single Deployment manifest, you can attach the secret to a Kubernetes ServiceAccount
+
+What happens if etcd becomes unavailable? How are existing workloads affected?
+● Existing Workloads: All active Pods, containers, and network proxies continue running without interruption because the data plane operates independently on the worker nodes. User traffic is handled normally through existing network rules.
+● Control Plane Stoppage: The API server ceases accepting write or read operations.
+● Loss of Orchestration: The cluster cannot self-heal. If an existing Pod crashes or a worker node dies, Kubernetes cannot schedule replacement Pods, scale applications, or process deployments until etcd recovers.
+
+How does Kubernetes achieve high availability for the control plane?
+● Redundant Nodes: Distributing multiple master/control-plane nodes across separate availability zones.
+● API Server Load Balancing: Running multiple stateless kube-apiserver instances in active-active mode behind a Layer 4/Layer 7 Load Balancer.
+● Leader Election: Active-passive failover for kube-scheduler and kube-controller-manager, ensuring only one active leader writes changes while standbys remain ready to take over.
+● Clustered etcd: Deploying etcd in a multi-node cluster using the Raft consensus algorithm (requiring a minimum of 3 or 5 nodes to maintain quorum).
+
+How does Kubernetes ensure self-healing?
+● ReplicaSet Controllers: Detect missing or crashed Pods against the
+desired count and launch new identical replicas automatically.
+● Kubelet Remediation: Automatically restarts failed containers based on the Pod's restartPolicy.
+● Node Eviction: Marks unresponsive nodes as NotReady and evicts Pods to healthy nodes after the node lifecycle controller timeout.
+
+What are Node Affinity and Pod Anti-Affinity?
+● Node Affinity: Directs Pods to schedule onto nodes matching specified labels using flexible expressions (e.g., placing analytics workloads on high-memory or GPU-labeled nodes).
+● Pod Anti-Affinity: Prevents identical or related Pods from being co-located on the same node or across identical availability zones, guarding against single points of hardware failure.
+
+What are Kubernetes Probes?
+● Liveness Probe: Tests if the running container is healthy. Failure triggers a container restart by the kubelet.
+● Readiness Probe: Determines if the container is prepared to handle ingress traffic. Failure removes the Pod IP from the endpoints of related Services.
+● Startup Probe: Protects slow-starting legacy apps by disabling liveness and readiness checks until startup completes successfully.
+
+What is nodeSelector?
+● The most direct mechanism for node assignment. Defined within the Pod specification, it uses explicit key-value pairs that must directly match labels assigned to worker nodes (e.g., disk: ssd).
+
+What is the difference between a LoadBalancer Service and an Ingress Controller?
+● LoadBalancer Service: Operates at Layer 4 (TCP/UDP). Each distinct service requires a dedicated external cloud load balancer, creating additional infrastructure costs.
+● Ingress Controller: Operates at Layer 7 (HTTP/HTTPS). Uses a single entry point load balancer to route traffic to multiple internal backend services based on URI path or domain name while managing TLS termination.
+
+What is resource Access manage in kubernetes
+
+What is a CNI plugin?
+CNI stands for Container Network Interface. It is responsible for assigning IP addresses to Pods and managing network connectivity across the entire cluster.
+
+How would you verify that your Kubernetes installation is healthy?
+● Check the worker and master nodes status: kubectl get nodes (ensure all nodes show STATUS: Ready).
+● Check the control plane core components/Pods: kubectl get pods -n kube-system (ensure all system Pods like API server, scheduler, CoreDNS, and etcd are Running).
+● Check cluster component health: kubectl get componentstatuses (or run cluster diagnostic tools like kubectl cluster-info).
+
+What happens if your API server becomes unavailable?
+● The kube-apiserver is the central communication hub.
+● If it goes down, cluster management freezes: kubectl commands stop working, and nodes/controllers cannot talk to each other to schedule new Pods or handle failovers.
+● However, existing applications continue running on worker nodes because the data plane and container processes remain active.
+
+In what situation would you use multiple containers in a single Pod?
+○ Logging / Monitoring sidecars: One container runs your main web application, while a secondary container ships its access logs or scrapes metrics.
+○ Proxy sidecars (e.g., Envoy/Istio): Handling mutual TLS, traffic shaping, or service mesh routing.
+○ Init / Config fetchers: Syncing code, SSL certificates, or configuration files from an external repository into a shared folder before the main app starts.
+
+What is a Static Pod?
+● A Static Pod is a Pod managed directly by the kubelet on a specific node, without the control plane (API server / Scheduler) managing its lifecycle.
+● The kubelet watches a local directory (usually /etc/kubernetes/manifests/) and automatically runs any YAML file placed there.
+● Static Pods are commonly used during cluster bootstrap to run the control plane components themselves (kube-apiserver, etcd, kube-controller-manager).
+

@@ -108,10 +108,6 @@ A role requires two policies:
 1.Trust Policy (Resource-based policy): This defines WHO is allowed to assume the role. It is literally a policy attached to the role that answers the question: "Who do I trust to wear this identity?" This could be an AWS service (like EC2), a specific IAM user, or another AWS account entirely.
 2.Permission Policy (Identity-based policy): This defines WHAT the principal can do once they have successfully assumed the role. It answers the question: "What AWS actions can this role perform, and on which resources?" (e.g., Read access to an S3 bucket or full access to DynamoDB).
 
-DEEP DIVE: IAM POLICIES & EVALUATION LOGIC
-Policy JSON Structure Elements: 
-- Effect (Allow/Deny), Action (e.g., s3:GetObject), Resource (ARN), Condition (Optional, e.g., specific IP or MFA).
-
 Types of Policies:
 - Identity-Based: Attached to Users, Groups, or Roles.
   * AWS Managed: Built-in, maintained by AWS (e.g., AdministratorAccess).
@@ -119,6 +115,10 @@ Types of Policies:
   * Inline: 1:1 relationship embedded directly in an entity (Use sparingly).
 - Resource-Based: Attached directly to a resource (e.g., S3 Bucket Policy). Essential for cross-account access. Must contain a "Principal" element.
 - Session-Based: AWS STS secure token service -> a web service that lets you request temporary, limited-privilege credentials for IAM users or federated users.
+
+DEEP DIVE: IAM POLICIES & EVALUATION LOGIC
+Policy JSON Structure Elements: 
+- Effect (Allow/Deny), Action (e.g., s3:GetObject), Resource (ARN), Condition (Optional, e.g., specific IP or MFA).
 
 Policy Evaluation Logic (CRITICAL)
 1. Explicit Deny: Always overrides any Allow.

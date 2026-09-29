@@ -232,6 +232,19 @@ Typical Use Cases:
 2. Metrics Scrappers: Prometheus, Node Exporter
 3. Security and Threat Detection: Falco etc
 
+4. A StatefulSet is a Kubernetes controller used to manage stateful applications, where each pod needs a stable identity and storage. 
+
+Key Features:
+1. Stable Pod Names: Pods get predictable names like app-0, app-1, etc., and these names do not change when pods are deleted or restarted.
+2. Persistent Storage: Each pod gets a dedicated volume, and it is retained even if the pod is deleted.
+3. Ordered Deployment and Scaling: Pods are created or terminated one at a time in order (from 0 to N). Ensures proper startup and shutdown sequence.
+4. Stable Network Identity: Each pod gets a DNS name that is tied to its identity/name (e.g., app-0.service-name.default.svc.cluster.local).
+
+Use Cases:
+Databases: MySQL, PostgreSQL, MongoDB — where each instance needs its own volume and stable identity.
+Distributed Systems: Kafka, Cassandra, Elasticsearch — where each pod must keep its data and know its identity.
+Leader-based Systems: Where pods must start in a specific order for correct bootstrapping.
+
 Services:
 kuberneties service provides a stable network endpoint to access a group of pods enabling communication within or outside the cluster
 
@@ -308,6 +321,40 @@ Delete: Delete reclaim policy removes both the PersistentVolume object from Kube
 as well as the associated storage
 Recycle: recycle reclaim policy performs a basic scrub (rm -rf /thevolume/*) on the volume
 and makes it available again for a new claim.
+
+Namespace:
+Namespaces in Kubernetes let you divide a single cluster into multiple virtual environments. This is useful for organizing resources by teams, projects, or environments (like dev, test, and prod). Resources in one namespace are isolated from those in another, preventing naming conflicts and ensuring clean separation.
+
+By default, Kubernetes includes the following namespaces:
+default: Used when no namespace is specified. It’s where most Kubernetes objects are created.
+kube-system: Contains core system components like the Kubernetes scheduler, controller manager, and DNS.
+kube-public: Readable by all users, including unauthenticated ones. Often used for cluster-level public info.
+kube-node-lease: Stores node heartbeat info using Lease objects, which helps track node health (introduced in v1.13).
+
+Namespaces are especially helpful in large clusters where many users or applications need to coexist without interfering with each other.
+
+Resource Quota:
+Kubernetes namespaces help creating logically isolated work environments. But namespaces do not enforce limitations 
+or quotas automatically. For this purpose, we use Kubernetes quotas to specify strict quota limits for around 
+15 Kubernetes API resources.
+Requests: Request is the minimum amount of CPU or memory that a container is guaranteed to receive. When a request is specified in container spec, Kubernetes uses this information to decide where to schedule the container, ensuring that the node where it is placed has enough available resources to meet the request. However, the container can use more resources than its request if the node has extra capacity.
+Limits: Limit defines the maximum amount of CPU or memory that the container is allowed to consume. If the container exceeds its CPU limit, it will be throttled, meaning it will slow down to stay within the limit. If it exceeds its memory limit, Kubernetes will kill the container[OOM] to prevent it from using too much memory.
+
+Manual Scheduling of Pods
+Instead of letting the scheduler decide automatically, manually controlling which node a pod runs on. This is useful for workload separation, node-specific tasks, or debugging
+Types:
+1. nodeSelector:
+It is the simplest way of scheduling the pods on to a particular node by using the node labels
+
+Affinity:
+1. nodeAffinity:
+A more advanced and flexible version of nodeSelector that supports expressions, multiple conditions, and preferences[soft rule].
+Rules:
+1. HardRule [requiredDuringScheduling]:
+The pod must be scheduled on a node that matches the rule. If no matching node is found, the pod will stay in Pending state.
+2. SoftRule [preferredDuringScheduling]:
+The pod will try to schedule on matching nodes, but if not available, it can run on other nodes too. It's a preference, not a strict requirement.
+Note: IgnoredDuringExecution: If labels on a node change at runtime such that the pods cease to satisfy affinity rules, the pod continues to run on the node.
 
 How do we take backup of etcd
 We use etcdctl command to take snapshot

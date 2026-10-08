@@ -302,7 +302,7 @@ Key components
     *   **Target Tracking Scaling:** Adjusts capacity to maintain a specific metric (e.g., keeping average CPU utilization at 50%).
     *   **Step Scaling:** Adjusts capacity based on the size of the alarm breach (e.g., add 1 instance if CPU is > 60%, add 3 if CPU is > 80%).
     *   **Simple Scaling:** A legacy policy that adjusts capacity based on a single alarm, typically requiring a cooldown period.
-    *   **Scheduled Scaling:** Adjusts capacity based on a predictable schedule (e.g., scale up at 8 AM and scale down at 6 PM daily).
+    *   **Predictive Scaling:** Adjusts capacity based on a predictable schedule (e.g., scale up at 8 AM and scale down at 6 PM daily).
 
 Auto scaling Health checks
 Auto Scaling health checks monitor your cloud instances and replace any that fail, ensuring your application stays online and healthy.
@@ -368,6 +368,7 @@ S3 Storage Classes:
 ⚬	S3 Standard-Infrequent Access (the storage closet — low cost, occasional use)
 ⚬	S3 Glacier Flexible Retrieval (the offsite vault — very cheap, takes hours to retrieve)
 ⚬	S3 Glacier Deep Archive (the time capsule — cheapest, takes days to retrieve)
+⚬	S3 one zone
 
 s3 versioning
 Versioning in Amazon S3 is a feature that keeps multiple variants or copies of an object in the same bucket.

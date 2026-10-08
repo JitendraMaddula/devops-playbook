@@ -343,6 +343,9 @@ Limits: Limit defines the maximum amount of CPU or memory that the container is 
 Manual Scheduling of Pods
 Instead of letting the scheduler decide automatically, manually controlling which node a pod runs on. This is useful for workload separation, node-specific tasks, or debugging
 Types:
+
+Using the nodeName Field (Direct Assignment)• Sets the nodeName property directly inside the pod's specification YAML file.
+
 1. nodeSelector:
 It is the simplest way of scheduling the pods on to a particular node by using the node labels
 
@@ -356,8 +359,86 @@ The pod must be scheduled on a node that matches the rule. If no matching node i
 The pod will try to schedule on matching nodes, but if not available, it can run on other nodes too. It's a preference, not a strict requirement.
 Note: IgnoredDuringExecution: If labels on a node change at runtime such that the pods cease to satisfy affinity rules, the pod continues to run on the node.
 
+• Pod Affinity
+	• Places a new pod onto a node that already runs other specific pods.
+
+• Pod Anti-Affinity
+	• Keeps a pod away from nodes running specific other pods.
 How do we take backup of etcd
 We use etcdctl command to take snapshot
+
+TopologyKey:
+topologyKey is a field used in Pod Affinity and Pod Anti-Affinity rules. It defines the scope or level at which the rule is applied. It tells Kubernetes where to look for matching pods — on the same node, zone, region, etc.
+
+Common Values for topologyKey:
+kubernetes.io/hostname
+Rule applies at the node level.
+Example: Place or avoid placing pods on the same node.
+
+topology.kubernetes.io/zone
+Rule applies at the zone level.
+Example: Ensure pods are spread across different zones (for high availability).
+
+topology.kubernetes.io/region
+Rule applies at the region level.
+Example: Spread pods across regions in multi-region clusters.
+
+Taints and Tolerations
+Taints are applied to nodes to repel pods from scheduling. Tolerations are applied to pods to let them “tolerate” a node’s taint and be allowed to schedule.
+Types:
+NoSchedule: Pods will not be scheduled on the node unless they tolerate the taint.
+PreferNoSchedule: Kubernetes will try to avoid placing pods on the node, but it may still happen.
+NoExecute: Existing pods that don’t tolerate this taint will be evicted, and new ones won't be scheduled.
+
+Probes:
+Types of Probes:
+1. Liveness Probe: Checks whether the container is still running and healthy. If the liveness probe fails, the Kubelet kills the container and restarts it, recovering applications from deadlocks or hung states
+2. Readiness Probe: Checks whether the application inside the container is ready to accept and serve network requests. If the readiness probe fails, Kubernetes removes the Pod’s IP from the Service endpoints so no traffic is routed to it.
+3. Startup Probe: Designed for slow-starting applications. It executes first upon container startup and disables liveness and readiness checks until it succeeds. If it fails after maximum retries, the container is killed and restarted.
+
+Probe Actions:
+1. HTTP Request [httpget]: Sends an HTTP GET request to a specific path and port. Any HTTP status code between 200 and 399 is considered a success.
+2. Shell [exec]: Executes a shell command inside the container. An exit code of 0 is considered a success.
+3. TCP Port Check: Attempts to establish a TCP connection to the specified port. If the socket opens, it is considered a success.
+
+Configuring Probes:
+1. initialDelaySeconds [Min:0, Def:0]: Number of seconds to wait after the container starts before performing the first probe check.
+2. periodSeconds [Min:1, Def:10]: Frequency (in seconds) at which the probe check is executed.
+3. timeoutSeconds [Min:1, Def:1]: Number of seconds the probe waits for a response before timing out and counting as failure.
+4. successThreshold [Min:1, Def:1]: Number of consecutive successful checks required to mark the probe healthy after a failure.
+5. failureThreshold [Min:1, Def:3]: Number of consecutive failed checks before taking corrective action (restart or remove endpoint).
+
+Securing Kubernetes:
+Context:
+A context is a group of access parameters to enable secure connection to a specific cluster’s API server.
+Each context contains a Kubernetes cluster, a user, and a namespace..
+
+Types of Users in Kubernetes:
+User Account: We can create users and groups who can connect to the Kubernetes API server.
+kubernetes- admin is the default user
+Service-Account:
+Service accounts are used to give access to processes inside pods to interact with the
+Kubernetes API. They can also be used by applications outside the cluster.
+For example, Prometheus monitoring tool which is used to monitor the cluster can be given the access using
+Service-Account.
+
+RBAC:
+RBAC or Role-Based Access Control is an approach in Kubernetes used to add constraints for users, groups,
+and applications to access Kubernetes resources. RBAC basically adds security to the Kubernetes cluster,
+and we can apply it for a specific namespace or to the total cluster.
+It was introduced in version 1.8 and uses rbac.authorization.k8s.io API group. 3 important concepts in RBAC.
+• Subject: Subject is the entity that needs access. It could be user or group or a service account
+• Resources: Resource is the K8s object that a subject wants to access. It could be pods, deployments, services etc
+• Verbs: Verbs are the actions that a subject can do on resources. It could be the list, delete, create, watch etc
+
+Role & Cluster Role:
+Role and ClusterRole contains set of rules to access & modify Kubernetes resources.
+Difference between them is Role works in a particular namespace while ClusterRole is cluster wide.
+Basically, we use Role If we want to define permissions inside a namespace and use ClusterRole for cluster wide.
+Cluster Role Binding and Role Bindings:
+Rolebinding binds the Role to a Subject to access the Resources within a namespace while
+ClusterRoleBinding binds the ClusterRole to a Subject to access the resources cluster-wide.
+
 
 what is baremetel cluster
 It means deploying the container orchestration platform directly on physical servers rather than inside traditional virtual machines (VMs) managed by a hypervisor layer.

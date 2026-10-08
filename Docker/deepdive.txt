@@ -320,6 +320,11 @@ docker context -->
 docker context: Manages the connection endpoint of your CLI (where commands get executed).Build Context: The set of files local to your computer passed into a docker build . command so the daemon can read the Dockerfile and assemble an image.
  By default, when you run commands like docker ps or docker run, your terminal talks to a local Docker daemon running on your machine via a Unix socket. This default setup is called the default context.
 
+1. Docker CLI Contexts (Remote Environment Management)
+A Docker context is a named configuration that tells the Docker Command Line Interface (CLI) which Docker host or engine to communicate with.
+2. Docker Build Context (Image Creation)
+When you run the docker build command (or use the context attribute in a Docker Compose file), the build context refers to the exact set of files and directories that the Docker CLI sends to the backend Docker builder daemon
+
 What is layer Caching --> Docker layer caching is a optimization mechanism that reuses previously built Docker image layers to drastically speed up subsequent image builds.
 
 How dangling images are generated --> Dangling images are generated when a container image loses its repository name and tag—appearing as <none>:<none>—because a new build or re-tagging action supersedes it

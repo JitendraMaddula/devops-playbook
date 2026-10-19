@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-nginx-ingress
+  annotations:
+    # Annotations pass specific configuration instructions to the Ingress Controller
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  # Explicitly names which controller should handle this rule
+  ingressClassName: nginx 
+  
+  # THE ROUTING RULES
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix # Required in v1. Options: Prefix, Exact, ImplementationSpecific
+        backend:
+          service:
+            name: my-nginx-service # MUST match the Service metadata.name
+            port:
+              number: 80           # MUST match the Service 'port' (not targetPort)

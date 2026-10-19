@@ -12,6 +12,7 @@ CLOUD DEPLOYMENT MODELS
 - Private Cloud: A dedicated cloud environment used exclusively by a single organization. Provides maximum control and privacy. Requires organization to manage costs and maintenance.
 - Public Cloud: Resources owned/operated by a provider (like AWS) and delivered over the internet. Massive scalability and pay-as-you-go model.
 - Hybrid Cloud: A strategic blend of private and public cloud resources. Keeps critical systems on-premises while using the cloud for other workloads.
+- Multi-Cloud: Using two or more public cloud providers simultaneously (for example, using AWS for storage and Google Cloud for machine learning).
 
 ADVANTAGES OF CLOUD COMPUTING
 - Flexibility & Adaptability: Easily change resource types, OS, or software on the fly.
@@ -33,6 +34,7 @@ TYPES OF CLOUD COMPUTING
 - Infrastructure as a Service (IaaS): Fundamental building blocks. Access to virtual servers, storage, networking. Highest flexibility. (Analogy: Leasing land and building materials).
 - Platform as a Service (PaaS): Provider manages infrastructure (hardware/OS). You focus on deploying/managing applications. Ideal for developers. (Analogy: Leasing land and a pre-built foundation).
 - Software as a Service (SaaS): Complete, ready-to-use software product delivered over the internet. Provider manages everything. (Analogy: Renting a fully furnished house). example AWS QuickSight
+- Function as a service: Lets developers run event-triggered code functions without managing any underlying servers or runtime environments.
 
 AWS GLOBAL INFRASTRUCTURE
 - Regions: Distinct geographical areas around the world where AWS clusters its data centers.
@@ -255,12 +257,13 @@ resources quotas on VPC -> AWS enforces default limits (quotas) on Virtual Priva
     NAT gateways per AZ: 5
     Elastic IP's per region: 5
     VPC peering connections per VPC: 50
+    Security Groups per Region: 2500
     Security Group Rules per SG: 60
     Route Tables per vpc: 200
     Network ACLs (NACL) per vpc: 200
     Subnets per VPC: 200
     Routes per route table: 500
-    Security Groups per Region: 2500
+    
 
 what are VPC endpoints and types
 A VPC Endpoint is a secure, private network connection that allows you to connect your VPC to supported AWS services and VPC endpoint services without using an Internet Gateway, NAT Gateway, VPN connection, or AWS Direct Connect.
@@ -348,6 +351,12 @@ types of Alarms
 Cloudwatch agent
 The Amazon CloudWatch Agent is a software package you install on servers to collect system-level metrics, logs, and traces.
 
+Log Stream
+• Definition: A log stream is an ordered sequence of individual log events that all originate from the same single source, such as a specific virtual machine instance, a container, an application process, or a server.
+
+Log Group
+• Definition: A log group is a collection of one or more log streams that share the same settings for data retention, monitoring, metric filters, and access control permissions.
+
 Amazon EFS (Elastic File System)
 Amazon Elastic File System (EFS) is a serverless, fully elastic file storage service designed to provide shared file systems for compute workloads across multiple Amazon EC2 instances.
 
@@ -358,6 +367,13 @@ EFS Storage Classes:
 ⚬	EFS One Zone-Infrequent Access (the local basement archive — cheapest, rarely accessed)
 
 An Amazon EFS file system supports a hard quota of up to 25,000 concurrent client connections.
+
+how to connect EFS to ec2
+To connect an Amazon EFS (Elastic File System) to an EC2 instance, you need to ensure they are in the same VPC, configure the Security Groups to allow traffic over port 2049 (NFS), and then use the Amazon EFS mount helper utility to mount the file system onto a directory within the EC2 instance.
+install binutils 
+create a local directory to act as the mount point: sudo mkdir /mnt/efs
+Persistent Mount (Boot Survival)  fs-XXXXXX:/ /mnt/efs efs _netdev,tls,defaults 0 0
+
 
 Amazon S3 (Simple Storage Service)
 Amazon Simple Storage Service (S3) is a highly scalable, object storage service designed to store and retrieve any amount of data from anywhere on the web.
@@ -612,3 +628,36 @@ Session persistence, also known as session stickiness or session affinity, is a 
 How S3 helps in static website hosting
 
 Difference between VPC flow logs, cloudwatch log and cloud trail logs
+
+multi part upload in s3
+Amazon S3 Multipart Upload is a feature that allows you to upload a single large object to an S3 bucket as a set of smaller, independent parts. 
+1. Initiation (CreateMultipartUpload): You notify S3 that you are starting a multipart upload. S3 returns a unique Upload ID, which acts as the primary key linking all the parts together
+2. Uploading Parts (UploadPart): You split your file and upload each part. With each part, you must provide the Upload ID and a sequential Part Number (from 1 to 10,000). For each successful part upload, S3 returns an ETag (an MD5 checksum). Your application must track and save these part numbers and ETags
+3. Completion (CompleteMultipartUpload): You send a final request containing the Upload ID and the complete list of part numbers paired with their respective ETags. S3 verifies the pieces and constructs the final object in your bucket.
+
+maximum number of s3 buckets per aws account - 1million
+
+maximum amount of data s3 can hold -5gb to 5tb
+
+points of presence
+An AWS Point of Presence (PoP) is a strategically located data center or network access point positioned at the edge of the internet to bring content, applications, and cloud services closer to end users, reducing latency and improving speed
+
+resouce access manager
+AWS Resource Access Manager (AWS RAM) is a service that helps you safely share your Amazon Web Services (AWS) resources across different AWS accounts, organizational units (OUs), and AWS Organizations.
+
+AWS RDS deeply
+Amazon Relational Database Service (Amazon RDS) is a fully managed cloud database service offered by Amazon Web Services (AWS) that automates time-consuming administrative tasks like hardware provisioning, database setup, patching, backups, and disaster recovery
+Supported Database Engines - PostgreSQL, MySQL, and MariaDB, Oracle Database and Amazon Aurora.
+Automation & Management Features - Automated Backups & Snapshots:, Monitoring & Observability, Maintenance & Patching, Extended Support
+
+what is AWS direct connect and VPN
+AWS Direct Connect and AWS Site-to-Site VPN are two ways to connect your on-premises data center, office, or local network to the Amazon Web Services (AWS) cloud.
+AWS Direct Connect
+What it is: A dedicated, physical fiber-optic network link that connects your infrastructure directly to an AWS data center, completely bypassing the public internet
+AWS Site-to-Site VPN
+What it is: An encrypted, secure connection (IPsec tunnel) that links your network to AWS over the public internet
+
+target groups and listeners
+
+How cloud watch to ec2 for logs - Integrate cloudwatch with EC2 instance to fetch the logs
+ CloudWatchAgentServerPolicy

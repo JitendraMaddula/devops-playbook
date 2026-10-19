@@ -343,3 +343,13 @@ The docker inspect command provides low-level, detailed information about Docker
 
 docker swam
 Docker Swarm is a native container orchestration tool built directly into the Docker Engine.
+
+docker compose up and docker compose down are the two primary commands used to manage the entire lifecycle of a multi-container Docker application. They read a single configuration file (typically compose.yaml or docker-compose.yml) to orchestrate your services, networks, and volumes all at once
+
+docker compose up (The Builder & Launcher)
+This command sets up and starts your entire application stack. When you run it, Docker Compose looks at your configuration file and executes several tasks under the hood
+
+docker compose down (The Demolition & Cleanup Crew)
+This command does the exact opposite of up. Instead of just turning your application "off" (like a pause button), down completely tears down and deletes the infrastructure created by the up command
+
+docker images -f "dangling=true"  --> docker command to list only dangling images

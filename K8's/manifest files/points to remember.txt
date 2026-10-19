@@ -1,0 +1,69 @@
+Kubernetes Object         apiVersion
+------------------------------------------------
+Deployment                apps/v1
+ReplicaSet                apps/v1
+StatefulSet               apps/v1
+DaemonSet                 apps/v1
+Pod                       v1
+Service                   v1
+ConfigMap / Secret        v1
+Ingress                   networking.k8s.io/v1
+PersistentVolumeClaim     v1
+StorageClass              storage.k8s.io/v1
+
+basic commands required for interview
+Cluster & Context Management
+
+⚬ View cluster API endpoints and services: kubectl cluster-info.
+⚬ List all worker nodes in the cluster: kubectl get nodes.
+⚬ View detailed node state, capacity, and scheduling events: kubectl describe node <node-name>.
+⚬ Display CPU and memory utilization across nodes (requires Metrics Server): kubectl top node.
+⚬ Drain a node to prepare it for maintenance: kubectl drain <node-name>.
+
+Creating & Managing Resources
+
+⚬ Create or update a resource declaratively from a manifest file: kubectl apply -f <filename.yaml>.
+⚬ Create an object imperatively: kubectl create -f <filename.yaml>.
+⚬ Delete a resource using its configuration file: kubectl delete -f <filename.yaml>.
+
+Pod & Workload Management
+
+⚬ List all pods in the current namespace: kubectl get pods.
+⚬ List pods across all namespaces: kubectl get pods -A or kubectl get pods --all-namespaces.
+⚬ Get extended pod information (including the assigned node and pod IP): kubectl get pods -o wide.
+⚬ View current CPU and memory metrics for pods: kubectl top pod.
+⚬ Scale a deployment to a specific number of replicas: kubectl scale deployment <deployment-name> --replicas=3.
+⚬ View the version history of a deployment: kubectl rollout history deployment/<deployment-name>.
+⚬ Roll back a deployment to a previous version: kubectl rollout undo deployment/<deployment-name>.
+
+Troubleshooting & Debugging (Highly Tested)
+
+⚬ Display detailed events, state, and errors (like ImagePullBackOff or scheduling failures) for a pod: kubectl describe pod <pod-name>.
+⚬ Fetch the standard output logs for a pod: kubectl logs <pod-name>.
+⚬ Stream logs continuously in real-time: kubectl logs -f <pod-name>.
+⚬ Retrieve logs for a specific container inside a multi-container pod: kubectl logs pod/<pod-name> -c <container-name>.
+⚬ Open an interactive shell session inside a running container: kubectl exec -it <pod-name> -- /bin/sh.
+⚬ List chronologically sorted cluster events to diagnose system-wide issues: kubectl get events --sort-by='.lastTimestamp'.
+⚬ Forward a local port to a pod or service for isolated testing: kubectl port-forward pod/<pod-name> 8080:80.
+
+Essential Helm Commands (CI/CD & Interview Focus)
+Interviewers test Helm to see if you understand how to manage applications at scale in automated pipelines, rather than just running raw `kubectl` commands.
+
+## 1. Installation & Upgrades (The CI/CD Staples)
+* `helm install <release-name> <chart>`: Deploys a new chart.
+* `helm upgrade <release-name> <chart>`: Updates an existing release.
+* **Interview Winner (`helm upgrade --install`):** Interviewers ask: "How do you write a CI/CD pipeline step that works for both the very first deployment and all future updates?" Answer: Use `helm upgrade --install <release-name> <chart>`. It installs if it doesn't exist, and upgrades if it does (idempotency).
+
+## 2. Debugging & Dry Runs (Highly Tested)
+* **`helm template <chart>`:** Renders the Jinja/Go templates locally into standard Kubernetes YAML without connecting to the cluster. *Interview Tip: This is the safest way to check what your Helm chart will actually generate before applying it.*
+* **`helm lint <chart>`:** Examines a chart for syntax errors and best-practice violations.
+* **`helm install <release> <chart> --dry-run --debug`:** Simulates an install against the cluster API to ensure it would be accepted, without actually creating resources.
+
+## 3. Rollbacks & History
+* **`helm history <release-name>`:** Lists all previous deployments (revisions) of a release, showing which one failed or succeeded.
+* **`helm rollback <release-name> <revision-number>`:** Instantly reverts the deployment to a previous known-good state. *Interview Tip: Helm makes rollbacks instantaneous because it saves the exact rendered YAML of previous revisions as Secrets in the cluster.*
+
+## 4. Viewing Current State
+* `helm ls -A` or `helm list --all-namespaces`: Lists all deployed Helm releases across the cluster.
+* `helm get values <release-name>`: Shows the custom values (overrides) that were passed to the chart during installation.
+* `helm get manifest <release-name>`: Outputs the actual raw YAML that is currently running in the cluster for that release.

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: my-nginx-ds
+  labels:
+    tier: frontend
+spec:
+  # No replicas field: one Pod runs on every (matching) node
+  selector:
+    matchLabels:
+      app: my-nginx
+
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1 # How many nodes can have their Pod updated at once
+
+  template:
+    metadata:
+      labels:
+        app: my-nginx   # MUST match the selector.matchLabels above
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.24
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+          limits:
+            cpu: "500m"
+            memory: "128Mi"

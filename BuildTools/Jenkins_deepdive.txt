@@ -262,20 +262,28 @@ To stop or prevent multiple deployment jobs from running at the same time in Jen
 In Jenkins, a timeout is used to automatically terminate a build, stage, or step if it takes too long to execute. This prevents stuck jobs from indefinitely consuming system resources.
 
 Capture shell commands in Jenkins
-
-
+returnStdout: true
 
 Jenkins shared library
-
-
-
-Secret masking mechanasim
 
 Gearmen plugin 
 The Gearman Plugin for Jenkins integrates the Gearman job server to coordinate and distribute build execution across multiple Jenkins controllers and shared agent networks.
 
-What is Gearmen server
-
 What is use of fleet manager
+The fleet manager in Jenkins refers to the EC2 Fleet Plugin, which automatically scales and manages cloud worker nodes (agents) using AWS Auto Scaling Groups (ASGs), EC2 Fleets, or Spot Fleets
 
 end-to-end CI/CD pipeline deepdive by including kubernetes
+
+safe restart in jenkins
+A safe restart in Jenkins allows you to reboot the controller gracefully without losing or interrupting running pipelines.
+we can use saferestart plugin
+Append /safeRestart to the end of the URL.
+
+post-build actions in jenkins
+Post-build actions in Jenkins are tasks executed automatically after a build job completes its main execution steps.
+Common Use Cases
+Notifications: Sending emails via the Extended Email Notification plugin or triggering Slack alerts upon build failure or success
+Artifact Management: Archiving binaries, JAR/WAR files, or build logs so they can be downloaded later
+Reporting: Publishing test execution data (e.g., JUnit, Selenium, or HTML reports).
+Downstream Triggers: Starting other Jenkins jobs sequentially once the current build completes
+Cleanup: Wiping out the workspace to conserve disk space on Jenkins agents.

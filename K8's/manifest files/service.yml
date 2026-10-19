@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-service
+  labels:
+    tier: frontend
+spec:
+  type: ClusterIP # Other options: NodePort, LoadBalancer
+  
+  # 1. THE BINDING MECHANISM
+  selector:
+    app: my-nginx # MUST match the Deployment's template.metadata.labels
+  
+  # 2. THE PORT MAPPING
+  ports:
+    - protocol: TCP
+      port: 80        # The port this Service listens on
+      targetPort: 80  # The port the Pod/Container is actually listening on
+      # nodePort: 30007 # Only use this field if 'type: NodePort' is set

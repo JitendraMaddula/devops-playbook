@@ -1,0 +1,41 @@
+Troubleshooting & Common Errors (The "What went wrong?" Scenarios)
+Interviewers will often present a broken cluster scenario. Use this framework to diagnose and answer.
+
+## 1. ImagePullBackOff / ErrImagePull
+**Symptom:** Kubelet cannot pull the container image.
+* **Identify:** `kubectl describe pod <pod-name>` -> Check the "Events" section at the bottom.
+* **Root Causes:**
+  1. Typo in the image name or tag.
+  2. Missing `imagePullSecrets` for a private registry.
+  3. The worker node lacks outbound internet/network access to the registry.
+
+## 2. CrashLoopBackOff
+**Symptom:** Container starts, crashes, and Kubernetes continuously tries to restart it in a loop.
+* **Identify:** 
+  * `kubectl describe pod <pod-name>` -> State is `Waiting: CrashLoopBackOff`.
+  * **CRITICAL COMMAND:** `kubectl logs <pod-name> --previous`. (Fetches the logs from the *dead* container right before it crashed).
+* **Root Causes:**
+  1. Application code panics on startup (missing env vars, db connection failed).
+  2. Liveness probe is misconfigured and keeps falsely failing, causing K8s to kill the pod.
+  3. Container command/args exit immediately upon execution.
+
+## 3. OOMKilled
+**Symptom:** The Linux kernel killed the container for using too much RAM.
+* **Identify:** `kubectl describe pod <pod-name>` -> Check "Last State" for `Reason: OOMKilled`.
+* **Root Causes:**
+  1. `resources.limits.memory` is set too low for normal operation.
+  2. Application memory leak.
+* **Interview Trap:** *Exceeding CPU limits results in CPU Throttling (slowdown), NOT a pod crash/kill. Only exceeding memory causes OOMKilled.*
+
+## 4. Pending
+**Symptom:** The pod is accepted by the API, but the Scheduler cannot place it on a node.
+* **Identify:** `kubectl describe pod <pod-name>` -> Read the `default-scheduler` events.
+* **Root Causes:**
+  1. **Insufficient Resources:** No single node has enough CPU/RAM to satisfy the pod's `requests`.
+  2. **Taints/Tolerations:** Nodes are tainted, and the pod lacks the toleration.
+  3. **Node Selector Mismatch:** Pod requests a node label that does not exist.
+
+## 5. CreateContainerConfigError
+**Symptom:** Pod fails to initialize because a dependency is missing.
+* **Identify:** `kubectl describe pod <pod-name>` -> Events state a ConfigMap/Secret is missing.
+* **Root Causes:** The Pod manifest references a ConfigMap or Secret that hasn't been created yet, or the name is misspelled in the YAML.

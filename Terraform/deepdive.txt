@@ -1,0 +1,30 @@
+IAC (Infracture As Code) -> Is a process of managing and provisioning infra through configuration files. 
+Terraform -> Terraform is a open source IAC tool developed by Hashicorp which is used to plan, apply and destroy using HCL(Hashicorp Configuration Language)
+The extension of terraform configuration files is .tf 
+
+Advantages of terraform
+1. Plannability - With terraform we can actually see the plan before making actual changes to the infracture.
+2. Reusability - Same set of configuration files can be reused for multiple environments or projects by passing different parameters.
+3. Maintainability - The configuration files can be stored in source code management tools like git or gitlab.
+
+Terraform Lifecycle/Terraform execution process
+1. Terraform init - The terraform init command is used to initialise working directory containing terraform configuration files, we can run terraform init multiple times. 
+    Terraform init operations
+    a. Initialises the backend
+    b. Initialises the provider plugin
+    c. Initilises the child modules
+Providers -  Terraform uses a plugin based architecture called providers to support 100s of in-fracture and service providers. The terraform init command downloads and installs the providers used within the configuration files.
+syntax:
+Command: terraform init
+2. Terraform plan - Terraform plan command is a convenient way to check whether the execution plan for a set of changes matches your expectations without making any changes to the real infractures.
+Terraform will scan all the .tf files in he initialised directory to create the execution plan.
+Command- terraform plan
+3. Terraform apply - This command is used to apply the changes to the in-fracture to reach the desired state based on the configuration files.
+command - 1. terraform apply
+          2. terraform apply —auto-approve
+4. Terraform destroy - This command is used to destroy terraform managed in-fracture
+command - 1. terraform destroy
+          2. terraform destroy —auto-approve
+          3. terraform destroy —target= resource_type.resource_name
+5. Terraform validate - Terraform validate is used to check syntax of terraform configuration files
+command - terraform validate

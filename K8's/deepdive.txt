@@ -20,17 +20,8 @@ What happens internally when you run kubectl apply -f deployment.yaml?
 ● Node Launch via Kubelet: The kubelet agent on the assigned node registers the scheduling decision, triggers the container runtime (e.g.,containerd) to pull images and execute containers, and initiates configured probes.
 ● Networking & Proxying: kube-proxy writes routing rules (via iptables or IPVS) on cluster nodes to direct traffic to the active Pod network.
 
-Pod Definition File:
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-  labels:
-    app: lb
-spec:
-  containers:
-  - name: nginx-container
-    image: nginx
+kubernetes components from smaller to bigger components
+image->container->pod->node->controllers(replicaset controller, deployment controller, deamon controller, stateful controller, ingress controller)->services(cluster IP, Node port, LoadBalancer, Headless)->Namespace->Storage->Cluster
 
 kubectl apply -f <manifest>.yaml --> To apply a Kubernetes Manifest file
 
@@ -86,26 +77,6 @@ Controllers:
 ReplicaSet/Replication controller are used to maintain a desired number of pod replicas 
 running at all time ensuring 
 
-apiVersion: apps/v1
-kind: ReplicaSet
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  replicas: 4
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx-container
-        image: nginx
-
 Difference between replica set and replication controller:
 Both replica set and replication controller are used to manage pod replicas but replication controller is legacy and only supports equity based selectors whereas replica set is the modern successor that supports both equity based and set based selectors 
 
@@ -118,26 +89,6 @@ kubectl edit <object-kind> <name>
 2. Deployment Controller:
 It is the most common controller used for deploying applications in K8’s this controller manages replica sets to ensure the desired number of pod replicas are running. With this controller we can effortlessly roll out application updates, rollback the updates without breaking the user experience.
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  replicas: 4
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx-container
-        image: nginx
-
 Deployment Strategies:
 This stretagy gradually replaces old pods with new pods
 maxunavalible- Maximum pods that can be deleted during update
@@ -146,56 +97,8 @@ a. RollingUpdate (Default):
 Configuration:
 - maxUnavailable: (default: 25%)
 - maxSurge: (default: 25%)
-Example:
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  replicas: 4
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 2
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx-container
-        image: nginx
-
 b. Recreate: 
 deletes all old pods first then creates new pods 
-Example:
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  replicas: 4
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx-container
-        image: nginx
 
 Commands:
 kubectl set image deploy <name> <container-name>=<image>:<tag> --> To update the image of a deployment controller
@@ -205,27 +108,6 @@ kubectl rollout undo deploy <name> --to-revision=<number> --> To rollback to a s
 
 3. DaemonSet Controller:
 this controller ensures that a pod replica runs on every node the kubernetes cluster if new nodes are added to the cluster deamon set automatically schedules a new pod on the node, when the nodes are removed deamon set cleans up a pod from those node
-
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx-container
-        image: nginx
 
 Typical Use Cases:
 1. Log Collection Agents: Fluentd, Filebeat, Logstash
@@ -321,6 +203,8 @@ Delete: Delete reclaim policy removes both the PersistentVolume object from Kube
 as well as the associated storage
 Recycle: recycle reclaim policy performs a basic scrub (rm -rf /thevolume/*) on the volume
 and makes it available again for a new claim.
+
+provisioner is the plugin used to use storage class in dynamic volume
 
 Namespace:
 Namespaces in Kubernetes let you divide a single cluster into multiple virtual environments. This is useful for organizing resources by teams, projects, or environments (like dev, test, and prod). Resources in one namespace are isolated from those in another, preventing naming conflicts and ensuring clean separation.
@@ -439,12 +323,31 @@ Cluster Role Binding and Role Bindings:
 Rolebinding binds the Role to a Subject to access the Resources within a namespace while
 ClusterRoleBinding binds the ClusterRole to a Subject to access the resources cluster-wide.
 
+Helm Charts:
+A Helm Chart is a package of pre-configured Kubernetes resources that lets you define, install, and upgrade complex applications using the Helm package manager. 
+mychart/
+├── .helmignore          # Files to ignore when packaging the chart
+├── Chart.yaml           # Metadata about the chart (name, version, etc.)
+├── values.yaml          # Default configuration values for templates
+├── values.schema.json   # Optional JSON schema to validate values.yaml
+├── charts/              # Directory for dependent sub-charts
+├── crds/                # Custom Resource Definitions
+├── templates/           # Directory for Kubernetes manifest templates
+│   ├── deployment.yaml  # Deployment manifest template
+│   ├── service.yaml     # Service manifest template
+│   ├── _helpers.tpl     # Reusable template snippets / helpers
+│   └── NOTES.txt        # Usage notes displayed after installation
+├── LICENSE              # Optional plain-text license file
+└── README.md            # Optional documentation file
 
 what is baremetel cluster
 It means deploying the container orchestration platform directly on physical servers rather than inside traditional virtual machines (VMs) managed by a hypervisor layer.
 
 Why generally prefers odd number of nodes in a cluster what is the reason 
 Kubernetes prefers an odd number of control plane (master) or etcd nodes to maintain a majority vote (quorum) efficiently and prevent tie votes during failures.
+
+Quorum***
+In Kubernetes, quorum refers to the minimum number of voting nodes required to agree on changes and maintain a consistent cluster state.
 
 co-run in kubernetes
 "Co-run" in Kubernetes generally refers to running multiple containers together within the same Pod so they can share resources and work as a single cohesive unit.
@@ -470,18 +373,6 @@ How does Kubernetes ensure self-healing?
 desired count and launch new identical replicas automatically.
 ● Kubelet Remediation: Automatically restarts failed containers based on the Pod's restartPolicy.
 ● Node Eviction: Marks unresponsive nodes as NotReady and evicts Pods to healthy nodes after the node lifecycle controller timeout.
-
-What are Node Affinity and Pod Anti-Affinity?
-● Node Affinity: Directs Pods to schedule onto nodes matching specified labels using flexible expressions (e.g., placing analytics workloads on high-memory or GPU-labeled nodes).
-● Pod Anti-Affinity: Prevents identical or related Pods from being co-located on the same node or across identical availability zones, guarding against single points of hardware failure.
-
-What are Kubernetes Probes?
-● Liveness Probe: Tests if the running container is healthy. Failure triggers a container restart by the kubelet.
-● Readiness Probe: Determines if the container is prepared to handle ingress traffic. Failure removes the Pod IP from the endpoints of related Services.
-● Startup Probe: Protects slow-starting legacy apps by disabling liveness and readiness checks until startup completes successfully.
-
-What is nodeSelector?
-● The most direct mechanism for node assignment. Defined within the Pod specification, it uses explicit key-value pairs that must directly match labels assigned to worker nodes (e.g., disk: ssd).
 
 What is the difference between a LoadBalancer Service and an Ingress Controller?
 ● LoadBalancer Service: Operates at Layer 4 (TCP/UDP). Each distinct service requires a dedicated external cloud load balancer, creating additional infrastructure costs.
@@ -512,3 +403,30 @@ What is a Static Pod?
 ● The kubelet watches a local directory (usually /etc/kubernetes/manifests/) and automatically runs any YAML file placed there.
 ● Static Pods are commonly used during cluster bootstrap to run the control plane components themselves (kube-apiserver, etcd, kube-controller-manager).
 
+What are init and sidecar containers
+Init containers and sidecar containers are specialized helper containers in Kubernetes that run inside a Pod alongside the main application containers
+Init Containers
+• What they are: Specialized containers that run during a Pod's initialization stage before any main application containers start.
+• Lifecycle: They run sequentially (one after another) to completion and must exit successfully before the next init container or the main application container can begin.
+• Common Use Cases:
+	• Running database migrations or schema setups.
+	• Waiting for external services or dependencies (like a database or API) to become reachable.
+	• Downloading configuration files, pre-populating shared volumes, or priming initial data
+Sidecar Containers
+• What they are: Auxiliary helper containers that run concurrently alongside the main application container to extend or enhance its functionality without modifying the core code.
+• Lifecycle: In Kubernetes (starting from v1.29+), sidecars are implemented as a special case of init containers configured with a restart policy of Always. They start during pod initialization and continue running for the entire lifetime of the Pod. During shutdown, main application containers terminate first, followed by sidecars.
+• Common Use Cases:
+	• Log shipping and aggregation (e.g., FluentBit, Vector).
+	• Service mesh proxies (e.g., Envoy) for traffic routing and load balancing.
+	• Metrics exporters and telemetry gathering.
+	• Certificate rotation, local caching, or security/authentication helpers
+based on that explain these
+You have a Java application running in Kubernetes. The application generates logs inside /app/logs. You don't want to modify the application code, but you need to send those logs to Elasticsearch. What would you use?
+Your application should start only after a configuration file is downloaded from an external location. What would you use?
+
+secure kubernetes cluster all aspects
+
+corden, uncorden and drain
+In Kubernetes, cordon and drain are commands used to manage worker nodes during maintenance, upgrades, or decommissioning.
+cordon- Action: Marks a worker node as SchedulingDisabled
+Drain- Action: Automatically cordons the node first, and then safely evicts all existing pods

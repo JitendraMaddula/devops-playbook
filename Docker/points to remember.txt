@@ -1,0 +1,21 @@
+Essential Docker Commands & Interview Traps
+Interviewers use Docker questions to test your fundamental understanding of container mechanics, local debugging, and build server maintenance.
+
+## 1. Building & Running
+* `docker build -t <name>:<tag> .`: Builds an image. 
+  * **Interview Trap:** "What is the `.`?" Answer: It is the build context—the path sent to the Docker daemon containing the files needed for the build.
+* `docker run -d -p 8080:80 --name myapp <image>`: Runs a container in detached mode.
+  * **Interview Trap:** "In `-p 8080:80`, which is the host port?" Answer: Left is host (8080), right is container (80).
+
+## 2. Debugging Commands
+* `docker ps -a`: Lists all containers, crucially including the ones that have crashed/exited.
+* `docker logs -f <container-id>`: Streams the standard output of the container.
+* `docker exec -it <container-id> /bin/sh`: Opens an interactive shell inside an *already running* container.
+  * **Interview Trap:** "Difference between `exec` and `run`?" Answer: `run` creates a NEW container. `exec` runs a command inside an EXISTING container.
+* `docker inspect <container-id>`: Outputs a massive JSON payload containing the container's IP address, actual volume mounts, and environment variables.
+
+## 3. Stopping & Cleaning Up
+* `docker stop` vs `docker kill`: 
+  * **Interview Trap:** `stop` sends SIGTERM (graceful shutdown, waits 10s). `kill` sends SIGKILL (instant termination).
+* `docker system prune -a --volumes`: 
+  * **Interview Trap:** "Your CI/CD build server is out of disk space. How do you fix it?" Answer: Run this command to delete all unused images, stopped containers, and orphaned volumes.

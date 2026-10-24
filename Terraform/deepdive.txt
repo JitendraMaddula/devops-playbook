@@ -28,3 +28,31 @@ command - 1. terraform destroy
           3. terraform destroy —target= resource_type.resource_name
 5. Terraform validate - Terraform validate is used to check syntax of terraform configuration files
 command - terraform validate
+
+Data sources: Allow terraform to extract information of infracture provisioned outside of terraform or by another saperate configuration. 
+Syntax:
+
+Resource dependency: By default terraform automatically gathers one resource dependends on another by studying the resource attributes used but if we want to explictly mention dependenies between resources that are not visible to terraform, we can use the depends_on argument.
+Syntax:
+
+Aliases: Aliases is a way of defining multiple configurations for the same provider, it is generally used to support multiple regions for same cloud provider.
+
+Count and for_each: By default the terraform resource block can only create one infracture object, if we ever want to create multiple objects then we can use count and for_each.
+
+Provisioners:
+Terraform provisioners are used to execute scripts or commands on the local machine or on the remote machines. For provisioner to work they require a connection block to run commands on remote machines. 
+
+Types of provisioners:
+1 file
+This provisioner is used to copy files or directories from the local machine to the remote machine.
+2 local exec
+This provisioner is used to run commands on local machine where terraform is installed.
+3 remote exec
+This provisioner is used to run scripts or commands on a remote resource.
+Types: 
+a inline:
+This is used to execute a list of commands.
+b script: 
+This is used to copy and execute a script on remote machine.
+c scripts: 
+This is used to copy a list of scripts and execute them on remote machines. 

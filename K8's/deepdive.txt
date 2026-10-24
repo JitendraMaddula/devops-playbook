@@ -346,7 +346,7 @@ It means deploying the container orchestration platform directly on physical ser
 Why generally prefers odd number of nodes in a cluster what is the reason 
 Kubernetes prefers an odd number of control plane (master) or etcd nodes to maintain a majority vote (quorum) efficiently and prevent tie votes during failures.
 
-Quorum***
+Quorum (very important for interviews)
 In Kubernetes, quorum refers to the minimum number of voting nodes required to agree on changes and maintain a consistent cluster state.
 
 co-run in kubernetes

@@ -1,0 +1,10 @@
+Artisan\ Tek.pem 
+Assignment
+playground
+git/Git-Notes.txt
+Linux/linux-jun2026.txt
+.DS_Store
+.gitignore
+**/.terraform/
+*.tfstate
+*.tfstate.*

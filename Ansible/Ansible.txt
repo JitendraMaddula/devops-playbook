@@ -1,0 +1,223 @@
+Ansible is an open-source tool used for configuration management, application deployment,
+along with infrastructure orchestration.
+
+Ansible is a push-based configuration management tool
+1. Ansible does not require any dedicated agent running on the target host machines.
+2. The requirement for host machines is python installed on them and a proper ssh
+connection between the controller and the host machines.
+Advantages:
+• free/open source
+• Very simple to setup
+• Agent less configuration tool
+
+Architecture:
+Modules: Ansible works by connecting to your nodes and pushing out scripts called “Ansible
+modules” to them, Ansible then executes these modules (over SSH by default), and removes
+them when finished.
+
+Plugins: While modules execute on the target system, plugins execute on the control node.
+Plugins offer options and extensions for the core features of Ansible
+
+Controller Machine: Controller is a Machine where Ansible is installed
+
+Inventory: Inventory is the place where we put information about all our managed machine
+host machines
+
+Default Location: /etc/ansible
+
+Ansible Installation
+This works only on the RHEL 9 version
+sudo dnf install -y python3 python3-pip
+sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+sudo dnf install -y ansible
+ansible --version
+ansible-galaxy collection install amazon.aws
+
+-----------------***********************----------------------------------------------
+Hosts file: This is a file which contains the ip and configuration of target host machines on which we want execute our playbooks. Default location of host file is /etc/ansible/hosts
+#username@<Private ip/Public ip of the machine>
+ubuntu@172.31.23.14 ansible_become=true
+
+#IP-address ansible_user=<username> ansible_become=true
+172.31.16.132 ansible_user=ec2-user ansible_become=true
+
+Ad-Hoc Commands:
+ansible -i <inventory-file> -m <modules like ping/shell/git/file> -a <arguments> <selection of the managed nodes>
+ansible -m shell -a "df -Th" all
+ansible -m shell -a "touch file.txt" all
+ansible -m shell -a "apt-get install wget" all --become
+
+Using a copy module to copy a file from controller to the managed nodes
+ansible -m copy -a "src=/home/ec2-user/copy-module.txt dest=/home/copy.txt" all
+
+Grouping Hosts in hosts file
+[frontend]
+ubuntu@172.31.23.14 ansible_become=true
+[backend]
+172.31.16.132 ansible_user=ec2-user ansible_become=true
+
+Playbook:
+Playbooks are list of tasks written in yaml format that gets executed on host
+machines
+• Can contain n number of plays
+• Each play is designated to run n number tasks
+• Each task is designated to execute a single module (i.e., only one module per task)
+
+#Playbook to install single package
+---
+- name: My First Playbook
+  hosts: all
+  become: true
+  tasks:
+   - name: installing wget
+     yum:
+      name: wget
+      update_cache: yes
+
+#playbook to install multi packages.
+---
+- name: My First Playbook
+  hosts: rhel
+  become: true
+  tasks:
+   - name: installing wget
+     yum:
+      name: ['wget','unzip','git']
+      update_cache: yes #this is as good as sudo yum update
+      state: present. # this has 3 option present-install absent-uninstall latest-it will install the latest version of the package
+
+Commands: ansible-playbook <playbook name>
+
+*PLAY RECAP Variables Explained
+
+The PLAY RECAP section shows execution statistics for each host. Here's what each variable means:
+
+### Basic Format:
+PLAY RECAP *********************************************************************
+hostname               : ok=X    changed=Y    unreachable=Z    failed=A    skipped=B    rescued=C    ignored=D
+
+
+### Variable Breakdown:
+
+ok=X
+
+- Tasks that executed successfully without making changes
+- Includes tasks that checked state and found it already correct
+- Green color in output
+
+changed=Y
+
+- Tasks that executed successfully AND made changes to the system
+- Files modified, packages installed, services restarted, etc.
+- Yellow/orange color in output
+
+unreachable=Z
+
+- Hosts that Ansible couldn't connect to
+- Network issues, SSH problems, host down
+- Red color, stops execution for that host
+
+failed=A
+
+- Tasks that failed during execution
+- Command errors, permission issues, syntax errors
+- Red color, usually stops playbook execution
+
+skipped=B
+
+- Tasks that were skipped due to conditions
+- `when:` conditions not met, tags not matching
+- Cyan color in output
+
+rescued=C
+
+- Tasks that failed but were handled by rescue blocks
+- Part of error handling with `block/rescue/always`
+- Shows recovery attempts
+
+ignored=D
+
+- Failed tasks that were explicitly ignored
+- Using `ignore_errors: yes` or `failed_when: false`
+- Continues execution despite failure
+
+
+Idempotency: 
+In Ansible, idempotency is the principle that running a task or an entire playbook multiple times will result in the same final state on the target system.If a system is already in the state you want it to be in, Ansible will not make any changes
+
+Multiple-tasks with multi module
+---
+- name: Multi-Task Playbook with different modules
+  hosts: backend
+  become: true
+  tasks:
+    - name: Installing multiple packages using yum module
+      yum:
+        name: ['wget','unzip','git']
+        state: present
+        update_cache: yes
+    
+    - name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+      file:
+        path: /home/ec2-user/file-module.txt
+        state: touch
+    
+    - name: This command will change the working directory to somedir/.
+      shell:
+        cmd: "touch shell-module.txt"
+        chdir: /home/ec2-user
+
+Ansible Register and Debugging:
+Ansible register is a way to capture the output from task execution and store it in a variable.
+
+Debug will print the values that are stored in the register Variables
+
+Ansible tags
+Using tags, we can run specific task or play in a playbook
+
+To run only task with the tag
+ansible-playbook <playbook_name>.yaml --tags="wget"
+ansible-playbook <playbook_name>.yaml --tags="wget,shell"
+To skip a tagged play / task
+ansible-playbook <playbook_name>.yaml --skip-tags="file"
+ansible-playbook <playbook_name>.yaml --skip-tags="wget,shell"
+
+
+Static inventory:
+It is a file which contains the ip and configuration of target host machines on
+which we want execute our playbooks. Default location of host file is /etc/ansible/hosts
+
+Dynamic Inventory:
+With scalable cloud infrastructure it is diﬃcult to maintain a sta5c inventory file as we might miss those instances that are newly created or created by auto-scaling. Ansible provides a way to capture these new host machines with Dynamic Inventory concept using plugins
+Ansible dynamic inventory plugin is supported from Ansible 2.7 version.
+
+
+Pre-requisites:
+1. Install boto3
+sudo yum install -y python3-pip
+pip install boto3
+
+2. Install AWS CLI and configure with access_Key and secret_Key
+aws_ec2 Plugin:
+plugin: aws_ec2
+regions:
+- ap-south-1
+
+keyed_groups:
+- key: tags
+  prefix: instace_tags
+- key: instance_type
+  prefix: instance_type
+
+
+Configuration:
+In ansible.cfg file
+[defaults]
+inventory = /etc/ansible/aws_ec2.yaml
+[inventory]
+enable_plugins = aws_ec2
+
+
+Commands:
+ansible-inventory -- graph
+ansible <tag> -m ping

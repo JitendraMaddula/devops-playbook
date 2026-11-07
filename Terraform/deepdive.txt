@@ -29,6 +29,11 @@ command - 1. terraform destroy
 5. Terraform validate - Terraform validate is used to check syntax of terraform configuration files
 command - terraform validate
 
+Input variables: These serve as parameters for terraform configuration files, they allow the config files to be customized without altering the source code and therefore making them reusable.
+Syntax:
+
+Output variables: These are used to extract information about the resources created using terraform configuration files.
+
 Data sources: Allow terraform to extract information of infracture provisioned outside of terraform or by another saperate configuration. 
 Syntax:
 
@@ -56,3 +61,15 @@ b script:
 This is used to copy and execute a script on remote machine.
 c scripts: 
 This is used to copy a list of scripts and execute them on remote machines. 
+
+Terraform state: Terraform state is a file which is used to keep track of the resources provisioned by terraform. The default name of the state file is terraform.tfstate. The state file is stored in JSON format and can be used to track the current state of the infracture.
+root module terraform.tfstate file contains the following information:
+1. Resources provisioned by terraform
+2. Resource dependencies
+3. Resource attributes  
+
+remote state[Backend]: Terraform state can be stored remotely in a backend like S3, GCS, Azure Blob Storage, etc. This allows multiple team members to work on the same infrastructure and ensures that the state is consistent across all users.
+
+State lock: Terraform state can be locked to prevent concurrent modifications. This is especially important when multiple team members are working on the same infrastructure. State locking can be enabled in the backend configuration.
+
+Modules: Modules are a way to organize and reuse Terraform code. A module is a container for multiple resources that are used together. Modules can be used to create reusable components, such as a VPC or an EC2 instance, that can be shared across different projects or environments.

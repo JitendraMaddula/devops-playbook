@@ -1,0 +1,99 @@
+LINUX INTERVIEW REVISION - COMPACT (command --> meaning)
+
+BASICS
+Linux = kernel + libraries + shell (bash/zsh) = distro | Arch: hardware>kernel>libs/utils>shell>apps | $ user, # root
+Pkg mgrs: apt (Ubuntu/Kali/RPi), yum/dnf (RedHat), apk (Alpine) | Dirs: /etc config, /var logs, /home, /root, /tmp, /proc /sys virtual, /dev devices, /opt 3rd-party, /boot, /usr, /mnt /media mounts
+Boot: BIOS/UEFI > MBR/EFI > GRUB (older LILO) > Kernel > systemd/init (PID 1) | Runlevels: 0 halt, 1 single, 3 multi-user (server), 5 GUI, 6 reboot
+
+FILES & NAVIGATION
+pwd | cd dir / cd .. / cd   --> where am I / change dir / up / home
+ls -l -a -lt -lrt -i -1     --> long / hidden / newest first / oldest first / inode / one per line
+touch f | mkdir -p a/b      --> create file / nested dirs
+cp [-r] s d | mv s d        --> copy / move or rename
+rm [-r -f] f, rm *.sh       --> delete (recursive, force, wildcard)
+stat f | file f | tree      --> file details / type / dir tree
+man cmd | cmd --help | history | alias | which cmd | clear
+
+VIEW & COUNT
+cat [-n] | tac | head -n | tail -n | tail -f | less [-N] (f/b/q)  --> view whole / reverse / start / end / live follow / paged
+wc -l -w -c | ls -1 | wc -l --> count lines/words/chars / count files
+echo "x" | echo -e "a\nb" | echo x | rev  --> print / with newline / reversed
+
+VI/VIM
+i insert | Esc normal | :w save | :q quit | :q! quit no save | :wq save+quit | :n go to line | :set nu / nonu line numbers
+u undo | Ctrl+r redo | dd / 4dd delete line(s) | :4,8d / :4,$d / :%d delete range | /pat search (/\cpat ignore case), n/N next/prev
+:%s/old/new/gic replace all (g all in line, i ignore case, c confirm) | :4,8s/../../g range | :4,$s/../../g to end
+
+REDIRECT / PIPE
+> overwrite | >> append | 2> errors | > f 2>&1 both | > /dev/null discard | cmd1 | cmd2 pipe | cmd | xargs rm  (pipe -> arguments)
+cmd | tee [-a] f1 f2        --> write to file(s) AND show on screen (-a append)
+
+SEARCH
+find . -name/-iname x -type f/d -maxdepth n -mtime -15/+15 -mmin -720 -size +1M -empty [-delete] -perm 644 -inum N -exec cmd {} \;
+locate f                    --> fast search via index (updatedb)
+grep [-i -n -v -c -r -l -L -e -A/-B/-C] "str" f ; "^str" starts-with ; "str$" ends-with ; -c "^$" empty lines
+
+TEXT PROCESSING
+sed 's/old/new/gi' f (-i save, -i.bkp backup) | sed '4s/../../' line 4 | '4,8d' '4,$d' '4d;8d' delete | -n '4p' '4,8p' print | -i '4 a\txt' / '$ a\txt' insert
+cut -d " " -f2 / -f2-4 / -f2,4  --> columns by delimiter
+awk -F ":" '{print $2,$NF,$(NF-1)}' | '{print NF}' cols per line | 'NR==4' | 'NR==4,NR==8' | 'END{print NR}' total lines | '{s+=$1}END{print s}' sum
+sort [-n -r] | uniq [-c -d] (needs sorted input) | diff f1 f2 | tr a-z A-Z | rename 's/a/b/' *.txt  or  for f in *.txt; do mv "$f" "${f%.txt}.md"; done
+Freq count: sort f | uniq -c | sort -rn | head
+
+USERS & SUDO
+whoami | id (UID/GID/groups) | who / w (logged in) | last (login history, /var/log/wtmp) | lastlog | groups u
+useradd [-d /home/u -m -s /bin/bash] u | passwd u | userdel [-r] u | usermod -aG grp u | usermod -s shell u | groupadd/groupdel | chsh -s /bin/bash u
+su u (needs u's password) | sudo su - / sudo -i (become root) | visudo --> edit /etc/sudoers: "u ALL=(ALL) NOPASSWD: ALL"
+/etc/passwd users | /etc/shadow hashed passwords | /etc/group groups | chage -l u password expiry | passwd -l/-u lock/unlock
+
+PERMISSIONS
+r=4 w=2 x=1 -> owner|group|others | chmod 764 f | chmod -R 755 d | chmod u+x,g+w,o+rw f
+chmod +t d sticky bit (only owner deletes own files, e.g. /tmp) | u+s SUID (run as owner) | g+s SGID (dir inherits group)
+chown u f | chgrp g f | chown u:g f | chown -R u d
+umask 022 --> default files 644 / dirs 755 (base 666/777 minus mask); 002 -> 664/775; 026 -> 640/751; persist in ~/.bashrc
+setfacl -m u:user:rwx d | getfacl f --> per-user ACL | lsattr / chattr +i f --> view / set immutable
+
+LINKS & INODES
+ln f hard --> same inode, survives original deletion, files only | ln -s f soft --> path shortcut, breaks if original gone, works for dirs
+inode = unique file ID | ls -i | find -inum N | df -i (inode usage) | Inodes full --> can't create files; delete files or add/mount disk
+
+DISK & MEMORY
+df -h disk usage | du -sh * | sort -rh | head  size per item | lsblk list disks | fdisk -l / fdisk /dev/sdb partitions | mkfs.ext4 dev format
+mount dev dir / umount | /etc/fstab permanent mounts | blkid UUIDs | free -h RAM+swap | swapon / swapoff / mkswap file | swapon --show
+Swap = disk used when RAM full | uptime --> uptime + load avg (procs using/waiting for CPU, 1/5/15 min) | vmstat / iostat | lsof -p PID open files | lsof -i :80 port owner
+
+PROCESSES
+ps -ef | ps aux | ps -u user | ps -fp PID | ps aux --sort=-%cpu (or -%mem) | head | pstree | pgrep name (PID) | pkill name | killall name
+kill PID (15 SIGTERM soft) | kill -9 (SIGKILL force) | -2 SIGINT (Ctrl+C) | -STOP/-19 pause | -CONT resume | kill -l list signals
+top (k kill, u user, q quit) / htop | nice -n v cmd / renice -n v -p PID (priority -20 high..19 low)
+cmd & background | jobs | fg %1 | bg %1 | Ctrl+Z suspend | Ctrl+C stop | nohup cmd & survive logout | disown | screen/tmux | watch -n2 cmd
+Daemon = background service, no terminal | Zombie = finished, parent hasn't reaped | Orphan = parent died, adopted by PID 1
+
+NETWORKING
+ip a / ip addr show (IPs) | ip r (routes) | curl ifconfig.me (public IP) | hostname -I | ping host | traceroute host (tracert) | telnet host port / nc -zv host port (port test)
+nslookup / dig domain / dig -x ip (reverse DNS) / host | ss -tuln / netstat -tulnp (open ports+process; netstat in net-tools) | iptables -L firewall | arp -a
+curl [-I headers, -o save] url | wget url | /etc/hosts local DNS | /etc/resolv.conf DNS servers
+Ports: SSH 22, Telnet 23, FTP 21 (ctrl)/20 (data), HTTP 80, HTTPS 443, Nginx 80, Jenkins/Tomcat 8080, K8s API 6443, DNS 53, SMTP 25, MySQL 3306, Postgres 5432
+TCP = reliable, connection-oriented | UDP = fast, no guarantee | HTTPS = HTTP over TLS | TLS = modern SSL | Handshake = initial negotiation before data
+
+SSH / SCP / RSYNC
+chmod 400 key.pem && ssh -i key.pem user@ip | ssh-keygen then copy .pub into remote ~/.ssh/authorized_keys --> passwordless
+scp [-r] [-i key] src user@ip:/path | rsync -avz /src/ /dest  --> copy over SSH / efficient sync
+
+SERVICES & LOGS
+systemctl status|start|stop|restart|reload|enable|disable|enable --now svc | is-active / is-enabled | daemon-reload | list-units --type=service
+start = run now (lost on reboot); enable = auto-start at boot | service svc start|stop|status (old style) | get-default / set-default multi-user.target | reboot | poweroff | halt
+systemctl set-property svc CPUQuota=20% MemoryMax=1G  --> limit resources
+journalctl [-u svc] [-f live] [-xe errors] [--since "1 hour ago"] | dmesg kernel msgs | tail -f /var/log/syslog (Ubuntu) or /messages (RHEL) | auth.log / secure login logs
+logrotate = rotate/compress/delete old logs by size/age (/etc/logrotate.conf) | crontab -e / -l  (min hour dom mon dow cmd) | at time = one-time job
+lsns namespaces | inotifywait (live file events) / inotifywatch (event summary) | init=old sequential PID1, systemd=modern parallel PID1, sshd=SSH daemon
+
+PACKAGES & ARCHIVES
+yum/dnf install|remove|update|search pkg | apt update; apt install pkg | apk add pkg | rpm -qa (all) -qi (info) -ql pkg (files installed) -qf file (owner pkg) -ivh f.rpm | dpkg -l
+tar -czvf a.tar.gz f (create+gzip) | tar -tf (list) | tar -xf [-C dir] (extract) | gzip/gunzip | zip -r a.zip d / unzip
+Archive (tar) = bundle, no size cut; Compress (gzip/zip) = shrink size
+
+SYSTEM INFO
+uname -a / -r | cat /etc/os-release (distro) | hostnamectl | lscpu / nproc | /proc/cpuinfo /proc/meminfo | date / timedatectl | env / export VAR=v / echo $PATH / source ~/.bashrc
+~/.bashrc every shell | ~/.bash_profile login | ~/.bash_logout on logout (audit logout time, clear screen, remove SSH keys from agent) | diff f1 f2 | Tomcat = Java servlet/web server
+Distro var: d=$(grep "^ID=" /etc/os-release | cut -d= -f2 | sed 's/"//g')

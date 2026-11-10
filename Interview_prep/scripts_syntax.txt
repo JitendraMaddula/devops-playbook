@@ -1,0 +1,116 @@
+If Condition:
+a. Simple If Condition:
+if [ condition ]
+then
+    commands
+else
+    commands
+fi
+
+b. If-Else-If
+if [ condition ]; then
+    commands
+elif [ condition ]; then
+    commands
+else
+    commands
+fi
+
+c. Nested-If
+if [ condition ]
+then
+    if [ condition ]
+    then
+        commands
+    else
+        commands
+    fi
+else
+    commands
+fi 
+
+
+
+
+
+While Loop:
+Syntax:
+while [ condition ]
+do 
+    commands
+done
+(or)
+while [ condition ]; do 
+    commands
+done
+
+
+
+
+
+While Read Loop:
+Syntax:
+while read <variable>
+do
+    commands
+done < <file-name>
+
+
+
+
+
+For Loop Syntax:
+
+1. C-Style 
+for ((Init; Condition; Iteration))
+do
+    Commands
+done
+
+2. List Iterative Loop
+a. With Direct Values
+for i in var1 var2 var3 var4 ..... varn
+do
+    commands
+done
+
+b. Using Range Functions:
+for i in {0..10}    -- The value of i will iterate from 0 to 10
+for i in {0..10..2} -- The value of i will iterate from 0 to 10 with increments of 2
+
+c. Using Sequence Command
+for i in $(seq 0 10)    -- The value of i will iterate from 0 to 10
+for i in $(seq 0 2 10)  -- The value of i will iterate from 0 to 10 with increments of 2
+
+d. Using Arguments
+for i in $* -- The value of i will iterate through all the arguments passed to the shell script
+for i in $@ -- The value of i will iterate through all the arguments passed to the shell script
+
+
+
+
+
+Case Statements:
+Syntax:
+case $<var> in
+    pattern1) Commands to be executed if variable matches pattern1;;
+    pattern2) Commands to be executed if variable matches pattern2;;
+    pattern3) Commands to be executed if variable matches pattern3;;
+    pattern4 | pattern5) Commands to be executed if variable matches pattern4 or pattern5;;
+    *) Commands to be executed if none of the above patterns match;;
+esac
+
+
+
+
+
+Functions:
+Syntax:
+<function-name> () {
+    commands
+}
+
+
+
+
+

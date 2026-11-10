@@ -1,5 +1,4 @@
-Ansible is an open-source tool used for configuration management, application deployment,
-along with infrastructure orchestration.
+Ansible is an open-source tool used for configuration management, application deployment, along with infrastructure orchestration.
 
 Ansible is a push-based configuration management tool
 1. Ansible does not require any dedicated agent running on the target host machines.
@@ -14,12 +13,9 @@ Architecture:
 Modules: Ansible works by connecting to your nodes and pushing out scripts called “Ansible
 modules” to them, Ansible then executes these modules (over SSH by default), and removes
 them when finished.
-
 Plugins: While modules execute on the target system, plugins execute on the control node.
 Plugins offer options and extensions for the core features of Ansible
-
 Controller Machine: Controller is a Machine where Ansible is installed
-
 Inventory: Inventory is the place where we put information about all our managed machine
 host machines
 
@@ -100,43 +96,36 @@ hostname               : ok=X    changed=Y    unreachable=Z    failed=A    skipp
 ### Variable Breakdown:
 
 ok=X
-
 - Tasks that executed successfully without making changes
 - Includes tasks that checked state and found it already correct
 - Green color in output
 
 changed=Y
-
 - Tasks that executed successfully AND made changes to the system
 - Files modified, packages installed, services restarted, etc.
 - Yellow/orange color in output
 
 unreachable=Z
-
 - Hosts that Ansible couldn't connect to
 - Network issues, SSH problems, host down
 - Red color, stops execution for that host
 
 failed=A
-
 - Tasks that failed during execution
 - Command errors, permission issues, syntax errors
 - Red color, usually stops playbook execution
 
 skipped=B
-
 - Tasks that were skipped due to conditions
 - `when:` conditions not met, tags not matching
 - Cyan color in output
 
 rescued=C
-
 - Tasks that failed but were handled by rescue blocks
 - Part of error handling with `block/rescue/always`
 - Shows recovery attempts
 
 ignored=D
-
 - Failed tasks that were explicitly ignored
 - Using `ignore_errors: yes` or `failed_when: false`
 - Continues execution despite failure
@@ -188,7 +177,7 @@ It is a file which contains the ip and configuration of target host machines on
 which we want execute our playbooks. Default location of host file is /etc/ansible/hosts
 
 Dynamic Inventory:
-With scalable cloud infrastructure it is diﬃcult to maintain a sta5c inventory file as we might miss those instances that are newly created or created by auto-scaling. Ansible provides a way to capture these new host machines with Dynamic Inventory concept using plugins
+With scalable cloud infrastructure it is diﬃcult to maintain a static inventory file as we might miss those instances that are newly created or created by auto-scaling. Ansible provides a way to capture these new host machines with Dynamic Inventory concept using plugins
 Ansible dynamic inventory plugin is supported from Ansible 2.7 version.
 
 
@@ -221,3 +210,14 @@ enable_plugins = aws_ec2
 Commands:
 ansible-inventory -- graph
 ansible <tag> -m ping
+
+
+Ansible Roles Standardized directory structure
+tasks/main.yml: The core logic, containing the main list of tasks executed by the role. 
+handlers/main.yml: Event-driven actions (e.g., service restarts) triggered by tasks. 
+defaults/main.yml: Low-priority variables that serve as overridable default settings. 
+vars/main.yml: High-priority variables for internal constants or role-specific data. 
+templates/: Files containing Jinja2 templates (ending in .j2) for dynamic configuration. 
+files/: Static files (scripts, configs) copied to managed hosts without modification. 
+meta/main.yml: Metadata about the role, including dependencies on other roles. 
+tests/: Optional directory for testing assets, including an inventory file and test.yml.

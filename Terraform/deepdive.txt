@@ -72,4 +72,16 @@ remote state[Backend]: Terraform state can be stored remotely in a backend like 
 
 State lock: Terraform state can be locked to prevent concurrent modifications. This is especially important when multiple team members are working on the same infrastructure. State locking can be enabled in the backend configuration.
 
+Terraform file structure:
+main.tf: The primary entry point containing resource blocks and module calls. 
+variables.tf: Declares input variables used across resources. 
+outputs.tf: Defines values exposed after execution (e.g., IDs, endpoints).
+provider.tf: Specifies cloud provider configurations (e.g., AWS, Azure) and required versions. 
+terraform.tfvars: Stores actual variable values, typically ignored in version control for security. 
+backend.tf: Configures remote state storage (e.g., S3, GCS) and state locking.
+
+diff between variables.tf abd .tfvars
+variables.tf acts as the schema or interface for a Terraform module.  It defines what inputs are available, their expected data types, descriptions, and optional default values. This file is part of the configuration code and is typically committed to version control.
+.tfvars files (such as terraform.tfvars or *.auto.tfvars) contain simple key-value pairs that assign values to the variables declared in the .tf files.  These files allow for environment-specific configurations (e.g., dev.tfvars, prod.tfvars) without modifying the core code. They are loaded automatically if named terraform.tfvars or *.auto.tfvars, or manually via the -var-file flag.
+
 Modules: Modules are a way to organize and reuse Terraform code. A module is a container for multiple resources that are used together. Modules can be used to create reusable components, such as a VPC or an EC2 instance, that can be shared across different projects or environments.

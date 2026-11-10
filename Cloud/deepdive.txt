@@ -34,7 +34,7 @@ TYPES OF CLOUD COMPUTING
 - Infrastructure as a Service (IaaS): Fundamental building blocks. Access to virtual servers, storage, networking. Highest flexibility. (Analogy: Leasing land and building materials).
 - Platform as a Service (PaaS): Provider manages infrastructure (hardware/OS). You focus on deploying/managing applications. Ideal for developers. (Analogy: Leasing land and a pre-built foundation).
 - Software as a Service (SaaS): Complete, ready-to-use software product delivered over the internet. Provider manages everything. (Analogy: Renting a fully furnished house). example AWS QuickSight
-- Function as a service: Lets developers run event-triggered code functions without managing any underlying servers or runtime environments.
+- Function as a service (FaaS): Lets developers run event-triggered code functions without managing any underlying servers or runtime environments.
 
 AWS GLOBAL INFRASTRUCTURE
 - Regions: Distinct geographical areas around the world where AWS clusters its data centers.

@@ -1,0 +1,652 @@
+***LINUX***
+Architecture -> hardware --> kernel --> system utilities and libraries --> shell --> applications
+Linux Distributions and there packet managers -> ubuntu.      --> apt, red hat      --> yum, Kali Linux   --> apt, Rasberry pi  --> apt, Alpine Linux --> apk
+
+prompt ending $ --> You're a regular user, # --> You're the root user (admin)
+
+Folder Structure:
+    Symbolic Links (Less Significant)
+        /sbin -> /usr/sbin	System binaries for administrative commands (linked to /usr/sbin).
+        /bin -> /usr/bin	Essential user binaries (linked to /usr/bin).
+        /lib -> /usr/lib	Shared libraries and kernel modules (linked to /usr/lib).
+    Important System Directories
+        /boot	Stores files needed for booting the system (not relevant in containers).
+        /usr	Contains most user-installed applications and libraries.
+        /var	Stores logs, caches, and temporary files that change frequently.
+        /etc	Stores system configuration files.
+    User & Application-Specific Directories
+        /home	Default location for user home directories.
+        /opt	Used for installing optional third-party software.
+        /srv	Holds data for services like web servers (rarely used in containers).
+        /root	Home directory for the root user.
+    Temporary & Volatile Directories
+        /tmp	Temporary files (cleared on reboot).
+        /run	Holds runtime data for processes.
+        /proc	Virtual filesystem for process and system information.
+        /sys	Virtual filesystem for hardware and kernel information.
+        /dev	Contains device files (e.g., /dev/null, /dev/sda).
+    Mount Points
+        /mnt	Temporary mount point for external filesystems.
+        /media	Mount point for removable media (USB, CDs).
+        /data	Likely your mounted volume from Windows (C:/ubuntu-data).   
+
+Creating Files and Directories -> touch <file-name>, mkdir <directory-name>
+
+To Check the current directory -> pwd
+
+Change Directory -> cd <directory-name>, cd ..
+
+Text Editor -> vi <file-name>
+threemodes -> normal mode, insert mode, command mode(w --> Write, q --> quit, d --> delete, ! --> Override [Forcefully])
+
+cat <file-name> --> To see the contents of the file
+Head - Used to print required number of lines from the beginning of the file
+Tail - Used to print required number of lines from the end of the file
+less - Used to view contents of the file interactively (f --> To go one page forward, b --> To go one page backward, q --> To quit/exit from the less command)
+
+man <command>  --> To see the Manual Page of the command
+
+Copy Files and Directories(-r) -> cp <source-path> <destination-path> 
+Move Files and Directories(-r) -> mv <source-path> <destination-path>
+Remove Files and Directories(-r) -> rm <file-name>
+
+echo "<text>" --> To print the text on the terminal
+
+<command> > <file-name> --> To redirect the output of a command to a file
+<command> >> <file-name> --> To append the output of a command to a file
+
+<command> | <command> --> To pass the output of a command as an input to another command
+pipe alternative- command2 <(command1)
+
+xargs -> Many Linux commands (like rm, cp, or mkdir) do not accept data piped from stdin (|). They require arguments to be passed directly on the command line.
+
+Word Count -> -l --> To print lines, -w --> To print words, -c --> To print characters
+
+find -mtime -15 --> To show all the files and directories which are last modified/created in the last 15 days
+find -maxdepth 3 -mindepth 3. --> To show only the files and folders that exist at that depth 3
+find . -type f -mmin 720 --> Find all the files that got modified/created in the last 12 hours
+find . -type f ! -empty -delete --> Find all the non-empty file and delete
+find . -type f -size +1M --> Find all the files that have a size of more than 1MB
+
+grep -i "<string>" <file-name>                 --> To print all the lines of the file with the matching string with case ignored
+grep -n "<string>" <file-name>                 --> To print all the lines of the file with line numbers that have the matching string
+grep -e "<string1>" -e "<string2>" <file-name> --> To search for multiple strings
+grep -lR "<string>"                            --> To print all the names of the files that contain the string 
+grep -riL "your_search_string"                 --> To display the names of all the files that do not have the matching string
+grep -v "<string>" <file-name>                 --> To print all the lines of the file that do not have the matching string 
+grep "^<string>" <file-name>                   --> To print all the lines of the file with the matching string at the start of the line
+grep "<string>$" <file-name>                   --> To print all the lines of the file with the matching string at the end of the line 
+grep -c "^$" <file-name>                       --> To find the empty lines count
+
+sed - Stream Editor - Find/Replace, Print, Delete etc
+
+locate <filename> --> find path of directory or file
+
+cut -d " " -f2,4 <file-name> --> To print the 2nd column and 4th column of the file
+awk 'NR==4;NR==8{print}' <file-name> --> To print from 4th line and 8th line of the file
+
+sudo visudo /etc/sudoers --> To edit the sudoers file  example: <username>       ALL=(ALL)       NOPASSWD: ALL
+Adding Users -> useradd <username>, passwd <username>, sudo useradd -d /home/<username> -m -s /bin/bash <username>, sudo userdel <username>
+Switch Users -> su <username>, sudo <username>, sudo su -
+
+Permissions in Linux  ->     rw-     r--     r--
+                          [Owner] [group] [others]
+Changing Permissions -> chmod 764 <file-name>
+    
+sticky bit -> chmod +t /path/to/directory -> is a special permission setting on a directory that ensures users can only delete or rename files they personally own, even if the directory itself is writable by everyone. 
+
+vi ~/.bashrc --> update umask details here to update umask perminently. Default permissions(umask) -> Files - 666 and Directories - 777
+
+Changing Ownershop and Group for files and Directories -> chown <username> <filename>, chgrp <username> <filename>, chown <username>:<groupname> <file-name>
+
+tee -> to Redirect and Append
+
+Link -> softlink and hardlink
+
+ls -i --> To check the inode of the files and directories
+
+df -h --> To check the disk size and usage
+
+PS - Process
+    ps -ef                 --> to list every process on the server with full format
+    ps -u <username>       --> To list process started by an user
+    <filename> &           --> Command to run process in background
+    ps -aux                --> List background running process
+    ps aux --sort=-%cpu    --> List process which are consuming more CPU
+    kill <PID>             --> To terminate a process - Soft Kill [Signal 15 - SIGTERM]
+    kill -9 <PID>          --> To Forcefully kill a process [Signal 9 - SIGKILL]
+                            A) SIGKILL (9)
+                            B) SIGSTOP (19)
+                            C) SIGTERM (15)
+                            D) SIGINT (2)
+    kill -STOP <processid> --> temporary stop
+    kill -CONT <processid> --> resume process
+    renice -n <priority number> -p <processid> --> priority/depriority
+
+top --> To check all the procees, CPU, Memory Usage in a live interactive dashboard
+Load average: It represents how many processes are using CPU or waiting to use it.
+
+free -h --> To check system memory usage
+Swap Memory: If the RAM is full kernel moves the active or idle data from RAM to Swap space which is taken from SSD in order to free-up RAM for active process.
+
+Networking commands
+   ip a        --> show private ip address
+   ip r        --> show routetable
+   ip addr show--> view IP addressing and network interface details
+   curl ifconfig.me -->public ip
+        Jenkins - 8080
+        Tomcat - 8080
+        HTTP - 80
+        HTTPS - 443
+        Nginx - 80
+        Kubernetes API Server - 6443
+        FTP -21- connection between client and user, 20-send actual files
+        ssh - 22
+        telnet - 23
+    tracert --> to show path of a data packets across network
+    telnet --> test connection to a specific port
+    iptable -->System firewall
+    ping <hostname/ip/website> --> TO check and ping another server/url
+    ping 0 --> check your system connection
+    nslookup    --> DNS troubleshooting
+    sudo netstat -tulnp --> To check which process is using which port on the server
+    sudo ss -tuln    --> chck open ports
+
+SSH -> ssh -i <private-key> <username>@<ip-address> --> To SSH into a Server
+To establish a passwordless connection, Generate a key pair using ssh-keygen command. Copy the contents of the newly generated public key to the authorized keys file of the remote server under .ssh folder
+
+scp -i <private-key> <file> <username>@<ip-address>:<destination-path>
+
+Managing Services -> sudo systemctl <service-name> start | stop | restart | 
+
+tar -> tar -tf file.tar.gz, tar -xf file.tar.gz, tar -czvf sample.tar.gz sample.txt
+
+Miscellaneous Commands:
+who --> To check all the logged in users
+whoami --> To check the current user
+getent passwd or cat /etc/passwd --> To see all the users on the server
+id --> TO check the curren user's UID, GID and the groups the user belongs to
+uname --> TO check the OS
+uname -a --> To check the OS, Kernel Version, Time Zone, Architecture etc
+cat /etc/os-release --> To check the information about the linux distribution
+rsync -avz /source/path/ /destination/path
+tac <file name> --> Command to display the contents of the file in reverse order
+
+
+***SHELL SCRIPTING***
+bashrc -- These are auto executable files that execute everytime an user logs in to the server or a new shell session starts. 
+bash_profile -- They are generally user for setting up Aliases, Environment Variables etc
+bash_logout -- Auto Executable file that executes everytime a session is exited or killed
+bash_history -- It contains all the commands executed by the user
+history -- Command to show history of commands executed by the user
+
+Special Variables:
+$0 -- The Name of the Shell Script
+$# -- THe Total Number of Arguments Passed to the script
+$* -- All the Arguments passed to the script in String Format
+$@ -- All the Arguments passed to the script in Array Format
+$$ -- The PID of the current Running Process
+$? -- The status of the last executed command
+$! -- PID of the last background process
+
+Operators:
+1. Arithmetic Operators [+, -, *. /, %]
+2. Relational Operators [==, !=, >, >=, <, <=]
+3. File Operators [-f,-d,-r,-w,-x,-s,-e,-L/-H,-z]
+4. Logical Operators [&&, ||, !]
+
+Debugging in Shell Scripts -> set -x, set -e, set -u, set -n
+
+*           *           *           *           *           <command>
+(mins)      (hour)      (date)      (month)     (day)
+crontab -e --> To edit the crontab file, crontab -l --> To list the existing crontabs
+Crown job for last day of every month --> 0 0 28-31 * * [ "$(date +\%d -d tomorrow)" = "01" ]
+
+exit status codes-->
+0: Success. The command or script finished completely without any errors.
+1: General Error. A generic catch-all for failures like a permission denied error, division by zero, or a script failing without a custom error number.
+2: Misuse of Shell Builtins. Usually triggered by syntax errors, missing keywords, or invalid arguments passed to a basic command
+126: Command Cannot Execute. The file exists, but the user doesn't have the necessary execution permissions, or it isn't an executable binary.
+127: Command Not Found. The command does not exist, there is a typo, or it is completely missing from your system path $PATH.
+128: Invalid Argument to Exit. Triggered if an exit command is given a non-integer or out-of-bounds parameter
+
+
+***GIT***
+Version Control is a system that tracks changes made to files over time. It helps developers collaborate, maintain history, and restore previous versions if needed.
+Two types -> Distributed Version Control System(DVCS) and Centralized Version Control System(CVCS)
+
+Git Architecture -> Working Directory, Staging Area, Local Repository, Remote Repository
+
+User Configuration -> git config --global(All repositories of current user), --local(Current Repo), --system(All users and all repositories)
+
+Create Repo -> git init
+Clone Existing Repository -> git clone <repository_url>
+Check Repository Status -> git status
+HEAD -> A pointer to the latest commit in the current branch. It represents the most recent commit on the current branch and serves as a reference point for various Git operations.
+
+Stage changes -> git add <filename> | git add .
+
+Commit Changes -> git commit -m "<message>" 
+View Commit History -> git log | git log --oneline
+
+update commit message of recent commit -> git commit --amend -m "new commit message"
+List all branches in the repository -> git branch  
+Rename the current branch -> git branch -m <new_branch_name>
+Switch to a specified branch -> git checkout <branch_name>
+
+Rename a remote repository alias -> git remote rename <old_name> <new_name>
+Add a new remote repository -> git remote add <name> <repo_url>
+Update URL -> git remote set-url <name> <repo-url>
+
+Push Changes -> git push -u <Alias> <branch name>
+Fetch Changes -> git fetch <Alias> <branch>
+Pull Change -> git pull <Alias> <branch>
+
+Merge Branches -> git merge <branch_name>
+Merge Conflict
+    A merge conflict occurs when Git cannot automatically figure out which changes to keep when combining two branches. The most common reasons are:
+        •	Same-line edits: Two branches modify the exact same line(s) in the same file differently.
+        •	Modify vs. Delete: One branch updates a file, while the other branch completely deletes that same file.
+        •	File creation collision: Both branches create a new file with the exact same name but different content.
+    Resolve the conflict manually, then:
+        git add .
+        git commit
+
+Rebase -> git rebase <branch_name>: Apply changes of the current branch on top of another branch. This can lead to a cleaner commit history compared to git merge.
+
+Reset -> Moves the branch pointer to a previous commit.
+    Soft Reset -> Removes the last commit but keeps changes staged.
+    Mixed Reset -> Removes the last commit and un-stages changes.
+    Hard Reset -> Deletes the last commit and all associated changes.
+ 
+Revert -> Safely undoes a commit by creating a new commit. -> git revert <commit_id>
+
+Restore -> to get deleted file back
+
+Key difference between restore, reset, revert
+    git restore works in working directory and staging
+    git reset works in all 3 and also rewrites history
+    git revert works in all 3 without rewriting history but adds a new commit
+
+Stash -> Temporarily saves uncommitted work. Save changes -> git stash, View stashes -> git stash list, Restore -> git stash apply, Restore and remove -> git stash pop, Delete all stashes -> git stash clear
+
+Cherry-pick -> Applies a specific commit from one branch to another. git cherry-pick <commit_id>
+
+Tags -> Leightweight tag and Annotated tag
+
+Git Ignore -> .gitignore
+
+git clone --mirror --> Used to create 1:1 replica of a repository, this is used whenever you want to migrate or take backup.
+
+git -blame --> Used to figure who last modified a specific line of code in a file and when they did it.
+
+Bare repository is a Git repository that does not have a working directory.
+
+git bisect -> is a powerful debugging tool that uses a binary search algorithm to find the exact commit that introduced a bug into your project.
+
+orphaned files -> Untracked Files
+
+git diff -> is a comparison tool used to show the line-by-line differences between two states of your Git repository.
+git diff --staged
+git diff branch_name_1 branch_name_2 -- path/to/your/file.ext
+
+squashing --> It is the process of combining multiple historical commits into a single, unified commit.
+git merge --squash
+
+Git hooks -> Client-Side Hooks(pre-commit, prepare-commit-msg, commit-msg, post-commit, pre-rebase, pre-push, post-checkout, post-merge ), Server-Side Hooks(pre-receive, update, post-receive)
+
+Command to stop merge in between -> git merge --abort
+
+fast forward merge -> git merge --ff-only feature-branch 
+
+How to delete remote branch--> git push origin --delete <branch_name>
+List only remote branches --> git branch -r
+
+Branching stretegy -> Trunk-Based Development (TBD), GitHub flow, Git flow
+
+Git submodules-> A Git submodule is a feature that allows you to keep one Git repository as a subdirectory of another Git repository. 
+
+
+***BUILD TOOLS***
+Build tools are -> Java -> Maven, Ant, Gradle, C/C++ -> make
+Extensions -> java -> .java, shell script -> .sh, python -> .py, nodejs -> .js
+
+Difference between interpreter and compiler:
+  •	Compiler: A compiler translates your entire program into a finished, ready-to-run file all at once before it ever starts running.
+  •	Interpreter: An interpreter translates and runs your code one single line at a time while the program is actively running.
+
+Difference between ant and maven
+•	Approach: Ant is procedural, meaning you have to write explicit, step-by-step scripts telling it exactly how to build the project. Maven is declarative and uses 'convention over configuration.' Because Maven has a standardized project structure, it already knows how to build the project—you just tell it what you need it to do.
+•	Dependency Management: Maven automatically downloads and manages third-party libraries and their sub-dependencies via a central repository. With Ant, you traditionally have to download, store, and link those library files manually.
+
+Java Executable Files (Artifacts) -> .jar, .war, .ear
+target files (artefacts ) in case of c,c++ -> Windows: .exe and Linux/macOS: .out
+
+Configuration file in case of ant -> build.xml, maven -> pom.xml, make -> makefile
+
+Unit Testing -> Testing the smallest individual, testable parts of an application (like a single function, method, or class) in complete isolation. testing tool is JUnit
+Integration Testing -> Grouping individual software modules together and testing them as a combined entity. Testing tools is selenium
+User Acceptance Testing (UAT) -> The final phase of testing performed in a real-world scenario by the intended audience or client. Testing tool is Jira
+Pre-Production (PRE-PROD) -> A testing environment that is an exact replica of the live production environment, used by technical teams to perform final load, performance, security, and deployment testing before the software goes live. Testing tool is JMeter
+
+Maven Goals / Maven Lifecycle -> 1.validate, 2.compile, 3.test, 4.package, 5.integration-testing, 6.verify, 7.install, 8.deploy
+
+Maven Repositories -> 1.local repo `~/.m2`, 2.central repo, 3.Remote repo
+Maven will look for dependencies in the below order: local repo --> remote repo (if does not exist) --> central repo
+
+Compilers used -> Java-->javac, C-->gcc, C++-->g++, Python-->CPython, Node.js-->V8 Engine
+
+
+***JENKINS***
+Software development life cycle(SDLC) 7 phases->  Planning, Requirements Analysis, Design, Development (Coding), Testing, Deployment, Maintenance
+
+Jenkins uses a master-agent architecture and old name of jenkins is Hudson. Default directory is /var/lib/jenkins
+
+Alternatives of Jenkins -> Github actions, Code pipeline, Azure devops, Bamboo, Gitlab cicd, Tekton
+
+Advanced jenkins pipeline flow ******get this from chatgpt
+
+Important plugins of jenkins -> Pipeline, Git Plugin, Credentials Binding, Blue Ocean, Docker Pipeline / Kubernetes, Role-Based Access Control (RBAC), Thin backup, SonarQube Scanner, Gearman, Priority sorter, throttle build plugin.
+
+types of jenkins jobs -> Freestyle Project, Pipeline Project, Multibranch Pipeline, Multi-Configuration Project, Maven Project, External Job, Organization Folder, Folder
+
+Jenkins Build Triggers -> Trigger builds remotely, Build after other proiects are built, Build periodically, GitHub hook trigger, Poll SCM
+
+Parameterized job -> is a build job or pipeline that is configured to accept input values (parameters) right before it executes.
+
+Parallel jobs (or parallel stages) In Jenkins allow you to execute multiple tasks simultaneously, rather than waiting for one task to finish before starting the next.
+
+Benefits of Using Agents -> Scalability, Platform diversity, Resource isolation, Security
+
+Security Concepts in Jenkins->
+1. Authentication
+2. Authorization -> Matrix-based, Project-based, RBAC (Role-Based Access Control)
+
+Types of credentials manager in jenkins -> Secret text, Username with password, Secret file, SSH Username with private key, Certificate
+
+Jenkins Pipeline Types -> Declarative and Scripted pipelines
+
+Testing Strategies and Environments ->
+	1.	Unit tests.
+	2.	Integration tests.
+	3.	Code analysis, typically using Sonar.
+	4.	Code vulnerability scanning, typically using Trivy.
+
+SonarQube Architecture and Configuration
+	The SonarQube architecture operates in two main parts.
+	The first part is the server component, which includes the User Interface (UI) and the database.
+	The second part is the Command Line Interface (CLI), specifically the Sonar Scanner, which is the tool that will be used most frequently.
+	The official domain for the tool is sonarsource.com.
+	By default, the SonarQube application runs on port 9000.
+	The initial default credentials to log in are "admin" for the username and "admin" for the password.
+
+types of parameters in perameterized jobs -> String Parameter, Boolean Parameter, Choice Parameter, Password Parameter, Multi-line String Parameter, File Parameter, Credentials Parameter, Run Parameter
+
+upstream and downstream jobs -> upstream job is the first task in a chain that triggers the next step when it finishes successfully. A downstream job is that next step, which waits for the upstream job to finish before starting its own work.
+
+To stop or prevent multiple deployment jobs from running at the same time in Jenkins, use the disableConcurrentBuilds() option inside your pipeline script,
+
+post-build actions Common Use Cases -> Notifications, Artifact Management, Reporting, Downstream Triggers, Cleanup
+
+
+***AWS***
+CLOUD COMPUTING -> is the delivery of computing services—including servers, storage, databases, networking, and software—over the internet. Instead of buying or keeping hard drives and physical servers, you rent access to these tools from a provider like Amazon Web Services and pay only for what you use.
+CLOUD DEPLOYMENT MODELS -> Private Cloud, Public Cloud, Hybrid Cloud, Multi-Cloud.
+
+TYPES OF CLOUD COMPUTING -> Infrastructure as a Service (IaaS), Platform as a Service (PaaS), Software as a Service (SaaS), Function as a service (FaaS)
+AWS GLOBAL INFRASTRUCTURE -> Regions, Availability Zones (AZs), Local Zones, Edge Locations, AWS Regional Edge Caches, Wavelength Zones.
+
+EC2 - ELASTIC COMPUTE CLOUD
+TYPES -> General purpose (M and T family), Compute optimized (C family), Memory optimized (R, U, X, Z family), Storage optimized (D, H, I family), Accelerated computing (P, G, Inf family), High-performance computing (HPC family)
+
+AMI- AMAZON MACHINE IMAGE-> A master template or blueprint for a server (pre-configured package)
+Placement Group -> is an AWS feature that lets you influence the physical placement of your Amazon EC2 instances within the underlying hardware of an AWS Data Center.
+
+EC2 PRICING MODELS -> On-Demand, Reserved Instances(Up to 75% savings), Savings Plans(Up to 72% savings), Spot Instances(Up to 90% savings), Dedicated Hosts, Capacity Reservations
+example: Amazon EC2 Pricing using a standard general-purpose m5.large instance (Linux, US East/N. Virginia region) as a concrete baseline example: per hour
+1. ondemand: 0.096 USD
+2. reserved instance: 0.060 USD (1-year) 0.041 USD (3-years)
+3. savings plan: 0.060 USD (1-year) 0.041 USD (3-years)
+4. spot instance: btwn 0.043-0.047 USD
+5. dediated host: 5.069 USD
+
+2/2 or 3/3 status checks done while connecting to a ec2 instance -> System Status Check, Instance Status Check, Attached EBS Status Check
+
+IAM - Identity and Access Management
+AUTHENTICATION -> IAM User, IAM Group, IAM Role
+AUTHORIZATION -> IAM Policy
+Policy types -> Identity-Based(AWS Managed, Customer Managed, Inline), Resource-Based, Session-Based
+Policy JSON Structure Elements -> Effect (Allow/Deny), Action (e.g., s3:GetObject), Resource (ARN), Condition (Optional, e.g., specific IP or MFA).
+Policy Evaluation Logic -> Explicit Deny, Explicit Allow, Default Deny(Implicit Deny)
+IAM ROLES roles requires two policies -> Trust Policy, Permission Policy
+
+SYSTEMS MANAGER (SSM) -> default port 443
+PREREQUISITES FOR SSM TO WORK -> SSM Agent Installed, IAM Role, Network Connectivity
+CORE CAPABILITIES -> SESSION MANAGER, RUN COMMAND, PARAMETER STORE, SECRETS MANAGER, PATCH MANAGER, STATE MANAGER, INVENTORY
+
+EBS (Elastic Block Store) 
+What Problem Does EBS Solve -> Data Persistence, Seamless Capacity Scaling, Dynamic Performance Tuning, Simplified Backups, Data Mobility, Effortless Security
+EBS Volume Types -> SSD-Based(gp3/gp2, io2/io1), HDD-Based(st1, sc1)
+
+ VPC -> is a  Virtual Private Cloud (VPC) in cloud computing is a logically isolated, private network within a public cloud
+difference between ipv4 and ipv6 -> IPv4 uses a 32-bit architecture (yielding ~4.3 billion addresses), while IPv6 uses a 128-bit architecture (yielding 340 undecillion addresses) to solve the global problem of running out of unique IPv4 addresses.
+CIDR -> Classless Inter-Domain Routing, is a method for allocating IP addresses and routing internet traffic more efficiently.
+To get avalible ip's we need to use (2 power 32-16) =2 power 16 =65,536 Available IPs
+The largest single CIDR block you can assign is /16 (65,536 IP addresses), and the smallest single CIDR block you can assign is /28 (16 IP addresses).
+bastion host / jump server -> It is a specialized Amazon EC2 instance placed in a public subnet. It acts as a secure, controlled gateway allowing administrators to connect via SSH or RDP to other EC2 instances residing in private subnets that have no direct internet access.
+vpc peering Key Rules -> No overlapping CIDRs, Not transitive, Cross-region supported, Cross-account supported, Route tables required.
+transit gateway -> is a centralized cloud router that connects multiple VPCs and on-premises networks through a single hub.
+
+VPC components with default limits -> 
+    CIDR per VPC: 5
+    VPCs per Region: 5  
+    Internet Gateways per Region: 5 (cannot increase on soft limit)
+    NAT gateways per AZ: 5
+    Elastic IP's per region: 5
+    VPC peering connections per VPC: 50
+    Security Groups per Region: 2500
+    Security Group Rules per SG: 60
+    Route Tables per vpc: 200
+    Network ACLs (NACL) per vpc: 200
+    Subnets per VPC: 200
+    Routes per route table: 500
+
+VPC endpoints types -> Interface Endpoints, Gateway Endpoints
+
+Osi layers->
+Layer 7: Application 
+Layer 6: Presentation
+Layer 5: Session 
+Layer 4: Transport 
+Layer 3: Network
+Layer 2: Data Link 
+Layer 1: Physical 
+
+Elastic Load Balancer (ELB) types -> 
+1. Application Load Balancer (ALB) --> Layer 7 --> HTTP/HTTPS
+2. Network Load Balancer (NLB) --> Layer 4 --> TCP/UDP/TLS 
+3. Gateway Load Balancer (GWLB) --> Layer 3 --> IP
+4. Classic Load Balancer (CLB) --> Layer 4/7 --> TCP/HTTP
+
+Auto Scaling Groups (ASG) types -> Horizontal Auto Scaling, Vertical Auto Scaling
+Key components -> Capacity Settings, Launch Template, AZ Distribution, Scaling Policies(Target Tracking Scaling, Step Scaling, Simple Scaling, Predictive Scaling)
+
+CloudWatch -> is a monitoring and observability service. It does FIVE things -> Metrics, Alarms, Logs, Dashboards, Events/EventBridge
+Default Metrics by AWS Service->
+  Amazon EC2: CPUUtilization, NetworkIn, NetworkOut, DiskReadBytes, and StatusCheckFailed.
+  Amazon RDS: CPUUtilization, DatabaseConnections, and FreeStorageSpace.
+  Amazon EBS: VolumeReadBytes, VolumeWriteBytes, and VolumeQueueLength.
+  Amazon S3: BucketSizeBytes and NumberOfObjects.
+types of Alarms -> Metric Alarms, Composite Alarm
+Cloudwatch agent -> is a software package you install on servers to collect system-level metrics, logs, and traces.
+
+SNS (Simple Notification Service) core concepts -> Publishers (Producers), Topics, Characters, Subscribers (Consumers)
+SNS fanout -> is a messaging design pattern where a single message published to an Amazon SNS topic is automatically replicated and pushed in parallel to multiple subscribed endpoints, such as Amazon SQS queues, Lambda functions, or HTTP endpoints
+
+SQS (Simple Queue Service)-> is a fully managed message queuing service that lets you send, store, and receive messages between software components at any volume. 
+
+Amazon EFS (Elastic File System) classes -> EFS Standard, EFS Standard-Infrequent Access, EFS One Zone, EFS One Zone-Infrequent Access
+EFS file system supports a hard quota of up to 25,000 concurrent client connections
+To connect EFS to ec2 need to install install binutils
+
+Amazon S3 (Simple Storage Service) classes -> S3 Standard, S3 Intelligent-Tiering, S3 Standard-Infrequent Access, S3 Glacier Flexible Retrieval, S3 Glacier Deep Archive, S3 one zone
+S3 object lock -> Prevents Amazon S3 objects from being deleted or overwritten for a fixed amount of time or indefinitely. It uses a Write-Once-Read-Many (WORM) model and is primarily used to meet regulatory compliance requirements.
+
+Cloud trail -> is a monitoring and logging service that records user activity and API (Application Programming Interface) calls across your Amazon Web Services infrastructure.
+
+Difference between CloudWatch and CloudTrail -> The primary difference is their focus: AWS CloudTrail logs who did what in your account (identity and API actions), while Amazon CloudWatch monitors how your resources are performing (metrics and performance).
+
+CloudFront (Amazon CloudFront) -> is a fast, globally distributed content delivery network (CDN) service that securely delivers websites, videos, applications, and APIs to users with low latency and high transfer speeds
+
+
+***Docker***
+Docker Architecture -> Docker daemon -> Docker Client -> Docker Registry -> Docker Host
+
+Docker Images -> is used to create, run and deploy applications in containers.
+Docker Image Repository -> Docker images can be stored in private or public repositories, such as Docker Hub, Amazon Container Registry etc.
+
+docker attach -> The command attaches to the sheel and gives you a terminal to access
+docker exec -> To execute a command inside a running container
+
+Dockerfile Instructions -> FROM, RUN, COPY, ADD, CMD, ENTRYPOINT, ENV, ARG, WORKDIR, EXPOSE, USER, VOLUME, SHELL
+
+Docker tag -> To retag an image with another name
+
+Docker Push -> Dockerhub, ECR(a. Using AWS ECR Get Login, b. Using ECR-Credential Helper)
+
+Volumes -> Docker Volumes, Bind Mount, Anonymous Volumes
+
+Docker Networks -> Bridge Network, Host Network, Null Network
+
+Docker Prune -> command used to clean up images, containers, volumes and Networks which are dangling
+Dangling Images -> Dangling image in Docker are unused image with no name and tag.
+
+Docker Compose -> used to run multiple containers as a single service.
+
+docker context -> Docker CLI Contexts (Remote Environment Management) -> Docker Build Context (Image Creation)
+
+layer Caching -> is a optimization mechanism that reuses previously built Docker image layers to drastically speed up subsequent image builds.
+
+docker swam -> is a native container orchestration tool built directly into the Docker Engine.
+
+
+***K8's***
+Architecture:
+Master (Control Plane) -> API Server -> etcd -> Scheduler -> Controller
+Node (Worker) -> Container Runtime -> Kubelet -> Kube Proxy -> Pod
+
+kubernetes components from smaller to bigger components
+image->container->pod->node->controllers(replicaset controller, deployment controller, deamon controller, stateful controller, ingress controller)->services(cluster IP, Node port, LoadBalancer, Headless)->Namespace->Storage->Cluster
+
+Manifest File Fields -> apiVersion, kind, metadata, labels, selectors (equity-based selectors, set-based selectors), spec
+
+Pod Phases/Lifecycle -> Pending -> Running -> Succeeded/Completed -> Failed -> Unknown
+
+Controllers -> ReplicaSet/ReplicationController -> Deployment Controller -> DaemonSet Controller -> StatefulSet Controller
+
+Deployment Strategies -> Rolling Update(default), Blue-Green Deployment, Canary Deployment, A/B Testing (Dark Launching), Recreate Deployment (All-At-Once)
+
+Services -> ClusterIP -> NodePort -> LoadBalancer -> Headless Service
+
+Kubernetes Volumes
+1. Ephemeral Volumes -> emptyDir
+2. Persistent Volumes 
+    a.Static Provisioning        PV --> PVC --> Mount
+    b.Dynamic Provisioning       Storage Class --> PVC --> Mount
+access modes
+    ReadWriteOnce
+    ReadOnlyMany
+    ReadWriteMany
+Reclaim Policies
+    Retain -> Delete -> Recycle
+provisioner is the plugin used to use storage class in dynamic volume
+
+Namespace -> default -> kube-system -> kube-public -> kube-node-lease
+
+Resource Quota -> Requests -> Limits
+
+Manual Scheduling of Pods -> nodeName -> nodeSelector -> nodeAffinity (HardRule,SoftRule) -> Pod Affinity -> Pod Anti-Affinity
+
+TopologyKey -> hostname -> zone -> region
+
+Taints and Tolerations
+NoSchedule -> PreferNoSchedule -> NoExecute
+
+cordon ->  Action: Marks a worker node as SchedulingDisabled
+Drain -> Action: Automatically cordons the node first, and then safely evicts all existing pods
+
+Probes -> Liveness Probe -> Readiness Probe -> Startup Probe
+Probe Actions -> HTTP Request [httpget] -> Shell [exec] -> TCP Port Check
+Configuring Probes -> initialDelaySeconds [Min:0, Def:0] -> periodSeconds [Min:1, Def:10] -> timeoutSeconds [Min:1, Def:1] -> successThreshold [Min:1, Def:1] -> failureThreshold [Min:1, Def:3]
+
+Securing Kubernetes
+Context -> A context is a group of access parameters to enable secure connection to a specific cluster’s API server.
+Users in Kubernetes -> User Account(admin is the default user) -> Service-Account
+
+RBAC
+3 important concepts in RBAC -> Subject -> Resources -> Verbs
+Role & Cluster Role
+
+Helm Charts -> is a package of pre-configured Kubernetes resources that lets you define, install, and upgrade complex applications using the Helm package manager. 
+Helm chart directory structure -> Chart.yaml -> values.yaml -> charts -> templates(deployment.yaml, service.yaml)
+
+
+***TERRAFORM***
+IAC (Infracture As Code) -> Is a process of managing and provisioning infra through configuration files.
+
+Terraform -> Terraform is a open source IAC tool developed by Hashicorp which is used to plan, apply and destroy using HCL(Hashicorp Configuration Language) The extension of terraform configuration files is .tf 
+
+Advantages of terrafor -> Plannability -> Reusability -> Maintainability
+
+Terraform Lifecycle -> 1.Terraform init (Initialises the backend, provider plugin, child modules) -> 2.Terraform plan -> 3.Terraform apply -> 4.Terraform destroy -> 5.Terraform validate
+
+Terraform blocks -> 1.Terraform Block -> 2.Provider Block: -> 3.Resource Block -> 4.Data Block -> 5.Variable Block/inputVariable Block -> 6.Output Block -> 7.Module Block -> 8.Provisioner Block(file, local exec, remote exec(inline,script,scripts))
+
+Add a block which Roopa said important in QA******
+add details on count, foreach, locals and functions length notes ****
+
+Terraform state -> is a file which is used to keep track of the resources provisioned by terraform. 
+It contains the following information -> Resources provisioned by terraform -> Resource dependencies -> Resource attributes  
+remote state[Backend]: Terraform state can be stored remotely in a backend like S3, GCS, Azure Blob Storage, etc.
+State lock: Terraform state can be locked to prevent concurrent modifications.
+
+Terraform file structure -> main.tf -> variables.tf -> outputs.tf -> provider.tf -> terraform.tfvars -> backend.tf 
+
+Modules: Modules are a way to organize and reuse Terraform code.
+
+
+***ANSIBLE***
+Ansible is an open-source tool used for configuration management, application deployment, along with infrastructure orchestration.
+
+Architecture -> Modules -> Plugins -> Controller Machine -> Inventory
+
+Hosts file -> Grouping Hosts in hosts file
+
+Playbook -> are list of tasks written in yaml format that gets executed on host machines. managed using ansible-playbook command
+
+PLAY RECAP Variables -> PLAY RECAP section shows execution statistics for each host.
+ok=X -> Tasks that executed successfully without making changes
+changed=Y -> Tasks that executed successfully AND made changes to the system
+unreachable=Z -> Hosts that Ansible couldn't connect to
+failed=A -> Tasks that failed during execution
+skipped=B -> Tasks that were skipped due to conditions
+rescued=C -> Tasks that failed but were handled by rescue blocks
+ignored=D -> Failed tasks that were explicitly ignored
+
+Idempotency -> is the property that running a playbook or task multiple times produces the same result as running it once, ensuring no unintended changes occur after the initial application.
+
+Ansible Register and Debugging:
+Ansible register is a way to capture the output from task execution and store it in a variable.
+Debug will print the values that are stored in the register Variables
+
+Ansible tags
+Using tags, we can run specific task or play in a playbook
+
+Static inventory -> A manually maintained file (YAML) listing hosts and groups, updated by hand.
+Dynamic Inventory-> A script or plugin that fetches host/group data from an external source (cloud API, CMDB, etc.) at runtime.
+
+Default location of host file/inventory is /etc/ansible/hosts
+
+Ansible Roles -> Standardized directory structures (tasks/, vars/, templates/) that allow you to define complex automation logic once and reuse it across multiple playbooks and projects.managed using ansible-galaxy command
+
+Ansible Roles Standardized directory structure -> tasks/main.yml -> handlers/main.yml -> defaults/main.yml -> vars/main.yml -> templates/ -> files/ -> meta/main.yml -> tests/

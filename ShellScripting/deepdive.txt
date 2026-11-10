@@ -73,7 +73,6 @@ Operators:
     [ -z <variable ] -- To check if a string variable is empty. 
 
 If Condition:
-Syntax:
 a. Simple If Condition:
 if [ condition ]
 then
@@ -167,8 +166,8 @@ done
 echo "The Sum of Even Numbers is $even"
 echo "The Sum of Odd Numbers is $odd"
 
-Syntax:
 While Read Loop:
+Syntax:
 while read <variable>
 do
     commands
@@ -198,8 +197,8 @@ done < users.txt
 Debugging in Shell Scripts:
     set -x --> To print commands and their arguments as they are executed
     set -e --> Exits the shell script immediately, if a command exits with non zero status
-    set -u: Stops the script immediately if you try to use a variable that doesn't exist yet.
-    set -n: Scans your script for formatting errors without actually executing any of the commands.
+    set -u --> Stops the script immediately if you try to use a variable that doesn't exist yet.
+    set -n --> Scans your script for formatting errors without actually executing any of the commands.
 
 Logical Operators
     && --> logical and 

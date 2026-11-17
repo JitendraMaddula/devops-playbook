@@ -1,0 +1,190 @@
+***DOCKER***
+images
+docker pull nginx                 # download an image
+docker images                     # list images
+docker build -t myapp:1.0 .       # build an image from a Dockerfile
+docker push user/myapp:1.0        # push to a registry
+docker rmi myapp:1.0              # remove an image
+
+containers
+docker run -d --name web -p 8080:80 nginx   # run detached, named, with a port mapped
+docker run -it ubuntu bash                   # run with an interactive shell
+docker ps        # list running containers
+docker ps -a     # list all containers, including stopped ones
+docker stop web  # graceful stop (sends SIGTERM)
+docker start web
+docker rm web    # remove a container
+
+debugging
+docker logs -f web          # follow the logs
+docker exec -it web bash    # open a shell inside a running container
+docker inspect web          # full details: IP, mounts, env
+docker stats                # live CPU and memory use
+
+volumes and networks
+docker volume create mydata
+docker run -v mydata:/data app     # attach a volume to persist data
+docker network create mynet
+docker run --network mynet app
+
+compose
+docker compose up -d
+docker compose down
+docker compose logs -f
+
+cleanup
+docker system prune -a      # remove all unused images, containers and networks
+
+
+***KUBERNETES***
+Cluster and context
+kubectl cluster-info                 # cluster endpoint details
+kubectl get nodes                    # list nodes
+kubectl config get-contexts          # list contexts
+kubectl config use-context dev       # switch cluster or context
+
+pods
+kubectl get pods                     # pods in the current namespace
+kubectl get pods -A                  # pods in all namespaces
+kubectl get pods -o wide             # also shows node and IP
+kubectl run nginx --image=nginx      # quick single pod
+kubectl delete pod nginx
+
+deployments
+kubectl create deployment web --image=nginx --replicas=3
+kubectl get deployments
+kubectl scale deployment web --replicas=5
+kubectl set image deployment/web nginx=nginx:1.27   # rolling update
+kubectl rollout status deployment/web
+kubectl rollout history deployment/web
+kubectl rollout undo deployment/web                  # roll back
+
+Apply yaml
+kubectl apply -f app.yaml            # create or update
+kubectl delete -f app.yaml
+kubectl get deploy web -o yaml       # view the live YAML
+kubectl create deployment web --image=nginx --dry-run=client -o yaml > web.yaml   # generate YAML
+
+services
+kubectl expose deployment web --port=80 --type=NodePort
+kubectl get svc
+kubectl port-forward svc/web 8080:80     # reach it locally
+
+debugging
+kubectl describe pod <pod>           # events: why a pod is Pending or crashing
+kubectl logs <pod>                   # logs
+kubectl logs -f <pod> -c <container> # follow one container's logs
+kubectl logs <pod> --previous        # logs from the crashed instance
+kubectl exec -it <pod> -- sh         # shell inside the pod
+kubectl get events --sort-by=.metadata.creationTimestamp
+kubectl top pod / kubectl top node   # CPU and memory (needs metrics-server)
+
+Namespaces, ConfigMaps and Secrets
+kubectl create namespace dev
+kubectl get pods -n dev
+kubectl create configmap app-config --from-literal=ENV=prod
+kubectl create secret generic db-pass --from-literal=password=xyz
+kubectl get configmap,secret
+
+Nodes (maintenance)
+kubectl cordon <node>                # stop new pods being scheduled there
+kubectl drain <node> --ignore-daemonsets   # evict pods for maintenance
+kubectl uncordon <node>
+
+
+***TERRAFORM***
+Core workflow
+terraform init          # download providers and modules, set up the backend
+terraform validate      # check syntax and configuration
+terraform fmt           # format code to the standard style
+terraform plan          # preview changes (what will be created, changed or destroyed)
+terraform apply         # apply the changes
+terraform destroy       # delete all managed resources
+
+Useful flags
+terraform plan -out=tfplan        # save a plan
+terraform apply tfplan            # apply exactly that saved plan
+terraform apply -auto-approve     # skip the confirmation prompt (CI/CD)
+terraform apply -var="env=prod"
+terraform apply -var-file="prod.tfvars"
+terraform apply -target=aws_instance.web    # change only one resource
+terraform apply -replace=aws_instance.web   # force-recreate a resource (replaces taint)
+terraform init -upgrade           # upgrade provider versions
+terraform init -reconfigure       # reset the backend configuration
+
+State management
+terraform state list                         # resources in state
+terraform state show aws_instance.web        # details of one resource
+terraform state mv aws_instance.a aws_instance.b   # rename or move in state
+terraform state rm aws_instance.web          # stop managing it (doesn't delete it)
+terraform state pull                         # print the remote state
+terraform refresh                            # sync state with the real world (now: plan -refresh-only)
+terraform force-unlock <LOCK_ID>             # release a stuck state lock
+
+Import existing resources
+terraform import aws_instance.web i-0abc123
+
+Workspaces
+terraform workspace list
+terraform workspace new dev
+terraform workspace select prod
+terraform workspace show
+
+Inspect and debug
+terraform output                 # show output values
+terraform output -json
+terraform show                   # human-readable state or plan
+terraform console                # test expressions interactively
+terraform graph                  # dependency graph (DOT format)
+terraform providers              # providers in use
+TF_LOG=DEBUG terraform plan      # detailed logs
+
+***ANSIBLE***
+Ad-hoc commands
+ansible all -m ping                          # check connectivity to all hosts
+ansible web -m shell -a "uptime"             # run a shell command
+ansible web -m command -a "df -h"
+ansible web -m apt -a "name=nginx state=present" -b   # install a package (-b = sudo)
+ansible web -m service -a "name=nginx state=started" -b
+ansible web -m copy -a "src=app.conf dest=/etc/app.conf" -b
+ansible all -m setup                         # gather facts about the hosts
+ansible all -i inventory.ini -m ping         # use a specific inventory
+
+Playbooks
+ansible-playbook site.yml                    # run a playbook
+ansible-playbook -i inventory.ini site.yml
+ansible-playbook site.yml --check            # dry run
+ansible-playbook site.yml --check --diff     # dry run that shows the changes
+ansible-playbook site.yml --syntax-check
+ansible-playbook site.yml --limit web1       # only some hosts
+ansible-playbook site.yml --tags nginx       # only tasks with this tag
+ansible-playbook site.yml --skip-tags db
+ansible-playbook site.yml -e "env=prod"      # extra variables
+ansible-playbook site.yml --start-at-task "Install nginx"
+ansible-playbook site.yml -vvv               # verbose output for debugging
+
+Inventory
+ansible-inventory --list                     # show the parsed inventory
+ansible-inventory --graph                    # show the group tree
+ansible all --list-hosts
+
+Roles and Galaxy
+ansible-galaxy init myrole                   # create a role skeleton
+ansible-galaxy install geerlingguy.nginx     # install a role from Galaxy
+ansible-galaxy install -r requirements.yml
+ansible-galaxy collection install community.general
+
+Vault (secrets)
+ansible-vault create secrets.yml
+ansible-vault encrypt vars.yml
+ansible-vault decrypt vars.yml
+ansible-vault edit secrets.yml
+ansible-vault view secrets.yml
+ansible-playbook site.yml --ask-vault-pass
+ansible-playbook site.yml --vault-password-file ~/.vault_pass
+
+Docs and config
+ansible-doc apt              # documentation for a module
+ansible-doc -l               # list all modules
+ansible --version            # also shows which ansible.cfg is in use
+ansible-config dump

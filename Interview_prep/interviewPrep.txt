@@ -1,6 +1,6 @@
 ***LINUX***
 Architecture -> hardware --> kernel --> system utilities and libraries --> shell --> applications
-Linux Distributions and there packet managers -> ubuntu.      --> apt, red hat      --> yum, Kali Linux   --> apt, Rasberry pi  --> apt, Alpine Linux --> apk
+Linux Distributions and there packet managers: ubuntu-> apt, red hat-> yum, KaliLinux-> apt, Rasberry pi-> apt, Alpine Linux-> apk
 
 prompt ending $ --> You're a regular user, # --> You're the root user (admin)
 
@@ -39,18 +39,18 @@ Change Directory -> cd <directory-name>, cd ..
 Text Editor -> vi <file-name>
 threemodes -> normal mode, insert mode, command mode(w --> Write, q --> quit, d --> delete, ! --> Override [Forcefully])
 
-cat <file-name> --> To see the contents of the file
-Head - Used to print required number of lines from the beginning of the file
-Tail - Used to print required number of lines from the end of the file
-less - Used to view contents of the file interactively (f --> To go one page forward, b --> To go one page backward, q --> To quit/exit from the less command)
+To see the contents of the file --> cat <file-name>  
+Used to print required number of lines from the beginning of the file --> Head
+Used to print required number of lines from the end of the file --> Tail
+Used to view contents of the file interactively -> less (f --> To go one page forward, b --> To go one page backward, q --> To quit/exit from the less command)
 
-man <command>  --> To see the Manual Page of the command
+To see the Manual Page of the command --> man <command>
 
 Copy Files and Directories(-r) -> cp <source-path> <destination-path> 
 Move Files and Directories(-r) -> mv <source-path> <destination-path>
 Remove Files and Directories(-r) -> rm <file-name>
 
-echo "<text>" --> To print the text on the terminal
+To print the text on the terminal --> echo "<text>"
 
 <command> > <file-name> --> To redirect the output of a command to a file
 <command> >> <file-name> --> To append the output of a command to a file
@@ -97,9 +97,9 @@ sticky bit -> chmod +t /path/to/directory -> is a special permission setting on 
 
 vi ~/.bashrc --> update umask details here to update umask perminently. Default permissions(umask) -> Files - 666 and Directories - 777
 
-Changing Ownershop and Group for files and Directories -> chown <username> <filename>, chgrp <username> <filename>, chown <username>:<groupname> <file-name>
+Changing Ownershop and Group for files and Directories -> chown <username> <filename>, chgrp <groupname> <filename>, chown <username>:<groupname> <file-name>
 
-tee -> to Redirect and Append
+tee -> to Redirect and Append and prints the output in the terminal
 
 Link -> softlink and hardlink
 
@@ -153,7 +153,7 @@ Networking commands
     sudo ss -tuln    --> chck open ports
 
 SSH -> ssh -i <private-key> <username>@<ip-address> --> To SSH into a Server
-To establish a passwordless connection, Generate a key pair using ssh-keygen command. Copy the contents of the newly generated public key to the authorized keys file of the remote server under .ssh folder
+To establish a passwordless connection, Generate a key pair using ssh-keygen -t rsa command. Copy the contents of the newly generated public key to the authorized keys file of the remote server under .ssh folder
 
 scp -i <private-key> <file> <username>@<ip-address>:<destination-path>
 
@@ -348,7 +348,7 @@ Advanced jenkins pipeline flow ******get this from chatgpt
 
 Important plugins of jenkins -> Pipeline, Git Plugin, Credentials Binding, Blue Ocean, Docker Pipeline / Kubernetes, Role-Based Access Control (RBAC), Thin backup, SonarQube Scanner, Gearman, Priority sorter, throttle build plugin.
 
-types of jenkins jobs -> Freestyle Project, Pipeline Project, Multibranch Pipeline, Multi-Configuration Project, Maven Project, External Job, Organization Folder, Folder
+types of jenkins jobs -> Freestyle Project, Pipeline Project, Multibranch Pipeline, Multi-Configuration Project, Maven Project, Organization Folder, Folder
 
 Jenkins Build Triggers -> Trigger builds remotely, Build after other proiects are built, Build periodically, GitHub hook trigger, Poll SCM
 
@@ -380,7 +380,7 @@ SonarQube Architecture and Configuration
 	By default, the SonarQube application runs on port 9000.
 	The initial default credentials to log in are "admin" for the username and "admin" for the password.
 
-types of parameters in perameterized jobs -> String Parameter, Boolean Parameter, Choice Parameter, Password Parameter, Multi-line String Parameter, File Parameter, Credentials Parameter, Run Parameter
+types of parameters in perameterized jobs -> String Parameter, Boolean Parameter, Choice Parameter, Username and Password Parameter, Multi-line String Parameter, File Parameter, Credentials Parameter, Run Parameter
 
 upstream and downstream jobs -> upstream job is the first task in a chain that triggers the next step when it finishes successfully. A downstream job is that next step, which waits for the upstream job to finish before starting its own work.
 
@@ -428,7 +428,7 @@ EBS (Elastic Block Store)
 What Problem Does EBS Solve -> Data Persistence, Seamless Capacity Scaling, Dynamic Performance Tuning, Simplified Backups, Data Mobility, Effortless Security
 EBS Volume Types -> SSD-Based(gp3/gp2, io2/io1), HDD-Based(st1, sc1)
 
- VPC -> is a  Virtual Private Cloud (VPC) in cloud computing is a logically isolated, private network within a public cloud
+VPC -> is a  Virtual Private Cloud (VPC) in cloud computing is a logically isolated, private network within a public cloud
 difference between ipv4 and ipv6 -> IPv4 uses a 32-bit architecture (yielding ~4.3 billion addresses), while IPv6 uses a 128-bit architecture (yielding 340 undecillion addresses) to solve the global problem of running out of unique IPv4 addresses.
 CIDR -> Classless Inter-Domain Routing, is a method for allocating IP addresses and routing internet traffic more efficiently.
 To get avalible ip's we need to use (2 power 32-16) =2 power 16 =65,536 Available IPs
@@ -508,7 +508,7 @@ Docker Image Repository -> Docker images can be stored in private or public repo
 docker attach -> The command attaches to the sheel and gives you a terminal to access
 docker exec -> To execute a command inside a running container
 
-Dockerfile Instructions -> FROM, RUN, COPY, ADD, CMD, ENTRYPOINT, ENV, ARG, WORKDIR, EXPOSE, USER, VOLUME, SHELL
+Dockerfile Instructions -> FROM, WORKDIR, RUN, COPY, ADD, CMD, ENTRYPOINT, ENV, ARG, EXPOSE, USER, VOLUME, SHELL
 
 Docker tag -> To retag an image with another name
 
@@ -542,7 +542,7 @@ Manifest File Fields -> apiVersion, kind, metadata, labels, selectors (equity-ba
 
 Pod Phases/Lifecycle -> Pending -> Running -> Succeeded/Completed -> Failed -> Unknown
 
-Controllers -> ReplicaSet/ReplicationController -> Deployment Controller -> DaemonSet Controller -> StatefulSet Controller
+Controllers -> ReplicaSet(bith set based and annoted based)/ReplicationController -> Deployment Controller -> DaemonSet Controller -> StatefulSet Controller
 
 Deployment Strategies -> Rolling Update(default), Blue-Green Deployment, Canary Deployment, A/B Testing (Dark Launching), Recreate Deployment (All-At-Once)
 
@@ -596,7 +596,7 @@ IAC (Infracture As Code) -> Is a process of managing and provisioning infra thro
 
 Terraform -> Terraform is a open source IAC tool developed by Hashicorp which is used to plan, apply and destroy using HCL(Hashicorp Configuration Language) The extension of terraform configuration files is .tf 
 
-Advantages of terrafor -> Plannability -> Reusability -> Maintainability
+Advantages of terraform -> Plannability -> Reusability -> Maintainability
 
 Terraform Lifecycle -> 1.Terraform init (Initialises the backend, provider plugin, child modules) -> 2.Terraform plan -> 3.Terraform apply -> 4.Terraform destroy -> 5.Terraform validate
 
@@ -611,6 +611,8 @@ remote state[Backend]: Terraform state can be stored remotely in a backend like 
 State lock: Terraform state can be locked to prevent concurrent modifications.
 
 Terraform file structure -> main.tf -> variables.tf -> outputs.tf -> provider.tf -> terraform.tfvars -> backend.tf 
+
+In Terraform, variables.tf declares the structure and rules for your input variables, while .tfvars files assign the actual values to them
 
 Modules: Modules are a way to organize and reuse Terraform code.
 
